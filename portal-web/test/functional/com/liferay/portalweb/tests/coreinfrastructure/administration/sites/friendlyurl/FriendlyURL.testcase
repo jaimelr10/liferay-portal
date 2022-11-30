@@ -332,4 +332,19 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-162714. Checks that Web Content FriendlyURL is not displayed escaped whit special characters like éöő"
+	@priority = "4"
+	test WebContentURLNotEscaped {
+		JSONWebcontent.addWebContent(
+			content = "WC WebContent Content",
+			groupName = "Test Site Name",
+			title = "éöő");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+		WebContentNavigator.gotoEditCP(webContentTitle = "éöő");
+
+		WebContent.viewFriendlyURLCP(friendlyURL = "eoo");
+	}
+
 }
