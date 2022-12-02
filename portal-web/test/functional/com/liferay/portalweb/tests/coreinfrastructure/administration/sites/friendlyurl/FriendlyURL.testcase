@@ -332,9 +332,9 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-162714. Checks that Web Content FriendlyURL is not displayed escaped whit special characters like éöő"
+	@description = "This is a test for LPS-162714. Checks that Web Content FriendlyURL special characters like éöő are not escaped"
 	@priority = "4"
-	test WebContentURLNotEscaped {
+	test SpecialCharactersAreNotEscapedFromWebContentURL {
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content",
 			groupName = "Test Site Name",
