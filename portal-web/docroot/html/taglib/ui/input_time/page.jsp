@@ -119,6 +119,8 @@ Format format = FastDateFormatFactoryUtil.getSimpleDateFormat(simpleDateFormatPa
 							var date = event.newSelection[0];
 
 							instance.updateTime(date);
+
+							instance.hide();
 						}
 					},
 					popover: {
