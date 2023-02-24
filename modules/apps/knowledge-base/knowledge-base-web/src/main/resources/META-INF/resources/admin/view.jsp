@@ -21,6 +21,8 @@ long kbFolderClassNameId = PortalUtil.getClassNameId(KBFolderConstants.getClassN
 
 long parentResourceClassNameId = ParamUtil.getLong(request, "parentResourceClassNameId", kbFolderClassNameId);
 
+boolean kbFolderView = parentResourceClassNameId == kbFolderClassNameId;
+
 long parentResourcePrimKey = ParamUtil.getLong(request, "parentResourcePrimKey", KBFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
 KBAdminManagementToolbarDisplayContext kbAdminManagementToolbarDisplayContext = new KBAdminManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, renderRequest, renderResponse, portletConfig);
@@ -127,19 +129,30 @@ String displayStyle = kbAdminManagementToolbarDisplayContext.getDisplayStyle();
 
 			<c:choose>
 				<c:when test='<%= !GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-156421")) || kbAdminManagementToolbarDisplayContextSearchContainer.hasResults() || kbAdminManagementToolbarDisplayContext.isSearch() %>'>
-
-					<%
-					KBArticleViewDisplayContext kbArticleViewDisplayContext = new KBArticleViewDisplayContext(request, liferayPortletRequest, liferayPortletResponse, renderResponse);
-					%>
-
+				<liferay-ui:search-container
+					id="kbObjects"
+					searchContainer="<%= kbAdminManagementToolbarDisplayContextSearchContainer %>"
+				>	
+								
+				<liferay-ui:search-container-row
+					className="Object"
+					modelVar="kbObject"
+				>	
 					<c:choose>
 						<c:when test='<%= displayStyle.equals("descriptive") %>'>
-							<liferay-util:include page="/admin/view_descriptive.jsp" servletContext="<%= application %>" />
+								<%@ include file="/admin/view_descriptive.jspf" %>
 						</c:when>
 						<c:otherwise>
-							<liferay-util:include page="/admin/view_table.jsp" servletContext="<%= application %>" />
-						</c:otherwise>
-					</c:choose>
+								<%@ include file="/admin/view_table.jspf" %>
+							</c:otherwise>
+						</c:choose>
+					</liferay-ui:search-container-row>
+					<liferay-ui:search-iterator
+						displayStyle="<%= displayStyle %>"
+						markupView="lexicon"
+						resultRowSplitter="<%= kbFolderView ? new KBResultRowSplitter() : null %>"
+					/>
+				</liferay-ui:search-container>
 				</c:when>
 				<c:otherwise>
 					<liferay-frontend:empty-result-message

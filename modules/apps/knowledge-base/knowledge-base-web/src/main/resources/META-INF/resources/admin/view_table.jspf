@@ -14,15 +14,8 @@
  */
 --%>
 
-<%@ include file="/admin/init.jsp" %>
 
 <%
-long kbFolderClassNameId = PortalUtil.getClassNameId(KBFolderConstants.getClassName());
-
-long parentResourceClassNameId = ParamUtil.getLong(request, "parentResourceClassNameId", kbFolderClassNameId);
-
-boolean kbFolderView = parentResourceClassNameId == kbFolderClassNameId;
-
 KBArticleURLHelper kbArticleURLHelper = new KBArticleURLHelper(renderRequest, renderResponse);
 
 KBAdminManagementToolbarDisplayContext kbAdminManagementToolbarDisplayContext = new KBAdminManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, renderRequest, renderResponse, portletConfig);
@@ -30,21 +23,16 @@ KBAdminManagementToolbarDisplayContext kbAdminManagementToolbarDisplayContext = 
 SearchContainer<Object> kbAdminManagementToolbarDisplayContextSearchContainer = kbAdminManagementToolbarDisplayContext.getSearchContainer();
 
 KBArticleViewDisplayContext kbArticleViewDisplayContext = new KBArticleViewDisplayContext(request, liferayPortletRequest, liferayPortletResponse, renderResponse);
+
 %>
 
-<liferay-ui:search-container
-	id="kbObjects"
-	searchContainer="<%= kbAdminManagementToolbarDisplayContextSearchContainer %>"
->
-	<liferay-ui:search-container-row
-		className="Object"
-		modelVar="object"
-	>
+
+
 		<c:choose>
-			<c:when test="<%= object instanceof KBFolder %>">
+			<c:when test="<%= kbObject instanceof KBFolder %>">
 
 				<%
-				KBFolder kbFolder = (KBFolder)object;
+				KBFolder kbFolder = (KBFolder)kbObject;
 
 				row.setData(
 					HashMapBuilder.<String, Object>put(
@@ -59,12 +47,10 @@ KBArticleViewDisplayContext kbArticleViewDisplayContext = new KBArticleViewDispl
 				>
 					<clay:content-row>
 						<clay:content-col>
-							<span class="sticker sticker-document sticker-rounded sticker-secondary">
-								<clay:icon
-									class="component-icon"
-									symbol="folder"
+								<clay:sticker
+									cssClass="sticker-secondary"
+									icon="folder"
 								/>
-							</span>
 						</clay:content-col>
 
 						<clay:content-col
@@ -143,7 +129,7 @@ KBArticleViewDisplayContext kbArticleViewDisplayContext = new KBArticleViewDispl
 			<c:otherwise>
 
 				<%
-				KBArticle kbArticle = (KBArticle)object;
+				KBArticle kbArticle = (KBArticle)kbObject;
 
 				row.setData(
 					HashMapBuilder.<String, Object>put(
@@ -154,16 +140,14 @@ KBArticleViewDisplayContext kbArticleViewDisplayContext = new KBArticleViewDispl
 				%>
 
 				<liferay-ui:search-container-column-text
-					cssClass="table-cell-expand table-cell-minw-200"
 					name="title"
 				>
 					<clay:content-row>
 						<clay:content-col>
-							<span class="sticker sticker-document sticker-rounded sticker-secondary">
-								<clay:icon
-									symbol="document-text"
-								/>
-							</span>
+							<clay:sticker
+								cssClass="sticker-secondary"
+								icon="document-text"
+							/>
 						</clay:content-col>
 
 						<clay:content-col
@@ -228,12 +212,3 @@ KBArticleViewDisplayContext kbArticleViewDisplayContext = new KBArticleViewDispl
 				</liferay-ui:search-container-column-text>
 			</c:otherwise>
 		</c:choose>
-	</liferay-ui:search-container-row>
-
-	<liferay-ui:search-iterator
-		displayStyle="list"
-		markupView="lexicon"
-		resultRowSplitter="<%= kbFolderView ? new KBResultRowSplitter() : null %>"
-		searchContainer="<%= searchContainer %>"
-	/>
-</liferay-ui:search-container>
