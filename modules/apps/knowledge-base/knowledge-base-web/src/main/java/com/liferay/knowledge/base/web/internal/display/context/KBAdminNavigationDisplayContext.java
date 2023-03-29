@@ -90,6 +90,34 @@ public class KBAdminNavigationDisplayContext {
 			_liferayPortletResponse);
 	}
 
+	public JSONArray getChildrenJSONArray() throws PortalException {
+		return JSONUtil.put(
+			JSONUtil.put(
+				"actions",
+				_kbDropdownItemsProvider.getKBFolderDropdownItems(null)
+			).put(
+				"children",
+				_getChildrenJSONArray(
+					KBFolderConstants.DEFAULT_PARENT_FOLDER_ID)
+			).put(
+				"classNameId",
+				PortalUtil.getClassNameId(KBFolderConstants.getClassName())
+			).put(
+				"href",
+				PortletURLBuilder.createRenderURL(
+					_liferayPortletResponse
+				).setMVCPath(
+					"/admin/view.jsp"
+				).buildString()
+			).put(
+				"id", KBFolderConstants.DEFAULT_PARENT_FOLDER_ID
+			).put(
+				"name", _themeDisplay.translate("home")
+			).put(
+				"type", "folder"
+			));
+	}
+
 	public List<NavigationItem> getInfoPanelNavigationItems() {
 		return ListUtil.fromArray(
 			NavigationItemBuilder.setActive(
@@ -125,7 +153,7 @@ public class KBAdminNavigationDisplayContext {
 					"/knowledge_base/view_kb_templates")) {
 
 				active = true;
-				navigationItemsJSONArray = _getChildrenJSONArray();
+				navigationItemsJSONArray = getChildrenJSONArray();
 			}
 
 			verticalNavigationItems.add(
@@ -271,34 +299,6 @@ public class KBAdminNavigationDisplayContext {
 		}
 
 		return childrenJSONArray;
-	}
-
-	private JSONArray _getChildrenJSONArray() throws PortalException {
-		return JSONUtil.put(
-			JSONUtil.put(
-				"actions",
-				_kbDropdownItemsProvider.getKBFolderDropdownItems(null)
-			).put(
-				"children",
-				_getChildrenJSONArray(
-					KBFolderConstants.DEFAULT_PARENT_FOLDER_ID)
-			).put(
-				"classNameId",
-				PortalUtil.getClassNameId(KBFolderConstants.getClassName())
-			).put(
-				"href",
-				PortletURLBuilder.createRenderURL(
-					_liferayPortletResponse
-				).setMVCPath(
-					"/admin/view.jsp"
-				).buildString()
-			).put(
-				"id", KBFolderConstants.DEFAULT_PARENT_FOLDER_ID
-			).put(
-				"name", _themeDisplay.translate("home")
-			).put(
-				"type", "folder"
-			));
 	}
 
 	private JSONArray _getChildrenJSONArray(long parentFolderId)

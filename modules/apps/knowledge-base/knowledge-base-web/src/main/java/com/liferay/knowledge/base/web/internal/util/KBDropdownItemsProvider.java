@@ -738,27 +738,17 @@ public class KBDropdownItemsProvider {
 		_getMoveActionUnsafeConsumer(KBArticle kbArticle) {
 
 		return dropdownItem -> {
-			dropdownItem.setHref(
-				PortletURLBuilder.create(
-					PortalUtil.getControlPanelPortletURL(
-						_liferayPortletRequest,
-						KBPortletKeys.KNOWLEDGE_BASE_ADMIN,
-						PortletRequest.RENDER_PHASE)
+			dropdownItem.putData("action", "move");
+			dropdownItem.putData(
+				"moveItemUrl",
+				PortletURLBuilder.createRenderURL(
+					_liferayPortletResponse
 				).setMVCPath(
-					"/admin/common/move_object.jsp"
-				).setRedirect(
-					_currentURL
-				).setParameter(
-					"parentResourceClassNameId",
-					kbArticle.getParentResourceClassNameId()
-				).setParameter(
-					"parentResourcePrimKey",
-					kbArticle.getParentResourcePrimKey()
-				).setParameter(
-					"resourceClassNameId", kbArticle.getClassNameId()
-				).setParameter(
-					"resourcePrimKey", kbArticle.getResourcePrimKey()
+					"/admin/common/move_object_modal.jsp"
+				).setWindowState(
+					LiferayWindowState.POP_UP
 				).buildString());
+
 			dropdownItem.setIcon("move-folder");
 			dropdownItem.setLabel(
 				LanguageUtil.get(
@@ -770,22 +760,19 @@ public class KBDropdownItemsProvider {
 		_getMoveActionUnsafeConsumer(KBFolder kbFolder) {
 
 		return dropdownItem -> {
-			dropdownItem.setHref(
+			dropdownItem.putData("action", "move");
+			dropdownItem.putData(
+				"moveItemUrl",
 				PortletURLBuilder.createRenderURL(
 					_liferayPortletResponse
 				).setMVCPath(
-					"/admin/common/move_object.jsp"
-				).setRedirect(
-					_currentURL
+					"/admin/common/move_object_modal.jsp"
 				).setParameter(
-					"parentResourceClassNameId", kbFolder.getClassNameId()
-				).setParameter(
-					"parentResourcePrimKey", kbFolder.getParentKBFolderId()
-				).setParameter(
-					"resourceClassNameId", kbFolder.getClassNameId()
-				).setParameter(
-					"resourcePrimKey", kbFolder.getKbFolderId()
-				).buildRenderURL());
+					"holi", "holiss"
+				).setWindowState(
+					LiferayWindowState.POP_UP
+				).buildString());
+
 			dropdownItem.setIcon("move-folder");
 			dropdownItem.setLabel(
 				LanguageUtil.get(

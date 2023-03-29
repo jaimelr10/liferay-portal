@@ -41,6 +41,13 @@ const ACTIONS = {
 			url: printURL,
 		});
 	},
+
+	move({moveItemUrl}) {
+		openModal({
+			title: Liferay.Language.get('move'),
+			url: moveItemUrl
+		})
+	}
 };
 
 export default function propsTransformer({items, ...props}) {
