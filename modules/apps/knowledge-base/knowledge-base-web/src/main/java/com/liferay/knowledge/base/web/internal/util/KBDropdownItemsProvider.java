@@ -744,6 +744,7 @@ public class KBDropdownItemsProvider {
 				dropdownItem.putData(
 					"itemId", String.valueOf(kbArticle.getResourcePrimKey()));
 				dropdownItem.putData("itemType", "article");
+				dropdownItem.putData("kbItemTitle", kbArticle.getTitle());
 				dropdownItem.putData(
 					"moveKBItemActionURL",
 					PortletURLBuilder.createActionURL(
@@ -759,6 +760,10 @@ public class KBDropdownItemsProvider {
 						"/admin/common/move_kb_object_modal.jsp"
 					).setParameter(
 						"itemToMoveId", kbArticle.getResourcePrimKey()
+					).setParameter(
+						"itemToMoveType", "Article"
+					).setParameter(
+						"itemVersion", kbArticle.getVersion()
 					).setWindowState(
 						LiferayWindowState.POP_UP
 					).buildString());
@@ -811,6 +816,7 @@ public class KBDropdownItemsProvider {
 				dropdownItem.putData(
 					"itemId", String.valueOf(kbFolder.getKbFolderId()));
 				dropdownItem.putData("itemType", "folder");
+				dropdownItem.putData("kbItemTitle", kbFolder.getName());
 				dropdownItem.putData(
 					"moveKBItemActionURL",
 					PortletURLBuilder.createActionURL(
@@ -826,6 +832,10 @@ public class KBDropdownItemsProvider {
 						"/admin/common/move_kb_object_modal.jsp"
 					).setParameter(
 						"itemToMoveId", kbFolder.getKbFolderId()
+					).setParameter(
+						"itemToMoveType", "Folder"
+					).setParameter(
+						"itemVersion", -1
 					).setWindowState(
 						LiferayWindowState.POP_UP
 					).buildString());
