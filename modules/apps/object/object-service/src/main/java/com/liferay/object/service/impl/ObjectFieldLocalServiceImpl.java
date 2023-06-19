@@ -644,7 +644,8 @@ public class ObjectFieldLocalServiceImpl
 			businessType, dbType, indexed, indexedAsKeyword, indexedLanguageId);
 		_validateLabel(labelMap, newObjectField);
 		_validateLocalized(
-			businessType, localized, oldObjectField.getObjectDefinition());
+			businessType, localized, oldObjectField.getObjectDefinition(),
+			required);
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionPersistence.findByPrimaryKey(
@@ -677,7 +678,7 @@ public class ObjectFieldLocalServiceImpl
 		newObjectField.setIndexedAsKeyword(indexedAsKeyword);
 		newObjectField.setIndexedLanguageId(indexedLanguageId);
 		newObjectField.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
-		newObjectField.setReadOnly(_getReadOnly(businessType, readOnly, false));
+		newObjectField.setReadOnly(_getReadOnly(businessType, readOnly));
 		newObjectField.setReadOnlyConditionExpression(
 			_getReadOnlyConditionExpression(
 				readOnly, readOnlyConditionExpression));
@@ -785,7 +786,7 @@ public class ObjectFieldLocalServiceImpl
 		_validateIndexed(
 			businessType, dbType, indexed, indexedAsKeyword, indexedLanguageId);
 		_validateLabel(labelMap, null);
-		_validateLocalized(businessType, localized, objectDefinition);
+		_validateLocalized(businessType, localized, objectDefinition, required);
 		_validateName(0, objectDefinition, name, system);
 		_validateReadOnlyAndReadOnlyConditionExpression(
 			businessType, readOnly, readOnlyConditionExpression);
@@ -814,7 +815,7 @@ public class ObjectFieldLocalServiceImpl
 		objectField.setLocalized(localized);
 		objectField.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
 		objectField.setName(name);
-		objectField.setReadOnly(_getReadOnly(businessType, readOnly, system));
+		objectField.setReadOnly(_getReadOnly(businessType, readOnly));
 		objectField.setReadOnlyConditionExpression(
 			_getReadOnlyConditionExpression(
 				readOnly, readOnlyConditionExpression));
@@ -1067,13 +1068,7 @@ public class ObjectFieldLocalServiceImpl
 		return null;
 	}
 
-	private String _getReadOnly(
-		String businessType, String readOnly, boolean system) {
-
-		if (system || FeatureFlagManagerUtil.isEnabled("LPS-170122")) {
-			return readOnly;
-		}
-
+	private String _getReadOnly(String businessType, String readOnly) {
 		if (Objects.equals(
 				businessType, ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) ||
 			Objects.equals(
@@ -1082,7 +1077,11 @@ public class ObjectFieldLocalServiceImpl
 			return ObjectFieldConstants.READ_ONLY_TRUE;
 		}
 
-		return ObjectFieldConstants.READ_ONLY_FALSE;
+		if (Validator.isNull(readOnly)) {
+			return ObjectFieldConstants.READ_ONLY_FALSE;
+		}
+
+		return readOnly;
 	}
 
 	private String _getReadOnlyConditionExpression(
@@ -1262,7 +1261,7 @@ public class ObjectFieldLocalServiceImpl
 
 	private void _validateLocalized(
 			String businessType, boolean localized,
-			ObjectDefinition objectDefinition)
+			ObjectDefinition objectDefinition, boolean required)
 		throws PortalException {
 
 		if (!localized) {
@@ -1286,6 +1285,11 @@ public class ObjectFieldLocalServiceImpl
 
 		if (!objectDefinition.isEnableLocalization()) {
 			throw new ObjectDefinitionEnableLocalizationException();
+		}
+
+		if (required) {
+			throw new ObjectFieldLocalizedException(
+				"Localized object fields must not be required");
 		}
 	}
 
@@ -1356,7 +1360,12 @@ public class ObjectFieldLocalServiceImpl
 			String readOnlyConditionExpression)
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-170122")) {
+		if (Objects.equals(
+				businessType, ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) ||
+			Objects.equals(
+				businessType, ObjectFieldConstants.BUSINESS_TYPE_FORMULA) ||
+			Validator.isNull(readOnly)) {
+
 			return;
 		}
 
@@ -1367,19 +1376,6 @@ public class ObjectFieldLocalServiceImpl
 
 			throw new ObjectFieldReadOnlyException(
 				"Unknown read only: " + readOnly);
-		}
-
-		if ((Objects.equals(
-				businessType, ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) ||
-			 Objects.equals(
-				 businessType, ObjectFieldConstants.BUSINESS_TYPE_FORMULA)) &&
-			!Objects.equals(readOnly, ObjectFieldConstants.READ_ONLY_TRUE)) {
-
-			throw new ObjectFieldReadOnlyException(
-				StringBundler.concat(
-					"Read only \"", readOnly,
-					"\" is not allowed for business type \"", businessType,
-					"\""));
 		}
 
 		if (Objects.equals(

@@ -566,7 +566,7 @@ const AddFDSEntryModalContent = ({
 	return (
 		<>
 			<ClayModal.Header>
-				{Liferay.Language.get('new-dataset')}
+				{Liferay.Language.get('new-data-set')}
 			</ClayModal.Header>
 
 			<ClayModal.Body>
@@ -711,7 +711,7 @@ const FDSEntries = ({
 	const creationMenu = {
 		primaryItems: [
 			{
-				label: Liferay.Language.get('new-dataset'),
+				label: Liferay.Language.get('new-data-set'),
 				onClick: ({loadData}: {loadData: Function}) => {
 					openModal({
 						contentComponent: ({
@@ -754,7 +754,7 @@ const FDSEntries = ({
 	}) => {
 		openModal({
 			bodyHTML: Liferay.Language.get(
-				'deleting-a-dataset-is-an-action-that-cannot-be-reversed'
+				'deleting-a-data-set-is-an-action-that-cannot-be-reversed'
 			),
 			buttons: [
 				{
@@ -794,7 +794,7 @@ const FDSEntries = ({
 				},
 			],
 			status: 'danger',
-			title: Liferay.Language.get('delete-dataset'),
+			title: Liferay.Language.get('delete-data-set'),
 		});
 	};
 
@@ -809,18 +809,22 @@ const FDSEntries = ({
 						contentRenderer: 'actionLink',
 						fieldName: 'label',
 						label: Liferay.Language.get('name'),
+						sortable: true,
 					},
 					{
 						fieldName: 'restApplication',
 						label: Liferay.Language.get('rest-application'),
+						sortable: true,
 					},
 					{
 						fieldName: 'restSchema',
 						label: Liferay.Language.get('rest-schema'),
+						sortable: true,
 					},
 					{
 						fieldName: 'restEndpoint',
 						label: Liferay.Language.get('rest-endpoint'),
+						sortable: true,
 					},
 					{
 						contentRenderer: 'viewsCount',
@@ -831,6 +835,7 @@ const FDSEntries = ({
 						contentRenderer: 'dateTime',
 						fieldName: 'dateModified',
 						label: Liferay.Language.get('modified-date'),
+						sortable: true,
 					},
 				],
 			},
@@ -861,6 +866,7 @@ const FDSEntries = ({
 						onClick: onDeleteClick,
 					},
 				]}
+				sorting={[{direction: 'desc', key: 'dateCreated'}]}
 				style="fluid"
 				views={views}
 				{...PAGINATION_PROPS}

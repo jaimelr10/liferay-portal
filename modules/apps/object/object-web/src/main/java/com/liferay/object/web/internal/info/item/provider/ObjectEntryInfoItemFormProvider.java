@@ -43,12 +43,12 @@ import com.liferay.object.exception.NoSuchObjectDefinitionException;
 import com.liferay.object.field.setting.util.ObjectFieldSettingUtil;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
-import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFieldSetting;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.rest.context.path.RESTContextPathResolver;
 import com.liferay.object.rest.context.path.RESTContextPathResolverRegistry;
+import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.scope.ObjectScopeProvider;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectActionLocalService;
@@ -142,7 +142,7 @@ public class ObjectEntryInfoItemFormProvider
 
 	@Override
 	public InfoForm getInfoForm(ObjectEntry objectEntry) {
-		long objectDefinitionId = objectEntry.getObjectDefinitionId();
+		long objectDefinitionId = _objectDefinition.getObjectDefinitionId();
 
 		try {
 			return _getInfoForm(
@@ -155,13 +155,20 @@ public class ObjectEntryInfoItemFormProvider
 			throw new RuntimeException(
 				StringBundler.concat(
 					"Unable to get object definition ", objectDefinitionId,
-					" for object entry ", objectEntry.getObjectEntryId()),
+					" for object entry ", objectEntry.getId()),
 				portalException);
 		}
 	}
 
 	@Override
 	public InfoForm getInfoForm(String formVariationKey)
+		throws NoSuchFormVariationException {
+
+		return getInfoForm(formVariationKey, 0);
+	}
+
+	@Override
+	public InfoForm getInfoForm(String formVariationKey, long groupId)
 		throws NoSuchFormVariationException {
 
 		long objectDefinitionId = GetterUtil.getLong(formVariationKey);
@@ -173,14 +180,8 @@ public class ObjectEntryInfoItemFormProvider
 		return _getInfoForm(
 			objectDefinitionId,
 			_displayPageInfoItemFieldSetProvider.getInfoFieldSet(
-				_getModelClassName(objectDefinitionId), StringPool.BLANK, 0));
-	}
-
-	@Override
-	public InfoForm getInfoForm(String formVariationKey, long groupId)
-		throws NoSuchFormVariationException {
-
-		return getInfoForm(formVariationKey);
+				_getModelClassName(objectDefinitionId), StringPool.BLANK,
+				groupId));
 	}
 
 	private InfoField<?> _addAttributes(
@@ -628,7 +629,7 @@ public class ObjectEntryInfoItemFormProvider
 			InfoLocalizedValue.localize(
 				ObjectEntryInfoItemFields.class, "actions")
 		).name(
-			_objectDefinition.getName()
+			"actions"
 		);
 
 		return TransformUtil.transform(
@@ -665,6 +666,10 @@ public class ObjectEntryInfoItemFormProvider
 				for (ObjectField objectField :
 						_objectFieldLocalService.getObjectFields(
 							objectDefinition.getObjectDefinitionId(), false)) {
+
+					if (objectField.isLocalized()) {
+						continue;
+					}
 
 					if (Validator.isNotNull(
 							objectField.getRelationshipType())) {

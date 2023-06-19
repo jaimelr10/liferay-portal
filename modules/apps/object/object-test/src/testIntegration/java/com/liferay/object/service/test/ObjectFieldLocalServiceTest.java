@@ -108,7 +108,7 @@ import org.junit.runner.RunWith;
  * @author Marco Leo
  * @author Brian Wing Shun Chan
  */
-@FeatureFlags({"LPS-146755", "LPS-163716", "LPS-179803"})
+@FeatureFlags({"LPS-146755", "LPS-163716", "LPS-172017", "LPS-179803"})
 @RunWith(Arquillian.class)
 public class ObjectFieldLocalServiceTest {
 
@@ -131,13 +131,10 @@ public class ObjectFieldLocalServiceTest {
 
 	@Test
 	public void testAddCustomObjectField() throws Exception {
-
-		// Localization is not enabled
-
 		AssertUtils.assertFailure(
 			ObjectDefinitionEnableLocalizationException.class, null,
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -148,14 +145,11 @@ public class ObjectFieldLocalServiceTest {
 					).localized(
 						true
 					).build())));
-
-		// List type definition ID is 0
-
 		AssertUtils.assertFailure(
 			ObjectFieldListTypeDefinitionIdException.class,
 			"List type definition ID is 0",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new MultiselectPicklistObjectFieldBuilder(
 					).labelMap(
@@ -164,15 +158,29 @@ public class ObjectFieldLocalServiceTest {
 					).name(
 						"a" + RandomTestUtil.randomString()
 					).build())));
-
-		// Localization is not supported
-
+		AssertUtils.assertFailure(
+			ObjectFieldLocalizedException.class,
+			"Localized object fields must not be required",
+			() -> ObjectDefinitionTestUtil.addObjectDefinition(
+				true, _objectDefinitionLocalService,
+				Arrays.asList(
+					new TextObjectFieldBuilder(
+					).labelMap(
+						LocalizedMapUtil.getLocalizedMap(
+							RandomTestUtil.randomString())
+					).name(
+						"a" + RandomTestUtil.randomString()
+					).localized(
+						true
+					).required(
+						true
+					).build())));
 		AssertUtils.assertFailure(
 			ObjectFieldLocalizedException.class,
 			"Only LongText,RichText and Text business types support " +
 				"localization",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new DateObjectFieldBuilder(
 					).labelMap(
@@ -184,8 +192,6 @@ public class ObjectFieldLocalServiceTest {
 						true
 					).build())));
 
-		// Reserved names
-
 		String[] reservedNames = {
 			"actions", "companyId", "createDate", "creator", "dateCreated",
 			"dateModified", "externalReferenceCode", "groupId", "id",
@@ -195,9 +201,10 @@ public class ObjectFieldLocalServiceTest {
 
 		for (String reservedName : reservedNames) {
 			AssertUtils.assertFailure(
-				ObjectFieldNameException.class, "Reserved name " + reservedName,
+				ObjectFieldNameException.MustNotBeReserved.class,
+				"Reserved name " + reservedName,
 				() -> ObjectDefinitionTestUtil.addObjectDefinition(
-					_objectDefinitionLocalService,
+					false, _objectDefinitionLocalService,
 					Arrays.asList(
 						new TextObjectFieldBuilder(
 						).labelMap(
@@ -208,8 +215,6 @@ public class ObjectFieldLocalServiceTest {
 						).build())));
 		}
 
-		// Object field setting invalid value
-
 		String defaultValue = RandomTestUtil.randomString();
 
 		AssertUtils.assertFailure(
@@ -217,7 +222,7 @@ public class ObjectFieldLocalServiceTest {
 			"The value " + defaultValue +
 				" of setting defaultValue is invalid for object field picklist",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new PicklistObjectFieldBuilder(
 					).labelMap(
@@ -251,7 +256,7 @@ public class ObjectFieldLocalServiceTest {
 			"The value " + uniqueValues +
 				" of setting uniqueValues is invalid for object field text",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -274,7 +279,7 @@ public class ObjectFieldLocalServiceTest {
 			"The value expressionBuilder of setting defaultValueType is " +
 				"invalid for object field picklist",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new PicklistObjectFieldBuilder(
 					).labelMap(
@@ -306,14 +311,12 @@ public class ObjectFieldLocalServiceTest {
 						true
 					).build())));
 
-		// Object field setting missing required values
-
 		AssertUtils.assertFailure(
 			ObjectFieldSettingValueException.MissingRequiredValues.class,
 			"The settings acceptedFileExtensions, fileSource, " +
 				"maximumFileSize are required for object field upload",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new AttachmentObjectFieldBuilder(
 					).labelMap(
@@ -322,13 +325,12 @@ public class ObjectFieldLocalServiceTest {
 					).name(
 						"upload"
 					).build())));
-
 		AssertUtils.assertFailure(
 			ObjectFieldSettingValueException.MissingRequiredValues.class,
 			"The settings defaultValue, defaultValueType are required for " +
 				"object field picklist",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new PicklistObjectFieldBuilder(
 					).labelMap(
@@ -343,12 +345,11 @@ public class ObjectFieldLocalServiceTest {
 					).state(
 						true
 					).build())));
-
 		AssertUtils.assertFailure(
 			ObjectFieldSettingValueException.MissingRequiredValues.class,
 			"The settings maxLength are required for object field text",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -365,12 +366,11 @@ public class ObjectFieldLocalServiceTest {
 								"true"
 							).build())
 					).build())));
-
 		AssertUtils.assertFailure(
 			ObjectFieldSettingValueException.MissingRequiredValues.class,
 			"The settings timeStorage are required for object field datetime",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Collections.singletonList(
 					new ObjectFieldBuilder(
 					).businessType(
@@ -385,14 +385,11 @@ public class ObjectFieldLocalServiceTest {
 					).objectFieldSettings(
 						Collections.emptyList()
 					).build())));
-
-		// Object field setting not allowed names
-
 		AssertUtils.assertFailure(
 			ObjectFieldSettingNameException.NotAllowedNames.class,
 			"The settings anySetting are not allowed for object field text",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -415,13 +412,12 @@ public class ObjectFieldLocalServiceTest {
 								"true"
 							).build())
 					).build())));
-
 		AssertUtils.assertFailure(
 			ObjectFieldSettingNameException.NotAllowedNames.class,
 			"The settings defaultValue, defaultValueType are not allowed for " +
 				"object field text",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -451,12 +447,11 @@ public class ObjectFieldLocalServiceTest {
 								"false"
 							).build())
 					).build())));
-
 		AssertUtils.assertFailure(
 			ObjectFieldSettingNameException.NotAllowedNames.class,
 			"The settings maxLength are not allowed for object field text",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -473,12 +468,11 @@ public class ObjectFieldLocalServiceTest {
 								null
 							).build())
 					).build())));
-
 		AssertUtils.assertFailure(
 			ObjectFieldSettingNameException.NotAllowedNames.class,
 			"The settings maxLength are not allowed for object field text",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new TextObjectFieldBuilder(
 					).labelMap(
@@ -501,14 +495,11 @@ public class ObjectFieldLocalServiceTest {
 								"false"
 							).build())
 					).build())));
-
-		// Object field must be required when the state is true
-
 		AssertUtils.assertFailure(
 			ObjectFieldStateException.class,
 			"Object field must be required when the state is true",
 			() -> ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					new PicklistObjectFieldBuilder(
 					).labelMap(
@@ -540,9 +531,6 @@ public class ObjectFieldLocalServiceTest {
 
 	@Test
 	public void testAddSystemObjectField() throws Exception {
-
-		// Business types
-
 		List<ObjectFieldBusinessType> objectFieldBusinessTypes =
 			_objectFieldBusinessTypeRegistry.getObjectFieldBusinessTypes();
 
@@ -575,7 +563,13 @@ public class ObjectFieldLocalServiceTest {
 				ObjectFieldUtil.createObjectField(
 					"businessType", StringPool.BLANK, "Able", "able")));
 
-		// Blob type is not indexable
+		for (String dbType :
+				_objectFieldBusinessTypeRegistry.getObjectFieldDBTypes()) {
+
+			_addUnmodifiableSystemObjectDefinition(
+				ObjectFieldUtil.createObjectField(
+					StringPool.BLANK, dbType, "Able", "able"));
+		}
 
 		AssertUtils.assertFailure(
 			ObjectFieldDBTypeException.class, "Blob type is not indexable",
@@ -584,9 +578,6 @@ public class ObjectFieldLocalServiceTest {
 					0, ObjectFieldConstants.BUSINESS_TYPE_LARGE_FILE, null,
 					ObjectFieldConstants.DB_TYPE_BLOB, true, false, "", "",
 					"able", false, true)));
-
-		// Indexed language ID can only be applied with type \"String\" that
-		// is not indexed as a keyword
 
 		String errorMessage =
 			"Indexed language ID can only be applied with type \"Clob\" or " +
@@ -615,24 +606,11 @@ public class ObjectFieldLocalServiceTest {
 					"", 0, "able", Collections.emptyList(),
 					ObjectFieldConstants.READ_ONLY_FALSE, null, false, true)));
 
-		// Invalid DB type
-
-		for (String dbType :
-				_objectFieldBusinessTypeRegistry.getObjectFieldDBTypes()) {
-
-			_addUnmodifiableSystemObjectDefinition(
-				ObjectFieldUtil.createObjectField(
-					StringPool.BLANK, dbType, "Able", "able"));
-		}
-
 		AssertUtils.assertFailure(
 			ObjectFieldDBTypeException.class, "Invalid DB type STRING",
 			() -> _addUnmodifiableSystemObjectDefinition(
 				ObjectFieldUtil.createObjectField(
 					StringPool.BLANK, "STRING", "Able", "able")));
-
-		// Label is null
-
 		AssertUtils.assertFailure(
 			ObjectFieldLabelException.class,
 			"Label is null for locale " + LocaleUtil.US.getDisplayName(),
@@ -641,18 +619,56 @@ public class ObjectFieldLocalServiceTest {
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 					ObjectFieldConstants.DB_TYPE_STRING, "", "able")));
 
-		// Duplicate name
+		_addUnmodifiableSystemObjectDefinition(
+			ObjectFieldUtil.createObjectField(
+				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+				ObjectFieldConstants.DB_TYPE_STRING, " able "));
+		_addUnmodifiableSystemObjectDefinition(
+			ObjectFieldUtil.createObjectField(
+				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+				ObjectFieldConstants.DB_TYPE_STRING,
+				"a123456789a123456789a123456789a1234567891"));
 
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Collections.singletonList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 						ObjectFieldConstants.DB_TYPE_STRING, "Able", "able")));
 
 		AssertUtils.assertFailure(
-			ObjectFieldNameException.class, "Duplicate name able",
+			ObjectFieldNameException.MustBeLessThan41Characters.class,
+			"Name must be less than 41 characters",
+			() -> _addUnmodifiableSystemObjectDefinition(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING,
+					"a123456789a123456789a123456789a12345678912")));
+		AssertUtils.assertFailure(
+			ObjectFieldNameException.MustBeginWithLowerCaseLetter.class,
+			"The first character of a name must be a lower case letter",
+			() -> _addUnmodifiableSystemObjectDefinition(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, "Able")));
+		AssertUtils.assertFailure(
+			ObjectFieldNameException.MustOnlyContainLettersAndDigits.class,
+			"Name must only contain letters and digits",
+			() -> _addUnmodifiableSystemObjectDefinition(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, "abl e")));
+		AssertUtils.assertFailure(
+			ObjectFieldNameException.MustOnlyContainLettersAndDigits.class,
+			"Name must only contain letters and digits",
+			() -> _addUnmodifiableSystemObjectDefinition(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, "abl-e")));
+		AssertUtils.assertFailure(
+			ObjectFieldNameException.MustNotBeDuplicate.class,
+			"Duplicate name able",
 			() -> _objectFieldLocalService.addSystemObjectField(
 				TestPropsValues.getUserId(),
 				objectDefinition.getObjectDefinitionId(),
@@ -661,57 +677,12 @@ public class ObjectFieldLocalServiceTest {
 				ObjectFieldConstants.DB_TYPE_STRING, false, true, "",
 				LocalizedMapUtil.getLocalizedMap("Able"), "able", false,
 				false));
-
-		// Name is null
-
 		AssertUtils.assertFailure(
-			ObjectFieldNameException.class, "Name is null",
+			ObjectFieldNameException.MustNotBeNull.class, "Name is null",
 			() -> _addUnmodifiableSystemObjectDefinition(
 				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 					ObjectFieldConstants.DB_TYPE_STRING, "Able", "")));
-
-		// Name must be less than 41 characters
-
-		_addUnmodifiableSystemObjectDefinition(
-			ObjectFieldUtil.createObjectField(
-				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-				ObjectFieldConstants.DB_TYPE_STRING,
-				"a123456789a123456789a123456789a1234567891"));
-
-		AssertUtils.assertFailure(
-			ObjectFieldNameException.class,
-			"Name must be less than 41 characters",
-			() -> _addUnmodifiableSystemObjectDefinition(
-				ObjectFieldUtil.createObjectField(
-					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-					ObjectFieldConstants.DB_TYPE_STRING,
-					"a123456789a123456789a123456789a12345678912")));
-
-		// Name must only contain letters and digits
-
-		_addUnmodifiableSystemObjectDefinition(
-			ObjectFieldUtil.createObjectField(
-				ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-				ObjectFieldConstants.DB_TYPE_STRING, " able "));
-
-		AssertUtils.assertFailure(
-			ObjectFieldNameException.class,
-			"Name must only contain letters and digits",
-			() -> _addUnmodifiableSystemObjectDefinition(
-				ObjectFieldUtil.createObjectField(
-					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-					ObjectFieldConstants.DB_TYPE_STRING, "abl e")));
-
-		AssertUtils.assertFailure(
-			ObjectFieldNameException.class,
-			"Name must only contain letters and digits",
-			() -> _addUnmodifiableSystemObjectDefinition(
-				ObjectFieldUtil.createObjectField(
-					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-					ObjectFieldConstants.DB_TYPE_STRING, "abl-e")));
-
-		// Reserved name
 
 		String objectDefinitionName = "A" + RandomTestUtil.randomString();
 
@@ -719,23 +690,13 @@ public class ObjectFieldLocalServiceTest {
 			objectDefinitionName + "Id", TextFormatter.I);
 
 		AssertUtils.assertFailure(
-			ObjectFieldNameException.class,
+			ObjectFieldNameException.MustNotBeReserved.class,
 			"Reserved name " + pkObjectFieldName,
 			() -> _addUnmodifiableSystemObjectDefinition(
 				objectDefinitionName,
 				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 					ObjectFieldConstants.DB_TYPE_STRING, pkObjectFieldName)));
-
-		// The first character of a name must be an upper case letter
-
-		AssertUtils.assertFailure(
-			ObjectFieldNameException.class,
-			"The first character of a name must be a lower case letter",
-			() -> _addUnmodifiableSystemObjectDefinition(
-				ObjectFieldUtil.createObjectField(
-					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-					ObjectFieldConstants.DB_TYPE_STRING, "Able")));
 	}
 
 	@Test
@@ -745,7 +706,7 @@ public class ObjectFieldLocalServiceTest {
 
 		ObjectDefinition customObjectDefinition =
 			ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Collections.singletonList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -920,7 +881,7 @@ public class ObjectFieldLocalServiceTest {
 
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -1216,7 +1177,7 @@ public class ObjectFieldLocalServiceTest {
 
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					objectFieldBuilder.userId(
 						TestPropsValues.getUserId()
@@ -1626,7 +1587,7 @@ public class ObjectFieldLocalServiceTest {
 	private ObjectDefinition _publishCustomObjectDefinition() throws Exception {
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.addObjectDefinition(
-				_objectDefinitionLocalService,
+				false, _objectDefinitionLocalService,
 				Arrays.asList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,

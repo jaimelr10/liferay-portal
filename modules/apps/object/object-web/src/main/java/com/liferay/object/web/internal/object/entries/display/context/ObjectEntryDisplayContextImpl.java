@@ -76,8 +76,10 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -708,7 +710,8 @@ public class ObjectEntryDisplayContextImpl
 
 		DDMFormField ddmFormField = new DDMFormField(
 			objectField.getName(),
-			objectFieldBusinessType.getDDMFormFieldTypeName());
+			objectFieldBusinessType.getDDMFormFieldTypeName(
+				objectField.isLocalized()));
 
 		Map<String, Object> properties = objectFieldBusinessType.getProperties(
 			objectField, _createObjectFieldRenderingContext(objectEntry));
@@ -726,6 +729,8 @@ public class ObjectEntryDisplayContextImpl
 			objectField.getLabel(_objectRequestHelper.getLocale()));
 
 		ddmFormField.setLabel(ddmFormFieldLabelLocalizedValue);
+
+		ddmFormField.setLocalizable(objectField.isLocalized());
 
 		properties.forEach(
 			(key, value) -> ddmFormField.setProperty(key, value));
@@ -783,6 +788,13 @@ public class ObjectEntryDisplayContextImpl
 		}
 
 		ddmFormField.setRequired(objectField.isRequired());
+
+		if (objectField.isLocalized() &&
+			StringUtil.equals(
+				ddmFormField.getType(), DDMFormFieldTypeConstants.TEXT)) {
+
+			ddmFormField.setType(DDMFormFieldTypeConstants.LOCALIZABLE_TEXT);
+		}
 
 		return ddmFormField;
 	}
@@ -1182,6 +1194,15 @@ public class ObjectEntryDisplayContextImpl
 
 			ddmFormFieldValue.setValue(
 				new UnlocalizedValue(listEntry.getKey()));
+		}
+		else if (FeatureFlagManagerUtil.isEnabled("LPS-172017") &&
+				 (value instanceof Map)) {
+
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				(Map<String, String>)value);
+
+			ddmFormFieldValue.setValue(
+				new UnlocalizedValue(jsonObject.toString()));
 		}
 		else {
 			if (value instanceof Double) {

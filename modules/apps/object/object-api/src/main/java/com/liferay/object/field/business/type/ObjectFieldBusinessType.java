@@ -56,6 +56,10 @@ public interface ObjectFieldBusinessType {
 
 	public String getDDMFormFieldTypeName();
 
+	public default String getDDMFormFieldTypeName(boolean localized) {
+		return getDDMFormFieldTypeName();
+	}
+
 	public default String getDescription(Locale locale) {
 		return StringPool.BLANK;
 	}
@@ -63,6 +67,10 @@ public interface ObjectFieldBusinessType {
 	public default Object getDisplayContextValue(
 			ObjectField objectField, long userId, Map<String, Object> values)
 		throws PortalException {
+
+		if (objectField.isLocalized()) {
+			return values.get(objectField.getI18nObjectFieldName());
+		}
 
 		return getValue(objectField, userId, values);
 	}

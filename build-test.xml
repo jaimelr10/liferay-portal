@@ -6676,7 +6676,7 @@ go</echo>
 
 			<if>
 				<or>
-					<contains string="${suite.search.engine}" substring="remote-elasticsearch7" />
+					<contains string="${suite.search.engine}" substring="remote-elasticsearch" />
 					<equals arg1="${app.server.type}" arg2="websphere" />
 					<istrue value="${remote.elasticsearch.enabled}" />
 				</or>
@@ -7833,7 +7833,7 @@ ${docker.start.error}</fail>
 
 			<if>
 				<or>
-					<contains string="${suite.search.engine}" substring="remote-elasticsearch7" />
+					<contains string="${suite.search.engine}" substring="remote-elasticsearch" />
 					<equals arg1="${app.server.type}" arg2="websphere" />
 					<istrue value="${remote.elasticsearch.enabled}" />
 				</or>
@@ -16116,6 +16116,19 @@ mail.send.blacklist=</echo>
 			delete.liferay.home="false"
 			testable.portal.started.marker.file="${testable.portal.started.marker.file}"
 		/>
+	</target>
+
+	<target name="start-app-server-tomcat-simple">
+		<trycatch property="startup.error">
+			<try>
+				<exec executable="${app.server.tomcat.bin.dir}/catalina.sh" failonerror="true" timeout="600000">
+					<arg line="run" />
+				</exec>
+			</try>
+			<catch>
+				<echo>Server failed to start</echo>
+			</catch>
+		</trycatch>
 	</target>
 
 	<target name="start-docker-browser">

@@ -1295,6 +1295,20 @@ definition {
 			menuItem = "Copy To",
 			rowEntry = ${dmDocumentTitle});
 
+		Alert.viewWarningSpecific(warningMessage = "The copying process may take some time. Note that categories, ratings, tags, and custom document types will not be copied.");
+
+		AssertElementPresent(
+			key_fieldLabel = "Copy From",
+			locator1 = "FormFields#FIELD_DISABLED");
+
+		AssertElementPresent(
+			key_fieldLabel = "Copy To",
+			locator1 = "FormFields#FIELD_DISABLED");
+
+		AssertVisible(
+			key_text = "Copy",
+			locator1 = "Button#ANY_DISABLED");
+
 		Button.clickSelect();
 
 		SelectFrame(locator1 = "IFrame#MODAL_BODY");
@@ -1341,11 +1355,7 @@ definition {
 		Button.click(button = "Copy");
 
 		if (isSet(copyDuplicatedDocument)) {
-			Alert.viewRequestFailedToComplete();
-
-			AssertTextEquals.assertPartialText(
-				locator1 = "Message#ERROR_DISMISSIBLE",
-				value1 = "The folder you selected already has an entry with this name. Please select a different folder.");
+			Alert.viewErrorMessage(errorMessage = "A file entry already exists with title ${dmDocumentTitle}");
 		}
 		else {
 			Alert.viewSuccessMessage();
@@ -2518,7 +2528,7 @@ definition {
 		}
 	}
 
-	macro selectExtensions {
+	macro selectFilterItems {
 		IFrame.selectModalFrame();
 
 		if (${clearAll} == "true") {
@@ -2527,7 +2537,7 @@ definition {
 				locator1 = "Link#ANY");
 		}
 
-		for (var category : list ${category}) {
+		for (var category : list ${categories}) {
 			while (IsElementPresent(locator1 = "Treeview#NODE_COLLAPSED")) {
 				Click(locator1 = "Treeview#NODE_COLLAPSED");
 			}
@@ -2539,7 +2549,7 @@ definition {
 
 		SelectFrameTop();
 
-		Button.clickSelect();
+		Button.clickApply();
 	}
 
 	macro selectTags {

@@ -34,6 +34,10 @@ export const ENABLE_FORM_ABANDONMENT = false;
 
 export const ENABLE_GLOBAL_FILTER = false;
 
+// LRAC-13781 [BUG] The Last Seen column only displays the creation date of the token
+
+export const ENABLE_LAST_ACCESS_DATE = false;
+
 // LRAC-11571 Disable temporarily Salesforce
 
 export const ENABLE_SALESFORCE = false;
@@ -249,6 +253,20 @@ export const TIME_RANGE_LABELS = {
 	[RangeKeyTimeRanges.Last90Days]: Liferay.Language.get('last-90-days'),
 	[RangeKeyTimeRanges.LastYear]: Liferay.Language.get('last-year'),
 	[RangeKeyTimeRanges.Yesterday]: Liferay.Language.get('yesterday')
+};
+
+export enum ExpirationPeriod {
+	In30Days = '2592000',
+	In6Months = '15778800',
+	In1Year = '31557600',
+	Indefinite = '3155760000'
+}
+
+export const EXPIRATION_DATE_LABELS = {
+	[ExpirationPeriod.In30Days]: Liferay.Language.get('30-days'),
+	[ExpirationPeriod.In6Months]: Liferay.Language.get('6-months'),
+	[ExpirationPeriod.In1Year]: Liferay.Language.get('1-year'),
+	[ExpirationPeriod.Indefinite]: Liferay.Language.get('indefinite')
 };
 
 /**

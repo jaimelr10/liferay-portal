@@ -34,8 +34,10 @@ import com.liferay.headless.delivery.client.dto.v1_0.ContentFieldValue;
 import com.liferay.headless.delivery.client.dto.v1_0.Geo;
 import com.liferay.headless.delivery.client.dto.v1_0.StructuredContent;
 import com.liferay.headless.delivery.client.dto.v1_0.StructuredContentLink;
+import com.liferay.headless.delivery.client.http.HttpInvoker;
 import com.liferay.headless.delivery.client.pagination.Page;
 import com.liferay.headless.delivery.client.pagination.Pagination;
+import com.liferay.headless.delivery.client.problem.Problem;
 import com.liferay.headless.delivery.client.resource.v1_0.StructuredContentResource;
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.model.JournalArticle;
@@ -72,6 +74,9 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.SynchronousMailTestRule;
 
@@ -140,6 +145,61 @@ public class StructuredContentResourceTest
 
 	@Override
 	@Test
+	public void testDeleteAssetLibraryStructuredContentByExternalReferenceCode()
+		throws Exception {
+
+		_useDepotDDMStructureStructureId = true;
+
+		super.testDeleteAssetLibraryStructuredContentByExternalReferenceCode();
+
+		StructuredContent randomStructuredContent = randomStructuredContent();
+
+		randomStructuredContent.setExternalReferenceCode("");
+
+		StructuredContent postStructuredContent =
+			structuredContentResource.postAssetLibraryStructuredContent(
+				testDeleteAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+				randomStructuredContent);
+
+		assertHttpResponseStatusCode(
+			204,
+			structuredContentResource.
+				deleteAssetLibraryStructuredContentByExternalReferenceCodeHttpResponse(
+					testDeleteAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					postStructuredContent.getUuid()));
+		assertHttpResponseStatusCode(
+			404,
+			structuredContentResource.
+				getAssetLibraryStructuredContentByExternalReferenceCodeHttpResponse(
+					testDeleteAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					postStructuredContent.getExternalReferenceCode()));
+
+		String externalReferenceCode = StringUtil.toLowerCase(
+			RandomTestUtil.randomString());
+
+		try {
+			structuredContentResource.
+				deleteAssetLibraryStructuredContentByExternalReferenceCode(
+					testDeleteAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					externalReferenceCode);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("NOT_FOUND", problem.getStatus());
+			Assert.assertEquals(
+				StringBundler.concat(
+					"No JournalArticle exists with the key {groupId=",
+					testDepotEntry.getGroupId(), ", externalReferenceCode=",
+					externalReferenceCode, "}"),
+				problem.getTitle());
+		}
+	}
+
+	@Override
+	@Test
 	public void testDeleteStructuredContentMyRating() throws Exception {
 		super.testDeleteStructuredContentMyRating();
 
@@ -165,6 +225,103 @@ public class StructuredContentResourceTest
 			structuredContentResource.
 				deleteStructuredContentMyRatingHttpResponse(
 					irrelevantStructuredContent.getId()));
+	}
+
+	@Override
+	@Test
+	public void testGetAssetLibraryStructuredContentByExternalReferenceCode()
+		throws Exception {
+
+		_useDepotDDMStructureStructureId = true;
+
+		super.testGetAssetLibraryStructuredContentByExternalReferenceCode();
+
+		// Blank external reference code
+
+		StructuredContent randomStructuredContent = randomStructuredContent();
+
+		randomStructuredContent.setExternalReferenceCode("");
+
+		StructuredContent postStructuredContent =
+			structuredContentResource.postAssetLibraryStructuredContent(
+				testGetAssetLibraryStructuredContentsPage_getAssetLibraryId(),
+				randomStructuredContent);
+
+		StructuredContent getStructuredContent =
+			structuredContentResource.
+				getAssetLibraryStructuredContentByExternalReferenceCode(
+					testGetAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					postStructuredContent.getUuid());
+
+		assertEquals(postStructuredContent, getStructuredContent);
+		assertValid(getStructuredContent);
+
+		// Nonexistent asset library ID
+
+		long assetLibraryId = RandomTestUtil.randomLong();
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.portal.vulcan.internal.jaxrs.exception.mapper." +
+					"WebApplicationExceptionMapper",
+				LoggerTestUtil.ERROR)) {
+
+			try {
+				structuredContentResource.
+					getAssetLibraryStructuredContentByExternalReferenceCode(
+						assetLibraryId,
+						postStructuredContent.getExternalReferenceCode());
+
+				Assert.fail();
+			}
+			catch (Problem.ProblemException problemException) {
+				Problem problem = problemException.getProblem();
+
+				Assert.assertEquals("NOT_FOUND", problem.getStatus());
+				Assert.assertEquals(
+					"Unable to get a valid asset library with ID " +
+						assetLibraryId,
+					problem.getTitle());
+			}
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertEquals(logEntries.toString(), 1, logEntries.size());
+
+			LogEntry logEntry = logEntries.get(0);
+
+			Assert.assertEquals(LoggerTestUtil.ERROR, logEntry.getPriority());
+
+			Throwable throwable = logEntry.getThrowable();
+
+			Assert.assertEquals(
+				"Unable to get a valid asset library with ID " + assetLibraryId,
+				throwable.getMessage());
+		}
+
+		// Nonexistent external reference code
+
+		String externalReferenceCode = StringUtil.toLowerCase(
+			RandomTestUtil.randomString());
+
+		try {
+			structuredContentResource.
+				getAssetLibraryStructuredContentByExternalReferenceCode(
+					testGetAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					externalReferenceCode);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("NOT_FOUND", problem.getStatus());
+			Assert.assertEquals(
+				StringBundler.concat(
+					"No JournalArticle exists with the key {groupId=",
+					testDepotEntry.getGroupId(), ", externalReferenceCode=",
+					externalReferenceCode, "}"),
+				problem.getTitle());
+		}
 	}
 
 	@Override
@@ -457,14 +614,14 @@ public class StructuredContentResourceTest
 
 		// Default external reference code and UUID
 
-		StructuredContent randomStructuredContent = randomStructuredContent();
+		StructuredContent randomStructuredContent1 = randomStructuredContent();
 
-		randomStructuredContent.setExternalReferenceCode("");
-		randomStructuredContent.setUuid("");
+		randomStructuredContent1.setExternalReferenceCode("");
+		randomStructuredContent1.setUuid("");
 
 		StructuredContent postStructuredContent1 =
 			testPostAssetLibraryStructuredContent_addStructuredContent(
-				randomStructuredContent);
+				randomStructuredContent1);
 
 		Assert.assertNotNull(postStructuredContent1.getExternalReferenceCode());
 		Assert.assertNotNull(postStructuredContent1.getUuid());
@@ -484,6 +641,32 @@ public class StructuredContentResourceTest
 
 		_testPostAssetLibraryStructuredContent(
 			String.valueOf(postStructuredContent2.getId()));
+
+		// Duplicate external reference code
+
+		StructuredContent postStructuredContent3 =
+			testPostAssetLibraryStructuredContent_addStructuredContent(
+				randomStructuredContent());
+
+		StructuredContent randomStructuredContent2 = randomStructuredContent();
+
+		randomStructuredContent2.setExternalReferenceCode(
+			postStructuredContent3.getExternalReferenceCode());
+
+		randomStructuredContent2.setContentStructureId(
+			_depotDDMStructure.getStructureId());
+
+		HttpInvoker.HttpResponse httpResponse =
+			structuredContentResource.
+				postAssetLibraryStructuredContentHttpResponse(
+					testDepotEntry.getDepotEntryId(), randomStructuredContent2);
+
+		Assert.assertEquals(
+			StringBundler.concat(
+				"Duplicate journal article external reference code ",
+				postStructuredContent3.getExternalReferenceCode(), "in group ",
+				testDepotEntry.getGroupId()),
+			httpResponse.getContent());
 	}
 
 	@Override
@@ -622,12 +805,30 @@ public class StructuredContentResourceTest
 					testPutAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
 					externalReferenceCode, randomStructuredContent2);
 
-		Assert.assertNotEquals(putStructuredContent1, putStructuredContent2);
+		Assert.assertNotEquals(
+			putStructuredContent1.getId(), putStructuredContent2.getId());
 		Assert.assertEquals(
 			putStructuredContent1.getTitle(), putStructuredContent2.getTitle());
 		Assert.assertEquals(
 			externalReferenceCode,
 			putStructuredContent2.getExternalReferenceCode());
+
+		StructuredContent randomStructuredContent3 = randomStructuredContent();
+
+		StructuredContent putStructuredContent3 =
+			structuredContentResource.
+				putAssetLibraryStructuredContentByExternalReferenceCode(
+					testPutAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					randomStructuredContent3.getExternalReferenceCode(),
+					randomStructuredContent3);
+
+		assertEquals(
+			putStructuredContent3,
+			structuredContentResource.
+				putAssetLibraryStructuredContentByExternalReferenceCode(
+					testPutAssetLibraryStructuredContentByExternalReferenceCode_getAssetLibraryId(),
+					putStructuredContent3.getExternalReferenceCode(),
+					randomStructuredContent3));
 	}
 
 	@Override
