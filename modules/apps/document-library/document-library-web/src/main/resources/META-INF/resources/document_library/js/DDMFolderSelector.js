@@ -74,16 +74,18 @@ const DDMFolderSelector = ({
 		const bodyContentObject = objectToFormData(
 			itemType === 'folder'
 				? {
-						[`${portletNamespace}sourceRepositoryId`]: sourceRepositoryId,
-						[`${portletNamespace}sourceFolderId`]: sourceFolderId,
-						[`${portletNamespace}destinationParentFolderId`]: destinationParentFolderId,
-						[`${portletNamespace}destinationRepositoryId`]: destinationRepositoryId,
+						[`destinationParentFolderId`]: destinationParentFolderId,
+						[`destinationRepositoryId`]: destinationRepositoryId,
+						[`entryType`]: 'folder',
+						[`sourceFolderId`]: sourceFolderId,
+						[`sourceRepositoryId`]: sourceRepositoryId,
 				  }
 				: {
-						[`${portletNamespace}fileEntryId`]: sourceFileEntryId,
-						[`${portletNamespace}fileShortcutId`]: fileShortcutId,
-						[`${portletNamespace}destinationFolderId`]: destinationParentFolderId,
-						[`${portletNamespace}destinationRepositoryId`]: destinationRepositoryId,
+						[`destinationFolderId`]: destinationParentFolderId,
+						[`destinationRepositoryId`]: destinationRepositoryId,
+						[`entryType`]: 'fileEntry',
+						[`fileEntryId`]: sourceFileEntryId,
+						[`fileShortcutId`]: fileShortcutId,
 				  }
 		);
 
@@ -92,7 +94,7 @@ const DDMFolderSelector = ({
 			method: 'POST',
 		})
 			.then((response) => response.json())
-			.then(({errorMessage}) => {
+			.then(({errorMessage, successMessage}) => {
 				if (errorMessage) {
 					openToast({
 						message: errorMessage,
@@ -101,6 +103,9 @@ const DDMFolderSelector = ({
 					});
 				}
 				else {
+					openToast({
+						message: successMessage,
+					});
 					navigate(redirect);
 				}
 			})

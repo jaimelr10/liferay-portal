@@ -27,7 +27,7 @@ dlCopyFolderDisplayContext.setViewAttributes(liferayPortletResponse);
 		module="document_library/js/DDMFolderSelector"
 		props='<%=
 			HashMapBuilder.<String, Object>put(
-				"copyActionURL", dlCopyFolderDisplayContext.getActionURL()
+				"copyActionURL", dlCopyFolderDisplayContext.getCopyToURL()
 			).put(
 				"itemType", "folder"
 			).put(
