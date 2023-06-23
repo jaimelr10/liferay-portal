@@ -172,7 +172,7 @@ public class BlogsViewEntriesDisplayContext {
 
 		_orderByType = SearchOrderByUtil.getOrderByType(
 			_httpServletRequest, BlogsPortletKeys.BLOGS_ADMIN,
-			"entries-order-by-type", "asc");
+			"entries-order-by-type", "desc");
 
 		return _orderByType;
 	}
