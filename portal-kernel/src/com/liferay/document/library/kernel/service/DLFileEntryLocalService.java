@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Hits;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
@@ -37,6 +38,7 @@ import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.Portal;
 
 import java.io.File;
 import java.io.InputStream;
@@ -45,6 +47,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.portlet.RenderRequest;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -99,6 +103,10 @@ public interface DLFileEntryLocalService
 
 	public DLFileVersion cancelCheckOut(long userId, long fileEntryId)
 		throws PortalException;
+
+	public boolean canCopyFileEntry(
+		FileEntry fileEntry, long systemMaxSizeToCopy,
+		long companyMaxSizeToCopy, long groupMaxSizeToCopy);
 
 	public void checkFileEntries(long companyId, long checkInterval)
 		throws PortalException;
@@ -348,6 +356,12 @@ public interface DLFileEntryLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Object[] getCopyFailInfo(
+		FileEntry fileEntry, long systemMaxSizeToCopy,
+		long companyMaxSizeToCopy, long groupMaxSizeToCopy, Portal portal,
+		RenderRequest renderRequest);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DLFileEntry> getDDMStructureFileEntries(

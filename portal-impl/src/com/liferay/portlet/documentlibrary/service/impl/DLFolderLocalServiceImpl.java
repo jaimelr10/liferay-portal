@@ -13,6 +13,7 @@ import com.liferay.document.library.kernel.exception.InvalidFolderException;
 import com.liferay.document.library.kernel.exception.NoSuchFolderException;
 import com.liferay.document.library.kernel.exception.RequiredFileEntryTypeException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.model.DLFileEntryTable;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFileEntryTypeConstants;
 import com.liferay.document.library.kernel.model.DLFolder;
@@ -27,6 +28,8 @@ import com.liferay.document.library.kernel.util.DLValidatorUtil;
 import com.liferay.document.library.kernel.util.comparator.FolderIdComparator;
 import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanReference;
@@ -35,6 +38,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.increment.BufferedIncrement;
 import com.liferay.portal.kernel.increment.DateOverrideIncrement;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.lock.ExpiredLockException;
 import com.liferay.portal.kernel.lock.InvalidLockException;
 import com.liferay.portal.kernel.lock.Lock;
@@ -72,6 +76,7 @@ import com.liferay.portal.kernel.tree.TreePathUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ServiceProxyFactory;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -92,6 +97,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.portlet.RenderRequest;
 
 /**
  * @author Brian Wing Shun Chan
@@ -164,6 +171,28 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 		}
 
 		return dlFolder;
+	}
+
+	@Override
+	public boolean canCopyFolder(
+		DLFolder dlFolder, long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy) {
+
+		long dlFolderSize = _getDLFolderSize(
+			dlFolder.getTreePath(), dlFolder.getCompanyId(),
+			dlFolder.getGroupId());
+
+		if (((dlFolderSize <= systemMaxSizeToCopy) ||
+			 (systemMaxSizeToCopy == 0)) &&
+			((dlFolderSize <= companyMaxSizeToCopy) ||
+			 (companyMaxSizeToCopy == 0)) &&
+			((dlFolderSize <= groupMaxSizeToCopy) ||
+			 (groupMaxSizeToCopy == 0))) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -329,6 +358,39 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 	@Override
 	public int getCompanyFoldersCount(long companyId) {
 		return dlFolderPersistence.countByCompanyId(companyId);
+	}
+
+	@Override
+	public Object[] getCopyFailInfo(
+		DLFolder dlFolder, long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy, Portal portal, RenderRequest renderRequest) {
+
+		long dlFolderSize = _getDLFolderSize(
+			dlFolder.getTreePath(), dlFolder.getCompanyId(),
+			dlFolder.getGroupId());
+
+		if ((dlFolderSize > groupMaxSizeToCopy) && (systemMaxSizeToCopy != 0)) {
+			return new Object[] {
+				LanguageUtil.get(portal.getLocale(renderRequest), "site"),
+				LanguageUtil.formatStorageSize(
+					groupMaxSizeToCopy, portal.getLocale(renderRequest))
+			};
+		}
+		else if ((dlFolderSize > companyMaxSizeToCopy) &&
+				 (companyMaxSizeToCopy != 0)) {
+
+			return new Object[] {
+				LanguageUtil.get(portal.getLocale(renderRequest), "instance"),
+				LanguageUtil.formatStorageSize(
+					companyMaxSizeToCopy, portal.getLocale(renderRequest))
+			};
+		}
+
+		return new Object[] {
+			LanguageUtil.get(portal.getLocale(renderRequest), "system"),
+			LanguageUtil.formatStorageSize(
+				systemMaxSizeToCopy, portal.getLocale(renderRequest))
+		};
 	}
 
 	@Override
@@ -1414,6 +1476,36 @@ public class DLFolderLocalServiceImpl extends DLFolderLocalServiceBaseImpl {
 					"Folder name ", folderName,
 					" is invalid because it contains a /"));
 		}
+	}
+
+	private long _getDLFolderSize(
+		String treePath, long companyId, long groupId) {
+
+		List<Long> result = dslQuery(
+			DSLQueryFactoryUtil.select(
+				DSLFunctionFactoryUtil.sum(
+					DLFileEntryTable.INSTANCE.size
+				).as(
+					"SUM_VALUE"
+				)
+			).from(
+				DLFileEntryTable.INSTANCE
+			).where(
+				DLFileEntryTable.INSTANCE.companyId.eq(
+					companyId
+				).and(
+					DLFileEntryTable.INSTANCE.groupId.eq(groupId)
+				).and(
+					DLFileEntryTable.INSTANCE.treePath.like(
+						treePath.concat(StringPool.PERCENT))
+				)
+			));
+
+		if (result.get(0) == null) {
+			return 0;
+		}
+
+		return result.get(0);
 	}
 
 	private static volatile TrashHelper _trashHelper =

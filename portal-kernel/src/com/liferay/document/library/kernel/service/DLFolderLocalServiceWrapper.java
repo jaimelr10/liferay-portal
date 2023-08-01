@@ -92,6 +92,16 @@ public class DLFolderLocalServiceWrapper
 	}
 
 	@Override
+	public boolean canCopyFolder(
+		DLFolder dlFolder, long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy) {
+
+		return _dlFolderLocalService.canCopyFolder(
+			dlFolder, systemMaxSizeToCopy, companyMaxSizeToCopy,
+			groupMaxSizeToCopy);
+	}
+
+	@Override
 	public void clearDLFileEntryTypeDLFolders(long fileEntryTypeId) {
 		_dlFolderLocalService.clearDLFileEntryTypeDLFolders(fileEntryTypeId);
 	}
@@ -410,6 +420,17 @@ public class DLFolderLocalServiceWrapper
 	@Override
 	public int getCompanyFoldersCount(long companyId) {
 		return _dlFolderLocalService.getCompanyFoldersCount(companyId);
+	}
+
+	@Override
+	public Object[] getCopyFailInfo(
+		DLFolder dlFolder, long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy, com.liferay.portal.kernel.util.Portal portal,
+		javax.portlet.RenderRequest renderRequest) {
+
+		return _dlFolderLocalService.getCopyFailInfo(
+			dlFolder, systemMaxSizeToCopy, companyMaxSizeToCopy,
+			groupMaxSizeToCopy, portal, renderRequest);
 	}
 
 	@Override

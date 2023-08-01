@@ -78,6 +78,16 @@ public class DLFileEntryLocalServiceUtil {
 		return getService().cancelCheckOut(userId, fileEntryId);
 	}
 
+	public static boolean canCopyFileEntry(
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy) {
+
+		return getService().canCopyFileEntry(
+			fileEntry, systemMaxSizeToCopy, companyMaxSizeToCopy,
+			groupMaxSizeToCopy);
+	}
+
 	public static void checkFileEntries(long companyId, long checkInterval)
 		throws PortalException {
 
@@ -440,6 +450,17 @@ public class DLFileEntryLocalServiceUtil {
 		getActionableDynamicQuery() {
 
 		return getService().getActionableDynamicQuery();
+	}
+
+	public static Object[] getCopyFailInfo(
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy, com.liferay.portal.kernel.util.Portal portal,
+		javax.portlet.RenderRequest renderRequest) {
+
+		return getService().getCopyFailInfo(
+			fileEntry, systemMaxSizeToCopy, companyMaxSizeToCopy,
+			groupMaxSizeToCopy, portal, renderRequest);
 	}
 
 	public static List<DLFileEntry> getDDMStructureFileEntries(

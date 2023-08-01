@@ -35,12 +35,15 @@ import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.Portal;
 
 import java.io.Serializable;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.portlet.RenderRequest;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -98,6 +101,10 @@ public interface DLFolderLocalService
 			String name, String description, boolean hidden,
 			ServiceContext serviceContext)
 		throws PortalException;
+
+	public boolean canCopyFolder(
+		DLFolder dlFolder, long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy);
 
 	public void clearDLFileEntryTypeDLFolders(long fileEntryTypeId);
 
@@ -300,6 +307,11 @@ public interface DLFolderLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getCompanyFoldersCount(long companyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public Object[] getCopyFailInfo(
+		DLFolder dlFolder, long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy, Portal portal, RenderRequest renderRequest);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<DLFolder> getDLFileEntryTypeDLFolders(long fileEntryTypeId);

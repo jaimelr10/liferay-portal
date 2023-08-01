@@ -77,6 +77,17 @@ public class DLFileEntryLocalServiceWrapper
 	}
 
 	@Override
+	public boolean canCopyFileEntry(
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy) {
+
+		return _dlFileEntryLocalService.canCopyFileEntry(
+			fileEntry, systemMaxSizeToCopy, companyMaxSizeToCopy,
+			groupMaxSizeToCopy);
+	}
+
+	@Override
 	public void checkFileEntries(long companyId, long checkInterval)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -493,6 +504,18 @@ public class DLFileEntryLocalServiceWrapper
 		getActionableDynamicQuery() {
 
 		return _dlFileEntryLocalService.getActionableDynamicQuery();
+	}
+
+	@Override
+	public Object[] getCopyFailInfo(
+		com.liferay.portal.kernel.repository.model.FileEntry fileEntry,
+		long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy, com.liferay.portal.kernel.util.Portal portal,
+		javax.portlet.RenderRequest renderRequest) {
+
+		return _dlFileEntryLocalService.getCopyFailInfo(
+			fileEntry, systemMaxSizeToCopy, companyMaxSizeToCopy,
+			groupMaxSizeToCopy, portal, renderRequest);
 	}
 
 	@Override

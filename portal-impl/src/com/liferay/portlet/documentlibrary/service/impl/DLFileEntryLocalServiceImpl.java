@@ -131,6 +131,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ServiceProxyFactory;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -165,6 +166,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.portlet.RenderRequest;
 
 /**
  * Provides the local service for accessing, adding, checking in/out, deleting,
@@ -355,6 +358,26 @@ public class DLFileEntryLocalServiceImpl
 		_removeFileVersion(dlFileEntry, dlFileVersion);
 
 		return dlFileVersion;
+	}
+
+	@Override
+	public boolean canCopyFileEntry(
+		FileEntry fileEntry, long systemMaxSizeToCopy,
+		long companyMaxSizeToCopy, long groupMaxSizeToCopy) {
+
+		long dlFileEntrySize = fileEntry.getSize();
+
+		if (((dlFileEntrySize <= systemMaxSizeToCopy) ||
+			 (systemMaxSizeToCopy == 0)) &&
+			((dlFileEntrySize <= companyMaxSizeToCopy) ||
+			 (companyMaxSizeToCopy == 0)) &&
+			((dlFileEntrySize <= groupMaxSizeToCopy) ||
+			 (groupMaxSizeToCopy == 0))) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	@Override
@@ -1068,6 +1091,40 @@ public class DLFileEntryLocalServiceImpl
 		long groupId, long folderId, String name) {
 
 		return dlFileEntryPersistence.fetchByG_F_N(groupId, folderId, name);
+	}
+
+	@Override
+	public Object[] getCopyFailInfo(
+		FileEntry fileEntry, long systemMaxSizeToCopy,
+		long companyMaxSizeToCopy, long groupMaxSizeToCopy, Portal portal,
+		RenderRequest renderRequest) {
+
+		long dlFileEntrySize = fileEntry.getSize();
+
+		if ((dlFileEntrySize > groupMaxSizeToCopy) &&
+			(systemMaxSizeToCopy != 0)) {
+
+			return new Object[] {
+				LanguageUtil.get(portal.getLocale(renderRequest), "site"),
+				LanguageUtil.formatStorageSize(
+					groupMaxSizeToCopy, portal.getLocale(renderRequest))
+			};
+		}
+		else if ((dlFileEntrySize > companyMaxSizeToCopy) &&
+				 (companyMaxSizeToCopy != 0)) {
+
+			return new Object[] {
+				LanguageUtil.get(portal.getLocale(renderRequest), "instance"),
+				LanguageUtil.formatStorageSize(
+					companyMaxSizeToCopy, portal.getLocale(renderRequest))
+			};
+		}
+
+		return new Object[] {
+			LanguageUtil.get(portal.getLocale(renderRequest), "system"),
+			LanguageUtil.formatStorageSize(
+				systemMaxSizeToCopy, portal.getLocale(renderRequest))
+		};
 	}
 
 	@Override

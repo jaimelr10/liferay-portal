@@ -86,6 +86,15 @@ public class DLFolderLocalServiceUtil {
 			parentFolderId, name, description, hidden, serviceContext);
 	}
 
+	public static boolean canCopyFolder(
+		DLFolder dlFolder, long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy) {
+
+		return getService().canCopyFolder(
+			dlFolder, systemMaxSizeToCopy, companyMaxSizeToCopy,
+			groupMaxSizeToCopy);
+	}
+
 	public static void clearDLFileEntryTypeDLFolders(long fileEntryTypeId) {
 		getService().clearDLFileEntryTypeDLFolders(fileEntryTypeId);
 	}
@@ -354,6 +363,16 @@ public class DLFolderLocalServiceUtil {
 
 	public static int getCompanyFoldersCount(long companyId) {
 		return getService().getCompanyFoldersCount(companyId);
+	}
+
+	public static Object[] getCopyFailInfo(
+		DLFolder dlFolder, long systemMaxSizeToCopy, long companyMaxSizeToCopy,
+		long groupMaxSizeToCopy, com.liferay.portal.kernel.util.Portal portal,
+		javax.portlet.RenderRequest renderRequest) {
+
+		return getService().getCopyFailInfo(
+			dlFolder, systemMaxSizeToCopy, companyMaxSizeToCopy,
+			groupMaxSizeToCopy, portal, renderRequest);
 	}
 
 	public static List<DLFolder> getDLFileEntryTypeDLFolders(
