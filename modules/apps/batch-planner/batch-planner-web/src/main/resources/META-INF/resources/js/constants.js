@@ -8,6 +8,17 @@ export const CSV_FORMAT = 'csv';
 export const EXPORT_FILE_NAME = 'Export.zip';
 export const FILE_EXTENSION_INPUT_PARTIAL_NAME = 'externalType';
 export const FILE_SCHEMA_EVENT = 'file-schema';
+export const FORBIDDEN_CSV_FIELDS_ENTITY_TYPES = {
+	'com.liferay.object.rest.dto.v1_0.ObjectEntry': [
+		'attachement',
+		'aggregation',
+		'boolean',
+		'encrypted',
+		'formula',
+		'multiselectPicklist',
+		'object',
+	],
+};
 
 export const HEADERS = new Headers({
 	'Accept': 'application/json',
