@@ -5,12 +5,13 @@
 
 import {ClaySelect} from '@clayui/form';
 import {Col} from '@clayui/layout';
-import React, {useEffect, useReducer, useState} from 'react';
+import React, {useEffect, useReducer, useRef, useState} from 'react';
 
 import {
 	CSV_FORMAT,
 	DISALLOWED_CSV_ENTITY_TYPES,
 	EXPORT_FILE_FORMAT_SELECTED_EVENT,
+	TEMPLATE_SELECTED_EVENT,
 } from '../constants';
 
 function ExportSettings({
@@ -28,9 +29,10 @@ function ExportSettings({
 		setSelectedExternalTypeOption,
 	] = useState(externalTypeInitialOptions[0].value);
 	const [
-		selectedinternalClassNameKeyName,
-		setSelectedinternalClassNameKeyName,
+		selectedInternalClassNameKeyName,
+		setSelectedInternalClassNameKeyName,
 	] = useState();
+	const templateRef = useRef(false);
 
 	const [
 		internalClassNameKeyOptions,
@@ -53,11 +55,41 @@ function ExportSettings({
 	}, [selectedExternalTypeOption]);
 
 	useEffect(() => {
-		Liferay.fire(EXPORT_FILE_FORMAT_SELECTED_EVENT, {
-			selectedExportFileFormat: selectedExternalTypeOption,
-			selectedSchema: selectedinternalClassNameKeyName,
-		});
-	}, [selectedExternalTypeOption, selectedinternalClassNameKeyName]);
+		const handleTemplateSelectedEvent = ({template}) => {
+			templateRef.current = true;
+			if (
+				template.internalClassNameKey !==
+				selectedInternalClassNameKeyName
+			) {
+				templateRef.current = true;
+				setSelectedInternalClassNameKeyName(
+					template.internalClassNameKey
+				);
+			}
+			dispatchInternalClassNameKeyOptions('update');
+			if (template.entityType !== selectedExternalTypeOption) {
+				templateRef.current = true;
+				setSelectedExternalTypeOption(template.entityType);
+			}
+		};
+
+		Liferay.on(TEMPLATE_SELECTED_EVENT, handleTemplateSelectedEvent);
+
+		if (!templateRef.current) {
+			Liferay.fire(EXPORT_FILE_FORMAT_SELECTED_EVENT, {
+				selectedExportFileFormat: selectedExternalTypeOption,
+				selectedSchema: selectedInternalClassNameKeyName,
+			});
+		}
+		templateRef.current = false;
+
+		return () => {
+			Liferay.detach(
+				TEMPLATE_SELECTED_EVENT,
+				handleTemplateSelectedEvent
+			);
+		};
+	}, [selectedExternalTypeOption, selectedInternalClassNameKeyName]);
 
 	return (
 		<>
@@ -72,7 +104,7 @@ function ExportSettings({
 						id={internalClassNameKeyId}
 						name={internalClassNameKeyName}
 						onChange={(event) =>
-							setSelectedinternalClassNameKeyName(
+							setSelectedInternalClassNameKeyName(
 								event.target.value
 							)
 						}

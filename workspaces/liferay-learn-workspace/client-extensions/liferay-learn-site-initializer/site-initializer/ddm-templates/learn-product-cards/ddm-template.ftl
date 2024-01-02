@@ -1,23 +1,39 @@
 <style>
 	.card-container {
 		height: 150px;
+		min-width: auto !important;
 	}
 
 	.home-card {
-		background-color:#FBFCFE!important;
-		border-color:#E7EFFF!important;
-		border-radius: 10px!important;
-		border-width:1px!important;
+		background-color:#FBFCFE !important;
+		border-color:#E7EFFF !important;
+		border-radius: 10px !important;
+		border-width:1px !important;
 		min-width: 100%;
 	}
 
 	.home-card:hover {
-		background-color: #EDF3FE!important;
-		border-color: #0053F0!important;
+		background-color: #EDF3FE !important;
+		border-color: #0053F0 !important;
+		box-shadow: none !important;
+		transform: none !important;
 	}
 
 	.product-cards {
 		min-width: 100%;
+	}
+
+	.product-icon{
+		height: 50px !important;
+		width: 50px !important;
+	}
+
+	.responsive-text {
+		display: -webkit-box;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
 	}
 
 	.subtitle {
@@ -30,7 +46,7 @@
 	}
 </style>
 
-<div class="col-12 m-0 product-cards row">
+<div class="d-flex justify-content-center m-0 product-cards row">
 	<#if entries?has_content>
 		<#list entries as navigationEntry>
 			<#assign
@@ -44,17 +60,17 @@
 					<#if navItemIcon?has_content>
 						<img
 							alt="${navigationEntry.getName()} icon"
-							class="icon mr-3"
+							class="icon mr-3 product-icon"
 							src="${navItemIcon}"
 						/>
 					</#if>
 
 					<div>
-						<h6 class="title">
+						<h6 class="responsive-text title">
 							${navigationEntry.getName()}
 						</h6>
 
-						<p class="pt-2 subtitle">
+						<p class="pt-2 responsive-text subtitle">
 							${navItemDescription}
 						</p>
 					</div>

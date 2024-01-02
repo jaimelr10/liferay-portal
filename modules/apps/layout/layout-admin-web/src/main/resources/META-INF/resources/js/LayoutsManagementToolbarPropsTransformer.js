@@ -5,10 +5,12 @@
 
 import {
 	addParams,
+	fetch,
 	navigate,
 	openConfirmModal,
 	openModal,
 	openSelectionModal,
+	openToast,
 	sub,
 } from 'frontend-js-web';
 
@@ -41,21 +43,51 @@ export default function propsTransformer({portletNamespace, ...otherProps}) {
 			),
 			multiple: true,
 			onDelete: () => {
-				const form = document.getElementById(`${portletNamespace}fm`);
+				const keys = getSelectedKeys(portletNamespace);
 
-				if (form) {
-					submitForm(form, itemData?.deleteLayoutURL);
-				}
+				const url = new URL(itemData?.deleteLayoutURL);
+
+				fetch(
+					addParams(
+						{
+							[`_${url.searchParams.get(
+								'p_p_id'
+							)}_rowIds`]: keys.join(','),
+						},
+						itemData?.deleteLayoutURL
+					),
+					{
+						method: 'post',
+					}
+				)
+					.then((response) => response.json())
+					.then(({errorMessage, redirectURL}) => {
+						if (errorMessage) {
+							openToast({
+								message: errorMessage,
+								title: Liferay.Language.get('error'),
+								type: 'danger',
+							});
+						}
+						else {
+							navigate(redirectURL);
+						}
+					})
+					.catch(() =>
+						openToast({
+							message: Liferay.Language.get(
+								'an-unexpected-error-occurred'
+							),
+							title: Liferay.Language.get('error'),
+							type: 'danger',
+						})
+					);
 			},
 		});
 	};
 
 	const changePermissions = (itemData) => {
-		const keys = Array.from(
-			document.querySelectorAll(
-				`[name=${portletNamespace}rowIds]:checked`
-			)
-		).map(({value}) => value);
+		const keys = getSelectedKeys(portletNamespace);
 
 		if (keys.length > itemData.maxItemsToShowInfoMessage) {
 			openModal({
@@ -110,11 +142,7 @@ export default function propsTransformer({portletNamespace, ...otherProps}) {
 	};
 
 	const exportTranslation = ({exportTranslationURL}) => {
-		const keys = Array.from(
-			document.querySelectorAll(
-				`[name=${portletNamespace}rowIds]:checked`
-			)
-		).map(({value}) => value);
+		const keys = getSelectedKeys(portletNamespace);
 
 		const url = new URL(exportTranslationURL);
 
@@ -151,4 +179,10 @@ export default function propsTransformer({portletNamespace, ...otherProps}) {
 			}
 		},
 	};
+}
+
+function getSelectedKeys(portletNamespace) {
+	return Array.from(
+		document.querySelectorAll(`[name=${portletNamespace}rowIds]:checked`)
+	).map(({value}) => value);
 }

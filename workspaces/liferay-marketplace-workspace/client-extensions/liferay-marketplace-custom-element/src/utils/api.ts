@@ -337,7 +337,7 @@ export async function deleteCart(cartId: number) {
 	);
 }
 
-export async function getCart(cartId: number) {
+export async function getCart(cartId: number | string) {
 	const cartResponse = await fetch(
 		`${baseURL}/o/headless-commerce-delivery-cart/v1.0/carts/${cartId}`,
 		{
@@ -349,7 +349,7 @@ export async function getCart(cartId: number) {
 	return await cartResponse.json();
 }
 
-export async function getCartItems(cartId: number) {
+export async function getCartItems(cartId: number | string) {
 	const cartResponse = await fetch(
 		`${baseURL}/o/headless-commerce-delivery-cart/v1.0/carts/${cartId}/items`,
 		{
@@ -1069,4 +1069,15 @@ export async function postEmailAppInformation(
 		headers,
 		method: 'POST',
 	});
+}
+
+export async function getSiteStructuredContentByKey(key: string) {
+	const response = await fetch(
+		`${baseURL}/o/headless-delivery/v1.0/sites/${Liferay.ThemeDisplay.getScopeGroupId()}/structured-contents/by-key/${key}`,
+		{
+			headers,
+		}
+	);
+
+	return await response.json();
 }

@@ -37,6 +37,7 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -498,6 +499,26 @@ public class HeadlessBuilderOpenAPIResourceTest extends BaseTestCase {
 						"path", "/no-schema"
 					).put(
 						"scope", APIApplication.Endpoint.Scope.SITE.getValue()
+					),
+					JSONUtil.put(
+						"description",
+						"post endpoint no request schema description"
+					).put(
+						"externalReferenceCode",
+						_API_POST_COMPANY_SCOPED_NO_SCHEMA_ENDPOINT_ERC
+					).put(
+						"httpMethod", "post"
+					).put(
+						"name", "company scoped post no schema"
+					).put(
+						"path", "/no-schema"
+					).put(
+						"retrieveType",
+						APIApplication.Endpoint.RetrieveType.SINGLE_ELEMENT.
+							getValue()
+					).put(
+						"scope",
+						APIApplication.Endpoint.Scope.COMPANY.getValue()
 					))
 			).put(
 				"apiApplicationToAPISchemas",
@@ -785,7 +806,7 @@ public class HeadlessBuilderOpenAPIResourceTest extends BaseTestCase {
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, false, false, false,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				"A" + RandomTestUtil.randomString(), null, null,
+				ObjectDefinitionTestUtil.getRandomName(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, scope, ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
 				objectFields);
@@ -803,6 +824,10 @@ public class HeadlessBuilderOpenAPIResourceTest extends BaseTestCase {
 
 	private static final String _API_ENDPOINT_ERC =
 		RandomTestUtil.randomString();
+
+	private static final String
+		_API_POST_COMPANY_SCOPED_NO_SCHEMA_ENDPOINT_ERC =
+			RandomTestUtil.randomString();
 
 	private static final String _API_SCHEMA_AGGREGATION_FIELD_ERC =
 		RandomTestUtil.randomString();

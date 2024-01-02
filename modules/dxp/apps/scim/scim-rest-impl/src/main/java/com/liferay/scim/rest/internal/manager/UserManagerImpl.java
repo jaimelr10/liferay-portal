@@ -135,7 +135,22 @@ public class UserManagerImpl implements UserManager {
 		throws CharonException, NotFoundException {
 
 		try {
-			_userGroupService.deleteUserGroup(GetterUtil.getLong(groupId));
+			getGroup(groupId, Collections.emptyMap());
+
+			TransactionInvokerUtil.invoke(
+				_transactionConfig,
+				() -> {
+					_userService.setUserGroupUsers(
+						GetterUtil.getLong(groupId), new long[0]);
+
+					_userGroupService.deleteUserGroup(
+						GetterUtil.getLong(groupId));
+
+					return null;
+				});
+		}
+		catch (AbstractCharonException abstractCharonException) {
+			ReflectionUtil.throwException(abstractCharonException);
 		}
 		catch (PrincipalException principalException) {
 			if (_log.isDebugEnabled()) {
@@ -144,10 +159,9 @@ public class UserManagerImpl implements UserManager {
 
 			throw new NotFoundException();
 		}
-		catch (PortalException portalException) {
+		catch (Throwable throwable) {
 			throw new CharonException(
-				"Unable to delete group with group ID " + groupId,
-				portalException);
+				"Unable to delete group with group ID " + groupId, throwable);
 		}
 	}
 
@@ -416,14 +430,17 @@ public class UserManagerImpl implements UserManager {
 			Company company = _companyLocalService.fetchCompany(
 				CompanyThreadLocal.getCompanyId());
 
-			UserGroup userGroup = TransactionInvokerUtil.invoke(
+			return TransactionInvokerUtil.invoke(
 				_transactionConfig,
-				() -> _addOrUpdateUserGroup(company, group));
+				() -> {
+					UserGroup userGroup = _addOrUpdateUserGroup(company, group);
 
-			return ScimUtil.toGroup(
-				_getScimUsers(
-					userGroup.getCompanyId(), userGroup.getUserGroupId()),
-				userGroup);
+					return ScimUtil.toGroup(
+						_getScimUsers(
+							userGroup.getCompanyId(),
+							userGroup.getUserGroupId()),
+						userGroup);
+				});
 		}
 		catch (AbstractCharonException abstractCharonException) {
 			return ReflectionUtil.throwException(abstractCharonException);
@@ -475,17 +492,19 @@ public class UserManagerImpl implements UserManager {
 			Company company = _companyLocalService.fetchCompany(
 				CompanyThreadLocal.getCompanyId());
 
-			ScimUser scimUser = TransactionInvokerUtil.invoke(
+			return TransactionInvokerUtil.invoke(
 				_transactionConfig,
-				() -> _addOrUpdateScimUser(
-					ScimUtil.toScimUser(
-						company.getCompanyId(), company.getLocale(), user)));
+				() -> {
+					ScimUser scimUser = _addOrUpdateScimUser(
+						ScimUtil.toScimUser(
+							company.getCompanyId(), company.getLocale(), user));
 
-			return ScimUtil.toUser(
-				_getGroups(
-					company.getCompanyId(),
-					GetterUtil.getLong(scimUser.getId())),
-				scimUser);
+					return ScimUtil.toUser(
+						_getGroups(
+							company.getCompanyId(),
+							GetterUtil.getLong(scimUser.getId())),
+						scimUser);
+				});
 		}
 		catch (AbstractCharonException abstractCharonException) {
 			return ReflectionUtil.throwException(abstractCharonException);
@@ -970,7 +989,7 @@ public class UserManagerImpl implements UserManager {
 
 	private static final TransactionConfig _transactionConfig =
 		TransactionConfig.Factory.create(
-			Propagation.SUPPORTS, new Class<?>[] {Exception.class});
+			Propagation.REQUIRED, new Class<?>[] {Exception.class});
 
 	private final ClassNameLocalService _classNameLocalService;
 	private final CompanyLocalService _companyLocalService;

@@ -181,6 +181,17 @@ const ActionForm = ({
 		url: initialValues?.url ?? '',
 	});
 
+	const handleActionTypeChange = (event: any) => {
+		const type = event.target.value;
+
+		setActionData({
+			...actionData,
+			method: type === ACTION_TYPE.ASYNC ? ACTION_METHOD.DELETE : '',
+			modalSize: type === ACTION_TYPE.MODAL ? MODAL_SIZES[0].value : '',
+			type,
+		});
+	};
+
 	const saveFDSAction = async () => {
 		setSaveButtonDisabled(true);
 
@@ -548,10 +559,7 @@ const ActionForm = ({
 									disabled={editing}
 									id={typeFormElementId}
 									onChange={(event) =>
-										setActionData({
-											...actionData,
-											type: event.target.value,
-										})
+										handleActionTypeChange(event)
 									}
 									options={
 										activeTab === 0
@@ -589,10 +597,7 @@ const ActionForm = ({
 										placeholder={Liferay.Language.get(
 											'please-select-an-option'
 										)}
-										value={
-											actionData.method ||
-											ACTION_METHOD.DELETE
-										}
+										value={actionData.method}
 									/>
 								</ClayForm.Group>
 							</ClayLayout.Col>

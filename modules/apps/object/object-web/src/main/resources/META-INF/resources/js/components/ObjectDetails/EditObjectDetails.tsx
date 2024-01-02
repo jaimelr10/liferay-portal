@@ -6,10 +6,10 @@
 import ClayPanel from '@clayui/panel';
 import {
 	API,
-	BetaButton,
 	getLocalizableLabel,
 	openToast,
 } from '@liferay/object-js-components-web';
+import {FeatureIndicator} from 'frontend-js-components-web';
 import React, {useEffect, useState} from 'react';
 
 import ObjectManagementToolbar from '../ObjectManagementToolbar';
@@ -38,6 +38,7 @@ interface EditObjectDetailsProps {
 	isApproved: boolean;
 	isRootDescendantNode: boolean;
 	label: LocalizedValue<string>;
+	learnResourceContext: any;
 	nonRelationshipObjectFieldsInfo: {
 		label: LocalizedValue<string>;
 		name: string;
@@ -82,6 +83,7 @@ export default function EditObjectDetails({
 	isApproved,
 	isRootDescendantNode,
 	label,
+	learnResourceContext,
 	nonRelationshipObjectFieldsInfo,
 	objectDefinitionExternalReferenceCode,
 	objectDefinitionId,
@@ -281,7 +283,13 @@ export default function EditObjectDetails({
 
 									{values.storageType === 'salesforce' && (
 										<div className="lfr__object-web-edit-object-details-external-data-source-panel-container-beta">
-											<BetaButton />
+											<FeatureIndicator
+												interactive
+												learnResourceContext={
+													learnResourceContext
+												}
+												type="beta"
+											/>
 										</div>
 									)}
 								</div>

@@ -40,6 +40,7 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.web.internal.info.item.ObjectEntryInfoItemFields;
+import com.liferay.object.web.internal.model.ProxyObjectEntry;
 import com.liferay.object.web.internal.util.ObjectEntryUtil;
 import com.liferay.object.web.internal.util.ObjectFieldDBTypeUtil;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -123,7 +124,8 @@ public class ObjectEntryInfoItemFieldValuesProvider
 			).infoFieldValues(
 				_displayPageInfoItemFieldSetProvider.getInfoFieldValues(
 					_getInfoItemReference(objectEntry), StringPool.BLANK,
-					ObjectEntry.class.getSimpleName(), _getThemeDisplay())
+					ObjectEntry.class.getSimpleName(), objectEntry,
+					_getThemeDisplay())
 			).infoFieldValues(
 				_infoItemFieldReaderFieldSetProvider.getInfoFieldValues(
 					objectEntry.getModelClassName(), objectEntry)
@@ -319,9 +321,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 		objectEntryFieldValues.addAll(
 			_getObjectFieldsInfoFieldValues(
-				_getObjectEntry(
-					objectEntry.getExternalReferenceCode(), _objectDefinition,
-					themeDisplay),
+				_getObjectEntry(_objectDefinition, objectEntry, themeDisplay),
 				_objectFieldLocalService.getObjectFields(
 					objectEntry.getObjectDefinitionId(), false),
 				themeDisplay));
@@ -373,8 +373,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 		com.liferay.object.rest.dto.v1_0.ObjectEntry objectEntry =
 			_getObjectEntry(
-				serviceBuilderObjectEntry.getExternalReferenceCode(),
-				_objectDefinition, themeDisplay);
+				_objectDefinition, serviceBuilderObjectEntry, themeDisplay);
 
 		objectEntryFieldValues.add(
 			new InfoFieldValue<>(
@@ -424,8 +423,19 @@ public class ObjectEntryInfoItemFieldValuesProvider
 	}
 
 	private com.liferay.object.rest.dto.v1_0.ObjectEntry _getObjectEntry(
-		String externalReferenceCode, ObjectDefinition objectDefinition,
+		ObjectDefinition objectDefinition, ObjectEntry objectEntry,
 		ThemeDisplay themeDisplay) {
+
+		if (objectEntry instanceof ProxyObjectEntry) {
+			ProxyObjectEntry proxyObjectEntry = (ProxyObjectEntry)objectEntry;
+
+			com.liferay.object.rest.dto.v1_0.ObjectEntry dtoObjectEntry =
+				proxyObjectEntry.getDTOObjectEntry();
+
+			if (dtoObjectEntry != null) {
+				return dtoObjectEntry;
+			}
+		}
 
 		ObjectEntryManager objectEntryManager =
 			_objectEntryManagerRegistry.getObjectEntryManager(
@@ -437,7 +447,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 				new DefaultDTOConverterContext(
 					false, null, null, null, null, themeDisplay.getLocale(),
 					null, themeDisplay.getUser()),
-				externalReferenceCode, objectDefinition,
+				objectEntry.getExternalReferenceCode(), objectDefinition,
 				ObjectEntryUtil.getScopeKey(
 					themeDisplay.getScopeGroupId(), objectDefinition,
 					_objectScopeProviderRegistry));
@@ -521,8 +531,7 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 		com.liferay.object.rest.dto.v1_0.ObjectEntry objectEntry =
 			_getObjectEntry(
-				serviceBuilderObjectEntry.getExternalReferenceCode(),
-				objectDefinition, themeDisplay);
+				objectDefinition, serviceBuilderObjectEntry, themeDisplay);
 
 		if (objectEntry == null) {
 			return Collections.emptyList();

@@ -224,6 +224,11 @@ definition {
 
 	@summary = "Default summary"
 	macro configureExport(containsHeaders = null, templateName = null, entityType = null, scope = null, exportFields = null, exportFileFormat = null) {
+		Select(
+			key_selectFieldLabel = "Export File Format",
+			locator1 = "ImportExport#SELECT",
+			value1 = ${exportFileFormat});
+
 		if (isSet(entityType)) {
 			ImportExport.selectEntity(entityType = ${entityType});
 		}
@@ -233,11 +238,6 @@ definition {
 				locator1 = "Select#SCOPE_CONFIGURATION",
 				value1 = ${scope});
 		}
-
-		Select(
-			key_selectFieldLabel = "Export File Format",
-			locator1 = "ImportExport#SELECT",
-			value1 = ${exportFileFormat});
 
 		if (${containsHeaders} == "false") {
 			Uncheck.uncheckNotVisible(

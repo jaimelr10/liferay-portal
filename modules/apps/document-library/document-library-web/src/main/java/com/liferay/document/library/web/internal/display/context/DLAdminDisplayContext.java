@@ -1028,6 +1028,13 @@ public class DLAdminDisplayContext {
 			_searchFolderId = ParamUtil.getLong(
 				_httpServletRequest, "searchFolderId",
 				ParamUtil.getLong(_httpServletRequest, "folderId"));
+
+			if ((_rootFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) &&
+				(_searchFolderId ==
+					DLFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
+
+				_searchFolderId = _rootFolderId;
+			}
 		}
 
 		return _searchFolderId;
@@ -1167,7 +1174,8 @@ public class DLAdminDisplayContext {
 				getAssetCategoryIds(), getAssetTagIds(), getExtensions(),
 				getFileEntryTypeId(), userId));
 
-		long folderId = ParamUtil.getLong(_httpServletRequest, "folderId");
+		long folderId = ParamUtil.getLong(
+			_httpServletRequest, "folderId", getFolderId());
 
 		if (folderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 			searchContext.setFolderIds(new long[] {folderId});

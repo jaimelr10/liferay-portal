@@ -186,6 +186,7 @@ type Channel = {
 
 type DefaultProperties = {
 	cloudBaseURL: string;
+	eulaBaseURL: string;
 };
 
 interface CommerceAccount extends Omit<Account, 'description'> {
@@ -271,6 +272,7 @@ interface PlacedOrderItems {
 	name: string;
 	options: string;
 	price: {
+		price: number;
 		priceFormatted: string;
 	};
 	productId: number;
@@ -500,6 +502,7 @@ type UserAccount = {
 	name: string;
 	newsSubscription: boolean;
 	password: string;
+	roleBriefs: {id: number; name: string}[];
 };
 
 type RequestBody = {

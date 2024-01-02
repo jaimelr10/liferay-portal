@@ -27,6 +27,7 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch7.internal.connection.HttpPortRange;
 import com.liferay.portal.search.elasticsearch7.internal.index.constants.SidecarVersionConstants;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
+import com.liferay.portal.util.PropsValues;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,7 @@ import java.net.URLClassLoader;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
@@ -64,17 +66,13 @@ public class Sidecar {
 	public Sidecar(
 		ElasticsearchConfigurationWrapper elasticsearchConfigurationWrapper,
 		ElasticsearchInstancePaths elasticsearchInstancePaths,
-		ProcessExecutor processExecutor,
-		ProcessExecutorPaths processExecutorPaths,
-		SidecarManager sidecarManager) {
+		ProcessExecutor processExecutor, SidecarManager sidecarManager) {
 
 		_elasticsearchConfigurationWrapper = elasticsearchConfigurationWrapper;
 		_elasticsearchInstancePaths = elasticsearchInstancePaths;
 		_processExecutor = processExecutor;
-		_processExecutorPaths = processExecutorPaths;
 		_sidecarManager = sidecarManager;
 
-		_dataHomePath = elasticsearchInstancePaths.getDataPath();
 		_sidecarHomePath = elasticsearchInstancePaths.getHomePath();
 	}
 
@@ -268,7 +266,7 @@ public class Sidecar {
 
 	private String _getBootstrapClassPath() {
 		return _createClasspath(
-			_processExecutorPaths.getLibPath(),
+			Paths.get(PropsValues.LIFERAY_SHIELDED_CONTAINER_LIB_PORTAL_DIR),
 			path -> _fileNameContains(path, "petra"));
 	}
 
@@ -582,13 +580,11 @@ public class Sidecar {
 	private static final Log _log = LogFactoryUtil.getLog(Sidecar.class);
 
 	private String _address;
-	private final Path _dataHomePath;
 	private final ElasticsearchConfigurationWrapper
 		_elasticsearchConfigurationWrapper;
 	private final ElasticsearchInstancePaths _elasticsearchInstancePaths;
 	private ProcessChannel<Serializable> _processChannel;
 	private final ProcessExecutor _processExecutor;
-	private final ProcessExecutorPaths _processExecutorPaths;
 	private FutureListener<Serializable> _restartFutureListener;
 	private final Path _sidecarHomePath;
 	private SidecarManager _sidecarManager;

@@ -1000,7 +1000,7 @@ public class JournalDisplayContext {
 			return null;
 		}
 
-		if (Objects.equals(_getSearchLocation(), "current-folder")) {
+		if (_isSearchLocationCurrentFolder()) {
 			JournalFolder folder = getFolder();
 
 			return folder.getName();
@@ -1180,7 +1180,7 @@ public class JournalDisplayContext {
 	public VerticalNavItemList getVerticalNavItemList() {
 		return VerticalNavItemListBuilder.add(
 			verticalNavItem -> {
-				verticalNavItem.setActive(getHighlightedDDMStructureId() == 0);
+				verticalNavItem.setActive(!isHighlightedDDMStructure());
 				verticalNavItem.setHref(
 					PortletURLBuilder.createRenderURL(
 						_liferayPortletResponse
@@ -1240,6 +1240,14 @@ public class JournalDisplayContext {
 
 				return true;
 			}
+		}
+
+		return false;
+	}
+
+	public boolean isHighlightedDDMStructure() {
+		if (getHighlightedDDMStructureId() > 0) {
+			return true;
 		}
 
 		return false;
@@ -1502,9 +1510,9 @@ public class JournalDisplayContext {
 		}
 
 		if (!FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
-			if (!isSearch() && !isNavigationMine() && !isNavigationRecent() &&
-				(getDDMStructureId() <= 0) &&
-				(getHighlightedDDMStructureId() <= 0)) {
+			if (!isHighlightedDDMStructure() && !isSearch() &&
+				!isNavigationMine() && !isNavigationRecent() &&
+				(getDDMStructureId() <= 0)) {
 
 				SearchContainer<Object> articleAndFolderSearchContainer =
 					_getArticleAndFolderSearchContainer();
@@ -1568,7 +1576,7 @@ public class JournalDisplayContext {
 				return _articleSearchContainer;
 			}
 
-			if (!isSearch() && (getHighlightedDDMStructureId() > 0)) {
+			if (isHighlightedDDMStructure() && !isSearch()) {
 				SearchContainer<JournalArticle> articleSearchContainer =
 					_getArticleSearchContainer();
 
@@ -1592,9 +1600,9 @@ public class JournalDisplayContext {
 		}
 
 		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
-			!isTypeVersions() && !isSearch() && !isNavigationMine() &&
-			!isNavigationRecent() && (getDDMStructureId() <= 0) &&
-			(getHighlightedDDMStructureId() <= 0) &&
+			!isHighlightedDDMStructure() && !isNavigationMine() &&
+			!isNavigationRecent() && !isSearch() && !isTypeVersions() &&
+			(getDDMStructureId() <= 0) &&
 			(getStatus() == WorkflowConstants.STATUS_ANY) &&
 			ArrayUtil.isEmpty(_getAssetCategoryIds()) &&
 			ArrayUtil.isEmpty(_getAssetTagNames())) {
@@ -1614,6 +1622,28 @@ public class JournalDisplayContext {
 					WorkflowConstants.STATUS_ANY));
 
 			_articleSearchContainer = articleAndFolderSearchContainer;
+
+			return _articleSearchContainer;
+		}
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
+			(isHighlightedDDMStructure() || isNavigationStructure())) {
+
+			SearchContainer<JournalArticle> articleSearchContainer =
+				_getArticleSearchContainer();
+
+			SearchResponse searchResponse =
+				JournalSearcherUtil.searchJournalArticles(
+					searchContext -> _populateSearchContext(
+						articleSearchContainer.getStart(),
+						articleSearchContainer.getEnd(), searchContext, false));
+
+			articleSearchContainer.setResultsAndTotal(
+				() -> JournalSearcherUtil.transformJournalArticles(
+					searchResponse.getDocuments71()),
+				searchResponse.getTotalHits());
+
+			_articleSearchContainer = articleSearchContainer;
 
 			return _articleSearchContainer;
 		}
@@ -1791,12 +1821,12 @@ public class JournalDisplayContext {
 		}
 
 		if (FeatureFlagManagerUtil.isEnabled("LPS-196768")) {
-			if (Objects.equals(_getSearchLocation(), "current-folder")) {
+			if (_isSearchLocationCurrentFolder()) {
 				booleanFilter.add(
 					_getCurrentFolderFilter(), BooleanClauseOccur.MUST_NOT);
 			}
 
-			if (!isSearch()) {
+			if (!isHighlightedDDMStructure() && !isSearch()) {
 				booleanFilter.addTerm(
 					Field.FOLDER_ID, String.valueOf(getFolderId()),
 					BooleanClauseOccur.MUST);
@@ -2147,6 +2177,22 @@ public class JournalDisplayContext {
 		return false;
 	}
 
+	private boolean _isSearchInAllFields() {
+		if (Objects.equals(_getSearchIn(), "all-fields")) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean _isSearchLocationCurrentFolder() {
+		if (Objects.equals(_getSearchLocation(), "current-folder")) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private void _populateSearchContext(
 		int start, int end, SearchContext searchContext, boolean showVersions) {
 
@@ -2154,7 +2200,7 @@ public class JournalDisplayContext {
 
 		Map<String, Serializable> attributes = searchContext.getAttributes();
 
-		if (Objects.equals(_getSearchIn(), "all-fields")) {
+		if (_isSearchInAllFields()) {
 			attributes.put(Field.ARTICLE_ID, getKeywords());
 			attributes.put(Field.CONTENT, getKeywords());
 			attributes.put(Field.DESCRIPTION, getKeywords());
@@ -2182,14 +2228,11 @@ public class JournalDisplayContext {
 		long ddmStructureId = ParamUtil.getLong(
 			_httpServletRequest, "ddmStructureId");
 
-		long highlightedDDMStructureId = ParamUtil.getLong(
-			_httpServletRequest, "highlightedDDMStructureId");
-
 		if (FeatureFlagManagerUtil.isEnabled("LPS-194763") &&
-			(highlightedDDMStructureId > 0)) {
+			isHighlightedDDMStructure()) {
 
 			searchContext.setClassTypeIds(
-				new long[] {highlightedDDMStructureId});
+				new long[] {getHighlightedDDMStructureId()});
 		}
 		else if (ddmStructureId > 0) {
 			searchContext.setClassTypeIds(new long[] {ddmStructureId});
@@ -2199,13 +2242,13 @@ public class JournalDisplayContext {
 		searchContext.setEnd(end);
 
 		if (FeatureFlagManagerUtil.isEnabled("LPS-196768") &&
-			isNavigationStructure()) {
+			(isHighlightedDDMStructure() || isNavigationStructure())) {
 
 			searchContext.setEntryClassNames(
 				new String[] {JournalArticle.class.getName()});
 		}
 
-		if (Objects.equals(_getSearchLocation(), "current-folder")) {
+		if (!isHighlightedDDMStructure() && _isSearchLocationCurrentFolder()) {
 			searchContext.setFolderIds(
 				Collections.singletonList(getFolderId()));
 		}
@@ -2213,7 +2256,7 @@ public class JournalDisplayContext {
 		searchContext.setGroupIds(new long[] {_themeDisplay.getScopeGroupId()});
 		searchContext.setIncludeInternalAssetCategories(true);
 
-		if (Objects.equals(_getSearchIn(), "all-fields")) {
+		if (_isSearchInAllFields()) {
 			searchContext.setKeywords(getKeywords());
 		}
 

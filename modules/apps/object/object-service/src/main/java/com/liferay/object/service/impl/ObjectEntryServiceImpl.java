@@ -30,19 +30,25 @@ import com.liferay.object.tree.Node;
 import com.liferay.object.tree.Tree;
 import com.liferay.object.tree.TreeFactory;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.ResourcePermission;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserGroupRole;
+import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
+import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -53,8 +59,14 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserNotificationEventLocalService;
+import com.liferay.portal.kernel.transaction.Propagation;
+import com.liferay.portal.kernel.transaction.TransactionConfig;
+import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -65,6 +77,8 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -586,11 +600,81 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 			LocalDate.now(
 			).minusDays(
 				Objects.equals(_objectConfiguration.timeScale(), "days") ?
-					_objectConfiguration.duration() :
-						_objectConfiguration.duration() * 7
+					_objectConfiguration.duration() - 1 :
+						(_objectConfiguration.duration() * 7) - 1
 			).atStartOfDay(
 				ZoneId.systemDefault()
 			).toInstant());
+	}
+
+	private void _sendUserNotificationEvents(
+			long userId, String portletId, ObjectDefinition objectDefinition)
+		throws PortalException {
+
+		_userNotificationEventLocalService.sendUserNotificationEvents(
+			userId, portletId, UserNotificationDeliveryConstants.TYPE_WEBSITE,
+			true, false,
+			JSONUtil.put(
+				"className", objectDefinition.getClassName()
+			).put(
+				"externalReferenceCode",
+				objectDefinition.getExternalReferenceCode()
+			).put(
+				"notificationMessage",
+				StringBundler.concat(
+					"The limit of guest entries for ",
+					objectDefinition.getLabel(
+						objectDefinition.getDefaultLanguageId()),
+					" has been reached and will no longer be accepted. Go to ",
+					"Instance Settings to change this.")
+			).put(
+				"portletId", portletId
+			));
+	}
+
+	private void _sendUserNotificationEvents(ObjectDefinition objectDefinition)
+		throws PortalException {
+
+		List<Long> userIds = new ArrayList<>();
+
+		String portletId =
+			objectDefinition.isUnmodifiableSystemObject() ? StringPool.BLANK :
+				objectDefinition.getPortletId();
+		long timestamp = LocalDate.now(
+		).atStartOfDay(
+			ZoneId.systemDefault()
+		).toInstant(
+		).getEpochSecond();
+
+		Role role = _roleLocalService.getRole(
+			objectDefinition.getCompanyId(), RoleConstants.ADMINISTRATOR);
+
+		for (long userId : _userLocalService.getRoleUserIds(role.getRoleId())) {
+			int count =
+				_userNotificationEventLocalService.
+					getUserNotificationEventsCount(
+						userId, portletId, timestamp, true);
+
+			if (count == 0) {
+				userIds.add(userId);
+			}
+		}
+
+		try {
+			TransactionInvokerUtil.invoke(
+				_transactionConfig,
+				() -> {
+					for (long userId : userIds) {
+						_sendUserNotificationEvents(
+							userId, portletId, objectDefinition);
+					}
+
+					return null;
+				});
+		}
+		catch (Throwable throwable) {
+			ReflectionUtil.throwException(throwable);
+		}
 	}
 
 	private void _validateSubmissionLimit(long objectDefinitionId, User user)
@@ -632,12 +716,16 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 			if (count >=
 					maximumNumberOfGuestUserObjectEntriesPerObjectDefinition) {
 
+				_sendUserNotificationEvents(objectDefinition);
+
 				throw new ObjectEntryCountException(
+					Collections.singletonList(objectDefinition.getLabel()),
 					StringBundler.concat(
-						"Unable to exceed ",
-						maximumNumberOfGuestUserObjectEntriesPerObjectDefinition,
-						" guest object entries for object definition ",
-						objectDefinitionId));
+						"The limit of guest entries for ",
+						objectDefinition.getLabel(),
+						" has been reached and will no longer be accepted"),
+					"the-limit-of-guest-entries-for-object-definition-has-" +
+						"been-reached-and-will-no-longer-be-accepted");
 			}
 		}
 		else {
@@ -659,6 +747,10 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 			}
 		}
 	}
+
+	private static final TransactionConfig _transactionConfig =
+		TransactionConfig.Factory.create(
+			Propagation.REQUIRES_NEW, new Class<?>[] {Exception.class});
 
 	@Reference
 	private AccountEntryLocalService _accountEntryLocalService;
@@ -691,9 +783,19 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 	private ResourcePermissionLocalService _resourcePermissionLocalService;
 
 	@Reference
+	private RoleLocalService _roleLocalService;
+
+	@Reference
 	private TreeFactory _treeFactory;
 
 	@Reference
 	private UserGroupRoleLocalService _userGroupRoleLocalService;
+
+	@Reference
+	private UserLocalService _userLocalService;
+
+	@Reference
+	private UserNotificationEventLocalService
+		_userNotificationEventLocalService;
 
 }

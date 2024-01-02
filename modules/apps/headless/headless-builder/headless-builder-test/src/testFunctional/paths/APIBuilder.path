@@ -26,6 +26,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ALERT_INDICATOR</td>
+	<td>//span[contains(@class,'alert-indicator')]/../strong</td>
+	<td></td>
+</tr>
+<tr>
 	<td>API_APPLICATION_TO_API_ENDPOINTS</td>
 	<td>//button[@class='dropdown-item' and text()='${applicationId}']</td>
 	<td></td>
@@ -128,6 +133,11 @@
 <tr>
 	<td>ODATA_TEXTAREA</td>
 	<td>//textarea[@placeholder='Add a ${fieldName} using OData.']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PATH_PARAMETER_PROPERTY_PREVIEW</td>
+	<td>//label[contains(.,'Path Parameter Property')]/../p</td>
 	<td></td>
 </tr>
 <tr>

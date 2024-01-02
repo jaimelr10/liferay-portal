@@ -54,7 +54,8 @@ public abstract class BaseGitHubEventHandler extends BaseEventHandler {
 		return gitHubFactory.newGitHubRepository(repositoryJSONObject);
 	}
 
-	protected String getJenkinsBranchBuildPropertyValue(String propertyName)
+	protected String getJenkinsBranchBuildPropertyValue(
+			String propertyName, String... propertyOpts)
 		throws IOException {
 
 		GitBranchEntity gitBranchEntity = getJenkinsGitBranchEntity();
@@ -71,7 +72,8 @@ public abstract class BaseGitHubEventHandler extends BaseEventHandler {
 			return null;
 		}
 
-		return PropertiesUtil.getPropertyValue(properties, propertyName);
+		return PropertiesUtil.getPropertyValue(
+			properties, propertyName, propertyOpts);
 	}
 
 	protected GitBranchEntity getJenkinsGitBranchEntity() {
@@ -89,6 +91,10 @@ public abstract class BaseGitHubEventHandler extends BaseEventHandler {
 	}
 
 	protected void invokeJobEntity(JobEntity jobEntity) {
+		if (jobEntity == null) {
+			return;
+		}
+
 		BuildEntityRepository buildEntityRepository = getBuildRepository();
 
 		for (JSONObject initialBuildJSONObject :

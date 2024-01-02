@@ -1263,8 +1263,6 @@ definition {
 	macro configureDocumentEmailSenderInfo(senderName = null, senderEmail = null) {
 		Portlet.gotoPortletOptions(portletOption = "Configuration");
 
-		SelectFrame(locator1 = "IFrame#CONFIGURATION");
-
 		Click(
 			key_navTab = "Email From",
 			locator1 = "DocumentsAndMediaConfiguration#CONFIGURATION_NAV_ITEM");
@@ -1283,10 +1281,6 @@ definition {
 				value1 = ${senderEmail});
 		}
 
-		SelectFrame(value1 = "relative=top");
-
-		SelectFrame(locator1 = "IFrame#MODAL_BODY");
-
 		if (isSet(cancel)) {
 			Button.clickCancel();
 		}
@@ -1303,12 +1297,7 @@ definition {
 
 		MenuItem.click(menuItem = "Configuration");
 
-		SelectFrame(locator1 = "IFrame#CONFIGURATION");
-
-		AssertClick(
-			key_navTab = ${navTab},
-			locator1 = "DocumentsAndMediaConfiguration#CONFIGURATION_NAV_ITEM",
-			value1 = ${navTab});
+		MenuBar.click(menuBar = ${navTab});
 
 		if (isSet(bodyContent)) {
 			SelectFrame.selectFrameNoLoading(locator1 = "CKEditor#BODY_FIELD_IFRAME");
@@ -1318,8 +1307,6 @@ definition {
 				value1 = ${bodyContent});
 
 			SelectFrame(value1 = "relative=top");
-
-			SelectFrame(locator1 = "IFrame#MODAL_BODY");
 		}
 
 		PortletEntry.save();
@@ -2418,7 +2405,9 @@ definition {
 				locator1 = "ManagementBar#NAVBAR_TEXT",
 				value1 = ${bulkSelection});
 
-			Click(locator1 = "Icon#MOVE");
+			Click(
+				key_text = "Move",
+				locator1 = "Button#ANY");
 		}
 		else {
 			Click(locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_VERTICAL_ELLIPSIS");

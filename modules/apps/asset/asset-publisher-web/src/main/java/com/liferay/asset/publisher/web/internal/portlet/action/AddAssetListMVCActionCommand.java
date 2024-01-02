@@ -95,15 +95,14 @@ public class AddAssetListMVCActionCommand extends BaseMVCActionCommand {
 				_saveManualAssetList(actionRequest, title, portletPreferences);
 			}
 
-			JSONObject jsonObject = JSONUtil.put("redirectURL", redirect);
+			JSONPortletResponseUtil.writeJSON(
+				actionRequest, actionResponse,
+				JSONUtil.put("redirectURL", redirect));
 
 			hideDefaultSuccessMessage(actionRequest);
 
 			MultiSessionMessages.add(
 				actionRequest, portletResource + "requestProcessed");
-
-			JSONPortletResponseUtil.writeJSON(
-				actionRequest, actionResponse, jsonObject);
 		}
 		catch (PortalException portalException) {
 			hideDefaultErrorMessage(actionRequest);

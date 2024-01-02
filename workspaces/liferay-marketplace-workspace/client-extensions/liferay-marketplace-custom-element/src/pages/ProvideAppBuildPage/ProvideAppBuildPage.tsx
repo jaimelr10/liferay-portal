@@ -415,7 +415,7 @@ export function ProvideAppBuildPage({
 			/>
 
 			<Section
-				label={i18n.translate('cloud-compatible-?')}
+				label={i18n.translate('cloud-compatible')}
 				required
 				tooltip={i18n.translate(
 					'a-liferay-cloud-app-is-a-collection-of-1-to-n-client-extension-artifacts-made-available-via-the-liferay-marketplace-it-is-installed-and-managed-as-a-single-atomic-unit-in-liferay-experience-cloud-a-dxp-app-is-a-jar-based-collection-meant-to-run-within-liferay-dxp-it-is-only-supported-on-self-hosted-or-self-managed-liferay-cloud-instances'
@@ -425,7 +425,7 @@ export function ProvideAppBuildPage({
 				<div className="provide-app-build-page-cloud-compatible-container">
 					<RadioCard
 						description={i18n.translate(
-							'lorem-ipsum-dolor-sit-amet-consectetur'
+							'create-a-cloud-app-using-client-extensions'
 						)}
 						icon={taskCheckedIcon}
 						onChange={() => handleAppTypeChange(ProductType.CLOUD)}
@@ -446,7 +446,7 @@ export function ProvideAppBuildPage({
 
 					<RadioCard
 						description={i18n.translate(
-							'lorem-ipsum-dolor-sit-amet-consectetur'
+							'create-a-dxp-app-using-a-plugin-package'
 						)}
 						icon={cancelIcon}
 						onChange={() => handleAppTypeChange(ProductType.DXP)}

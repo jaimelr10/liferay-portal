@@ -892,6 +892,7 @@ export function setSessionValue(
 export function isReducedMotion(): boolean;
 
 /**
- * Renderer API
+ * Client Extensions API
  */
-export {getModuleAndSymbolNames, loadModule} from './module';
+export {default as loadClientExtensions} from './utils/client_extensions/loadClientExtensions';
+export {loadModule} from './utils/client_extensions/loadModule';

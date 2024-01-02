@@ -7,7 +7,7 @@ import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import {TreeView as ClayTreeView} from '@clayui/core';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import {fetch, navigate, openModal, openToast} from 'frontend-js-web';
+import {fetch, navigate, openModal, openToast, sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useCallback, useEffect, useState} from 'react';
 
@@ -15,7 +15,6 @@ const ACTION_COPY_PAGE = 'copy-page';
 const ACTION_DELETE = 'delete';
 const ENTER_KEYCODE = 13;
 const ROOT_ITEM_ID = '0';
-const NOT_DROPPABLE_TYPES = ['url', 'link_to_layout'];
 
 export default function PagesTree({
 	config,
@@ -68,7 +67,29 @@ export default function PagesTree({
 
 	const onItemMove = useCallback(
 		(item, parentItem, {next: priority}) => {
-			if (NOT_DROPPABLE_TYPES.includes(parentItem.type)) {
+			if (!parentItem.parentable) {
+				openErrorToast(
+					sub(
+						Liferay.Language.get(
+							'pages-of-type-x-cannot-have-child-pages'
+						),
+						parentItem.typeName
+					)
+				);
+
+				return false;
+			}
+
+			if (priority === 0 && !item.firstPageable) {
+				openErrorToast(
+					sub(
+						Liferay.Language.get(
+							'the-first-page-cannot-be-of-type-x'
+						),
+						item.typeName
+					)
+				);
+
 				return false;
 			}
 
@@ -377,21 +398,31 @@ function normalizeActions(actions, namespace) {
 										fetch(item.data.url, {
 											method: 'post',
 										})
-											.then((response) => {
-												if (response.redirected) {
-													navigate(response.url);
+											.then((response) => response.json())
+											.then(
+												({
+													errorMessage,
+													redirectURL,
+												}) => {
+													if (errorMessage) {
+														openErrorToast(
+															errorMessage
+														);
+													}
+													else {
+														openToast({
+															message: Liferay.Language.get(
+																'your-request-processed-successfully'
+															),
+															toastProps: {
+																autoClose: 5000,
+															},
+															type: 'success',
+														});
+														navigate(redirectURL);
+													}
 												}
-
-												openToast({
-													message: Liferay.Language.get(
-														'your-request-processed-successfully'
-													),
-													toastProps: {
-														autoClose: 5000,
-													},
-													type: 'success',
-												});
-											})
+											)
 											.catch(() => openErrorToast());
 									},
 								},
@@ -419,9 +450,10 @@ function normalizeActions(actions, namespace) {
 	}));
 }
 
-function openErrorToast() {
+function openErrorToast(message) {
 	openToast({
-		message: Liferay.Language.get('an-unexpected-error-occurred'),
+		message:
+			message || Liferay.Language.get('an-unexpected-error-occurred'),
 		title: Liferay.Language.get('error'),
 		type: 'danger',
 	});

@@ -6,9 +6,6 @@
 package com.liferay.scim.rest.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.expando.kernel.model.ExpandoColumn;
-import com.liferay.expando.kernel.model.ExpandoTable;
-import com.liferay.expando.kernel.model.ExpandoTableConstants;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
@@ -36,6 +33,7 @@ import com.liferay.scim.rest.client.dto.v1_0.MultiValuedAttribute;
 import com.liferay.scim.rest.client.dto.v1_0.Name;
 import com.liferay.scim.rest.client.dto.v1_0.User;
 import com.liferay.scim.rest.client.http.HttpInvoker;
+import com.liferay.scim.rest.resource.v1_0.test.util.ScimTestUtil;
 
 import java.util.Arrays;
 
@@ -98,6 +96,26 @@ public class UserResourceTest extends BaseUserResourceTestCase {
 				user.getExternalId(), TestPropsValues.getCompanyId());
 
 		Assert.assertFalse(portalUser.isActive());
+
+		// Delete an existing user with no SCIM client ID
+
+		portalUser = UserTestUtil.addUser();
+
+		assertHttpResponseStatusCode(
+			404,
+			userResource.deleteV2UserHttpResponse(
+				String.valueOf(portalUser.getUserId())));
+
+		// Delete an existing user provided by another SCIM client
+
+		ScimTestUtil.saveSCIMClientId(
+			com.liferay.portal.kernel.model.User.class.getName(),
+			portalUser.getUserId(), portalUser.getCompanyId());
+
+		assertHttpResponseStatusCode(
+			409,
+			userResource.deleteV2UserHttpResponse(
+				String.valueOf(portalUser.getUserId())));
 	}
 
 	@Override
@@ -118,6 +136,8 @@ public class UserResourceTest extends BaseUserResourceTestCase {
 	@Override
 	@Test
 	public void testGetV2Users() throws Exception {
+		UserTestUtil.addUser();
+
 		_assertListResponse(userResource.getV2Users(5, 0), 0, 0);
 
 		User user1 = testDeleteV2User_addUser();
@@ -188,7 +208,9 @@ public class UserResourceTest extends BaseUserResourceTestCase {
 		com.liferay.portal.kernel.model.User portalUser3 =
 			UserTestUtil.addUser();
 
-		_saveSCIMClientId(portalUser3);
+		ScimTestUtil.saveSCIMClientId(
+			com.liferay.portal.kernel.model.User.class.getName(),
+			portalUser3.getUserId(), portalUser3.getCompanyId());
 
 		User postUser3 = _createUser(portalUser3);
 
@@ -336,26 +358,6 @@ public class UserResourceTest extends BaseUserResourceTestCase {
 		Object userObject = userResource.getV2UserById(userId);
 
 		return User.toDTO(userObject.toString());
-	}
-
-	private void _saveSCIMClientId(
-			com.liferay.portal.kernel.model.User portalUser)
-		throws Exception {
-
-		ExpandoTable expandoTable = _expandoTableLocalService.getTable(
-			portalUser.getCompanyId(),
-			_classNameLocalService.getClassNameId(
-				com.liferay.portal.kernel.model.User.class.getName()),
-			ExpandoTableConstants.DEFAULT_TABLE_NAME);
-
-		ExpandoColumn expandoColumn = _expandoColumnLocalService.getColumn(
-			expandoTable.getTableId(), "scimClientId");
-
-		_expandoValueLocalService.addValue(
-			portalUser.getCompanyId(),
-			com.liferay.portal.kernel.model.User.class.getName(),
-			ExpandoTableConstants.DEFAULT_TABLE_NAME, expandoColumn.getName(),
-			portalUser.getUserId(), RandomTestUtil.randomString());
 	}
 
 	private static String _pid;

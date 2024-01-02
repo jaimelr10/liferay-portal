@@ -33,6 +33,7 @@ import com.liferay.scim.rest.client.dto.v1_0.Name;
 import com.liferay.scim.rest.client.dto.v1_0.User;
 import com.liferay.scim.rest.client.http.HttpInvoker;
 import com.liferay.scim.rest.client.resource.v1_0.UserResource;
+import com.liferay.scim.rest.resource.v1_0.test.util.ScimTestUtil;
 
 import java.util.Arrays;
 
@@ -101,6 +102,28 @@ public class GroupResourceTest extends BaseGroupResourceTestCase {
 		Assert.assertNull(
 			_userGroupLocalService.fetchUserGroupByExternalReferenceCode(
 				group.getExternalId(), TestPropsValues.getCompanyId()));
+
+		// Delete an existing group with no SCIM client ID
+
+		UserGroup userGroup = _userGroupLocalService.addUserGroup(
+			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(),
+			RandomTestUtil.randomString(), null, new ServiceContext());
+
+		assertHttpResponseStatusCode(
+			404,
+			groupResource.deleteV2GroupHttpResponse(
+				String.valueOf(userGroup.getUserGroupId())));
+
+		// Delete an existing group provided by another SCIM client
+
+		ScimTestUtil.saveSCIMClientId(
+			UserGroup.class.getName(), userGroup.getUserGroupId(),
+			userGroup.getCompanyId());
+
+		assertHttpResponseStatusCode(
+			409,
+			groupResource.deleteV2GroupHttpResponse(
+				String.valueOf(userGroup.getUserGroupId())));
 	}
 
 	@Override
@@ -121,6 +144,10 @@ public class GroupResourceTest extends BaseGroupResourceTestCase {
 	@Override
 	@Test
 	public void testGetV2Groups() throws Exception {
+		_userGroupLocalService.addUserGroup(
+			TestPropsValues.getUserId(), TestPropsValues.getCompanyId(),
+			RandomTestUtil.randomString(), null, new ServiceContext());
+
 		_assertListResponse(groupResource.getV2Groups(5, 0), 0, 0);
 
 		Group group1 = testDeleteV2Group_addGroup();

@@ -30,12 +30,12 @@ public class CommercePaymentEntryConstants {
 	public static final int STATUS_PENDING =
 		CommerceOrderPaymentConstants.STATUS_PENDING;
 
-	public static final int STATUS_REFUND =
+	public static final int STATUS_REFUNDED =
 		CommerceOrderPaymentConstants.STATUS_REFUNDED;
 
 	public static final int[] STATUSES = {
 		STATUS_AUTHORIZED, STATUS_CANCELLED, STATUS_COMPLETED, STATUS_CREATED,
-		STATUS_FAILED, STATUS_PENDING, STATUS_REFUND
+		STATUS_FAILED, STATUS_PENDING, STATUS_REFUNDED
 	};
 
 	public static final int TYPE_PAYMENT = 0;
@@ -53,8 +53,8 @@ public class CommercePaymentEntryConstants {
 		if (paymentStatus == STATUS_CREATED) {
 			return "created";
 		}
-		else if (paymentStatus == STATUS_REFUND) {
-			return "refund";
+		else if (paymentStatus == STATUS_REFUNDED) {
+			return "refunded";
 		}
 
 		return CommerceOrderPaymentConstants.getOrderPaymentStatusLabel(

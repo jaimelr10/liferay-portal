@@ -195,7 +195,7 @@ public class FDSViewFragmentRenderer implements FragmentRenderer {
 
 				ComponentDescriptor componentDescriptor =
 					new ComponentDescriptor(
-						"{BetaBadge} from frontend-js-components-web",
+						"{FeatureIndicator} from frontend-js-components-web",
 						betaBadgeComponentId, null, true);
 
 				_reactRenderer.renderReact(
@@ -686,6 +686,8 @@ public class FDSViewFragmentRenderer implements FragmentRenderer {
 						"method", properties.get("method")
 					).put(
 						"permissionKey", properties.get("permissionKey")
+					).put(
+						"size", properties.get("modalSize")
 					).put(
 						"status", properties.get("confirmationMessageType")
 					).put(

@@ -12,6 +12,7 @@ import com.liferay.commerce.payment.service.base.CommercePaymentEntryServiceBase
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -30,6 +31,7 @@ import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Luca Pellizzon
+ * @author Alessio Antonio Rendina
  */
 @Component(
 	property = {
@@ -79,8 +81,9 @@ public class CommercePaymentEntryServiceImpl
 		throws PortalException {
 
 		CommercePaymentEntry commercePaymentEntry =
-			commercePaymentEntryLocalService.fetchByExternalReferenceCode(
-				externalReferenceCode, serviceContext.getCompanyId());
+			commercePaymentEntryLocalService.
+				fetchCommercePaymentEntryByExternalReferenceCode(
+					externalReferenceCode, serviceContext.getCompanyId());
 
 		if (commercePaymentEntry == null) {
 			String actionId = CommercePaymentEntryActionKeys.ADD_PAYMENT;
@@ -120,13 +123,32 @@ public class CommercePaymentEntryServiceImpl
 	}
 
 	@Override
-	public CommercePaymentEntry fetchByExternalReferenceCode(
-			String externalReferenceCode, long companyId)
+	public CommercePaymentEntry fetchCommercePaymentEntry(
+			long commercePaymentEntryId)
 		throws PortalException {
 
 		CommercePaymentEntry commercePaymentEntry =
-			commercePaymentEntryLocalService.fetchByExternalReferenceCode(
-				externalReferenceCode, companyId);
+			commercePaymentEntryLocalService.fetchCommercePaymentEntry(
+				commercePaymentEntryId);
+
+		if (commercePaymentEntry != null) {
+			_commercePaymentEntryModelResourcePermission.check(
+				getPermissionChecker(), commercePaymentEntry, ActionKeys.VIEW);
+		}
+
+		return commercePaymentEntry;
+	}
+
+	@Override
+	public CommercePaymentEntry
+			fetchCommercePaymentEntryByExternalReferenceCode(
+				String externalReferenceCode, long companyId)
+		throws PortalException {
+
+		CommercePaymentEntry commercePaymentEntry =
+			commercePaymentEntryLocalService.
+				fetchCommercePaymentEntryByExternalReferenceCode(
+					externalReferenceCode, companyId);
 
 		if (commercePaymentEntry != null) {
 			_commercePaymentEntryModelResourcePermission.check(
@@ -196,8 +218,7 @@ public class CommercePaymentEntryServiceImpl
 			long companyId, long[] classNameIds, long[] classPKs,
 			String[] currencyCodes, String keywords,
 			String[] paymentMethodNames, int[] paymentStatuses,
-			boolean excludeStatuses, int start, int end, String orderByField,
-			boolean reverse)
+			boolean excludeStatuses, int start, int end, Sort sort)
 		throws PortalException {
 
 		BaseModelSearchResult<CommercePaymentEntry> baseModelSearchResult =
@@ -218,7 +239,7 @@ public class CommercePaymentEntryServiceImpl
 				).put(
 					"excludeStatuses", excludeStatuses
 				).build(),
-				start, end, orderByField, reverse);
+				start, end, sort);
 
 		return baseModelSearchResult.getBaseModels();
 	}
@@ -244,28 +265,39 @@ public class CommercePaymentEntryServiceImpl
 	}
 
 	@Override
-	public CommercePaymentEntry updateCommercePaymentEntryNote(
+	public CommercePaymentEntry updateExternalReferenceCode(
+			long commercePaymentEntryId, String externalReferenceCode)
+		throws PortalException {
+
+		_commercePaymentEntryModelResourcePermission.check(
+			getPermissionChecker(), commercePaymentEntryId, ActionKeys.UPDATE);
+
+		return commercePaymentEntryLocalService.updateExternalReferenceCode(
+			commercePaymentEntryId, externalReferenceCode);
+	}
+
+	@Override
+	public CommercePaymentEntry updateNote(
 			long commercePaymentEntryId, String note)
 		throws PortalException {
 
 		_commercePaymentEntryModelResourcePermission.check(
 			getPermissionChecker(), commercePaymentEntryId, ActionKeys.UPDATE);
 
-		return commercePaymentEntryLocalService.updateCommercePaymentEntryNote(
+		return commercePaymentEntryLocalService.updateNote(
 			commercePaymentEntryId, note);
 	}
 
 	@Override
-	public CommercePaymentEntry updateCommercePaymentEntryReasonKey(
+	public CommercePaymentEntry updateReasonKey(
 			long commercePaymentEntryId, String reasonKey)
 		throws PortalException {
 
 		_commercePaymentEntryModelResourcePermission.check(
 			getPermissionChecker(), commercePaymentEntryId, ActionKeys.UPDATE);
 
-		return commercePaymentEntryLocalService.
-			updateCommercePaymentEntryReasonKey(
-				commercePaymentEntryId, reasonKey);
+		return commercePaymentEntryLocalService.updateReasonKey(
+			commercePaymentEntryId, reasonKey);
 	}
 
 	@Reference(

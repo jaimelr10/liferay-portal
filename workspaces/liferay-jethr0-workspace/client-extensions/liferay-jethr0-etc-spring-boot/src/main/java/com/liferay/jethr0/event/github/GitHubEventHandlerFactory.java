@@ -37,15 +37,19 @@ public class GitHubEventHandlerFactory extends BaseEventHandlerFactory {
 					String body = commentJSONObject.getString("body");
 
 					if (body.startsWith("ci:close")) {
-						return new CloseGitHubIssueEventHandler(
+						return new CloseGitHubCommentEventHandler(
+							eventHandlerContext, messageJSONObject);
+					}
+					else if (body.startsWith("ci:forward")) {
+						return new ForwardGitHubCommentEventHandler(
 							eventHandlerContext, messageJSONObject);
 					}
 					else if (body.startsWith("ci:help")) {
-						return new HelpGitHubIssueEventHandler(
+						return new HelpGitHubCommentEventHandler(
 							eventHandlerContext, messageJSONObject);
 					}
 					else if (body.startsWith("ci:test")) {
-						return new TestGitHubIssueEventHandler(
+						return new TestGitHubCommentEventHandler(
 							eventHandlerContext, messageJSONObject);
 					}
 

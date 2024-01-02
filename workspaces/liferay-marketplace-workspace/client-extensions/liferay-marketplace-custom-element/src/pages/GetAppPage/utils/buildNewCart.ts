@@ -56,21 +56,25 @@ export default function buildNewCart({
 		free: {
 			...cart,
 			billingAddress,
+			shippingAddress: billingAddress,
 		},
 		order: {
 			...cart,
 			author: email,
 			billingAddress,
 			purchaseOrderNumber,
+			shippingAddress: billingAddress,
 		},
 		pay: {
 			...cart,
 			billingAddress,
-			paymentMethod: 'paypal',
+			paymentMethod: 'paypal-integration',
+			shippingAddress: billingAddress,
 		},
 		trial: {
 			...cart,
 			billingAddress,
+			shippingAddress: billingAddress,
 		},
 	};
 

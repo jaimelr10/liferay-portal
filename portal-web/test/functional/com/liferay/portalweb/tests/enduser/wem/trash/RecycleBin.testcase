@@ -22,17 +22,6 @@ definition {
 			siteName = "Site Name");
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Site Name");
-		}
-	}
-
 	@description = "This is a use case for LPS-109555. Can bulk restore multiple items from recycle bin."
 	@priority = 5
 	test BulkRestoreMultipleAssetsFromRecycleBin {
@@ -135,7 +124,9 @@ definition {
 		}
 
 		task ("Go to recycle bin to view entry and restore") {
-			RecycleBin.openRecycleBinAdmin(siteURLKey = "site-name");
+			ProductMenu.gotoPortlet(
+				category = "Recycle Bin",
+				portlet = "Recycle Bin");
 
 			RecycleBin.viewCP(
 				assetName = "Blogs Entry Title",

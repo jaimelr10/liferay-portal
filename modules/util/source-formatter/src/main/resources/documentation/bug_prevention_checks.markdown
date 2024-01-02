@@ -105,6 +105,7 @@ JavaModuleClassGetResourceCallCheck | .java | Checks that dependencies files are
 [JavaModuleComponentCheck](check/java_module_component_check.markdown#javamodulecomponentcheck) | .java | Performs several checks on classes with or without `@Component` annotation. |
 [JavaModuleExposureCheck](check/java_module_exposure_check.markdown#javamoduleexposurecheck) | .java | Checks for exposure of `SPI` types in `API`. |
 JavaModuleIllegalImportsCheck | .java | Finds cases of incorrect use of certain classes in modules. |
+JavaModuleInheritableVariableAccessModifierCheck | .java | Checks for cases where visibility of variable can be increased. |
 JavaModuleInternalImportsCheck | .java | Finds cases where a module imports an `internal` class from another class. |
 JavaModuleJavaxPortletInitParamTemplatePathCheck | .java | Validates the value of `javax.portlet.init-param.template-path`. |
 JavaModuleServiceReferenceCheck | .java | Finds cases where `@BeanReference` annotation should be used instead of `@ServiceReference` annotation. |

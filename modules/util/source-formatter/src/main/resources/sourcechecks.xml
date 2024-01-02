@@ -925,6 +925,10 @@
 			<description name="Finds cases of incorrect use of certain classes in modules." />
 			<property name="checkRegistryInTestClasses" value="false" />
 		</check>
+		<check name="JavaModuleInheritableVariableAccessModifierCheck">
+			<category name="Bug Prevention" />
+			<description name="Checks for cases where visibility of variable can be increased." />
+		</check>
 		<check name="JavaModuleInternalImportsCheck">
 			<category name="Bug Prevention" />
 			<description name="Finds cases where a module imports an `internal` class from another class." />

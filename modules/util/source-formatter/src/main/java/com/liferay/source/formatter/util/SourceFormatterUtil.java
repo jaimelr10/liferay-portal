@@ -328,6 +328,20 @@ public class SourceFormatterUtil {
 		return suppressionsFiles;
 	}
 
+	public static List<String> matchFileContentsForFileNames(
+		List<String> args, String baseDirName, String[] includes) {
+
+		List<String> allArgs = new ArrayList<>();
+
+		allArgs.add("grep");
+		allArgs.add("--untracked");
+		allArgs.add("-l");
+
+		allArgs.addAll(args);
+
+		return _matchFileContentsForFileNames(allArgs, baseDirName, includes);
+	}
+
 	public static void printError(String fileName, File file) {
 		printError(fileName, file.toString());
 	}
@@ -654,6 +668,31 @@ public class SourceFormatterUtil {
 			});
 
 		return _untrackedFileNames;
+	}
+
+	private static List<String> _matchFileContentsForFileNames(
+		List<String> args, String baseDirName, String[] includes) {
+
+		List<String> allArgs = new ArrayList<>(args);
+
+		List<String> filters = new ArrayList<>();
+
+		ArrayUtil.isNotEmptyForEach(
+			includes, includeGlob -> filters.add(":(glob)" + includeGlob));
+
+		if (ListUtil.isNotEmpty(filters)) {
+			allArgs.add("--");
+
+			allArgs.addAll(filters);
+		}
+
+		List<String> fileNames = new ArrayList<>();
+
+		_executeGitCommand(
+			allArgs, baseDirName,
+			line -> fileNames.add(baseDirName + StringPool.SLASH + line));
+
+		return fileNames;
 	}
 
 	private static List<String> _scanForFileNames(

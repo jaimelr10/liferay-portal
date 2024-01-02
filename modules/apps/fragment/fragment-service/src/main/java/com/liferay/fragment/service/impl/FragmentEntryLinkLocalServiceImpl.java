@@ -42,6 +42,7 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -51,6 +52,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -269,6 +271,30 @@ public class FragmentEntryLinkLocalServiceImpl
 				fragmentEntryLink);
 
 			deletedFragmentEntryLinks.add(fragmentEntryLink);
+
+			if (fragmentEntryLink.isTypePortlet()) {
+				try {
+					JSONObject jsonObject = _jsonFactory.createJSONObject(
+						fragmentEntryLink.getEditableValues());
+
+					String instanceId = jsonObject.getString("instanceId");
+					String portletId = jsonObject.getString("portletId");
+
+					if (Validator.isNotNull(instanceId)) {
+						portletId = portletId + "_INSTANCE_" + instanceId;
+					}
+
+					_portletPreferencesLocalService.deletePortletPreferences(
+						PortletKeys.PREFS_OWNER_ID_DEFAULT,
+						PortletKeys.PREFS_OWNER_TYPE_LAYOUT,
+						fragmentEntryLink.getPlid(), portletId);
+				}
+				catch (PortalException portalException) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(portalException);
+					}
+				}
+			}
 		}
 
 		return deletedFragmentEntryLinks;
@@ -1041,6 +1067,9 @@ public class FragmentEntryLinkLocalServiceImpl
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private PortletPreferencesLocalService _portletPreferencesLocalService;
 
 	@Reference
 	private UserLocalService _userLocalService;
