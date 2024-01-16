@@ -87,6 +87,10 @@ export default function EditEndpointConfiguration({
 		property: string,
 		value: string
 	) => {
+		console.log('entra al response body schema con')
+		console.log(onChangeFn)
+		console.log(property)
+		console.log(value)
 		setData((previousValue) => ({
 			...previousValue,
 			[property]: Number(value),

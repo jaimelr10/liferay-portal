@@ -122,7 +122,7 @@ export default function EditAPIEndpoint({
 
 	function validateData() {
 		let isDataValid = true;
-
+		console.log('data to update', localUIData)
 		const mandatoryFields = ['httpMethod', 'path', 'retrieveType', 'scope'];
 
 		if (
@@ -293,6 +293,100 @@ export default function EditAPIEndpoint({
 		[localUIData]
 	);
 
+	// async function handleModifyODataFields({
+	// 	deleteSuccessMessage,
+	// 	fieldKey,
+	// 	postSuccessMessage,
+	// 	updateSuccessMessage,
+	// }: {
+	// 	deleteSuccessMessage: string;
+	// 	fieldKey: 'Filter' | 'Sort';
+	// 	postSuccessMessage: string;
+	// 	updateSuccessMessage: string;
+	// }) {
+
+		//Lo dejo por aquí. Para mi futuro yo:
+		//Estoy refactorizando el if para primero probar si está en local, y según eso
+		//Mirar el estado del fetched. Si existe y hay que editar, no existe y hay que crear,
+		// o se ha borrado y se debe borrar.
+	// 	console.log('fieldKey',fieldKey)
+	// 	if (fetchedData[`apiEndpointToAPI${fieldKey}s`]) {
+	// 		//Caso 1: No está en fetched
+	// 		if (
+		// (fieldKey === 'Filter'
+		// ? localUIData[`apiEndpointToAPI${fieldKey}s`]?.[0]?.[
+		// 		`oData${fieldKey}` as keyof APIEndpointFilter
+		//   ]
+		// : localUIData[`apiEndpointToAPI${fieldKey}s`]?.[0]?.[
+		// 		`oData${fieldKey}` as keyof APIEndpointSort
+		//   ])&&
+		  	// 			!fetchedData.apiEndpoint[`apiEndpointToAPI${fieldKey}s`].length
+	// 		) {
+	// 			console.log('hola caso 1, no está fetched')
+	// 			console.log(fetchedData)
+	// 		//Caso 2: está fetched
+	// 		} else if (
+	// 			(fieldKey === 'Filter'
+	// 				? !fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`]?.[0]?.[
+	// 					`oData${fieldKey}` as keyof APIEndpointFilter
+	// 				]
+	// 				: !fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`]?.[0]?.[
+	// 					`oData${fieldKey}` as keyof APIEndpointSort
+	// 				]
+	// 			)
+	// 			) {
+	// 			console.log('hola caso 2, esta fetched')
+	// 			updateData<APIEndpointFilter | APIEndpointSort>({
+	// 				dataToUpdate: {
+	// 					[`oData${fieldKey}`]:
+	// 						fieldKey === 'Filter'
+	// 							? localUIData[
+	// 									`apiEndpointToAPI${fieldKey}s`
+	// 							  ]?.[0]?.[
+	// 									`oData${fieldKey}` as keyof APIEndpointFilter
+	// 							  ]
+	// 							: localUIData[
+	// 									`apiEndpointToAPI${fieldKey}s`
+	// 							  ]?.[0]?.[
+	// 									`oData${fieldKey}` as keyof APIEndpointSort
+	// 							  ],
+	// 				},
+	// 				method: 'PATCH',
+	// 				onError: (error: string) => {
+	// 					openToast({
+	// 						message: error,
+	// 						type: 'danger',
+	// 					});
+	// 				},
+	// 				onSuccess: (responseJSON) => {
+	// 					setFetchedData((previous) => ({
+	// 						...previous,
+	// 						apiEndpoint: {
+	// 							...previous.apiEndpoint!,
+	// 							[`apiEndpointToAPI${fieldKey}s`]: [responseJSON],
+	// 						},
+	// 					}));
+	// 					openToast({
+	// 						message: updateSuccessMessage,
+	// 						type: 'success',
+	// 					});
+	// 				},
+	// 				url:
+	// 					apiURLPaths[
+	// 						`${fieldKey.toLocaleLowerCase()}s` as keyof APIURLPaths
+	// 					] +
+	// 					fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`][0]
+	// 						.id,
+	// 			});
+	// 		//Caso 3: Está en fetched pero difiere
+	// 		} else if (fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`] &&
+	// 		fetchedData.apiEndpoint[`apiEndpointToAPI${fieldKey}s`]?.length !==
+	// 			localUIData[`apiEndpointToAPI${fieldKey}s`]?.length) {
+	// 				console.log('caso 3, esta fetched pero difiere')
+	// 			}
+	// 	}
+	// }
+
 	async function handleModifyODataFields({
 		deleteSuccessMessage,
 		fieldKey,
@@ -304,6 +398,7 @@ export default function EditAPIEndpoint({
 		postSuccessMessage: string;
 		updateSuccessMessage: string;
 	}) {
+		console.log(fieldKey)
 		if (
 			fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`] &&
 			!fetchedData.apiEndpoint[`apiEndpointToAPI${fieldKey}s`].length &&
@@ -315,6 +410,12 @@ export default function EditAPIEndpoint({
 						`oData${fieldKey}` as keyof APIEndpointSort
 				  ])
 		) {
+
+			console.log('_____________Caso 1___________')
+			console.log('fetched', fetchedData.apiEndpoint)
+			console.log('local', localUIData[`apiEndpointToAPI${fieldKey}s`])
+			console.log('______________________________')
+
 			postData<APIEndpointFilter | APIEndpointSort>({
 				data: {
 					[`oData${fieldKey}`]:
@@ -355,10 +456,10 @@ export default function EditAPIEndpoint({
 		}
 		else if (
 			(fieldKey === 'Filter'
-				? fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`][0][
+				? fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`]?.[0]?.[
 						`oData${fieldKey}` as keyof APIEndpointFilter
 				  ]
-				: fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`][0][
+				: fetchedData.apiEndpoint?.[`apiEndpointToAPI${fieldKey}s`]?.[0]?.[
 						`oData${fieldKey}` as keyof APIEndpointSort
 				  ]) &&
 			(fieldKey === 'Filter'
@@ -369,6 +470,11 @@ export default function EditAPIEndpoint({
 						`oData${fieldKey}` as keyof APIEndpointSort
 				  ])
 		) {
+			console.log('_____________Caso 2___________')
+			console.log('fetched', fetchedData.apiEndpoint)
+			console.log('local', localUIData[`apiEndpointToAPI${fieldKey}s`])
+			console.log('______________________________')
+
 			updateData<APIEndpointFilter | APIEndpointSort>({
 				dataToUpdate: {
 					[`oData${fieldKey}`]:
@@ -418,6 +524,11 @@ export default function EditAPIEndpoint({
 			fetchedData.apiEndpoint[`apiEndpointToAPI${fieldKey}s`].length !==
 				localUIData[`apiEndpointToAPI${fieldKey}s`]?.length
 		) {
+			console.log('_____________Caso 3___________')
+			console.log('fetched', fetchedData.apiEndpoint)
+			console.log('local', localUIData[`apiEndpointToAPI${fieldKey}s`])
+			console.log('______________________________')
+
 			deleteData({
 				onError: (error: string) => {
 					openToast({
