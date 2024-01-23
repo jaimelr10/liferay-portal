@@ -69,11 +69,11 @@ export async function getAllItems<T>({
 			page: number;
 		}>({
 			input: filter
-				? `${url}?filter=${filter}&?page=${currentPage}`
+				? `${url}?filter=${filter}&page=${currentPage}`
 				: `${url}?page=${currentPage}`,
 		});
 		allItems = [...allItems, ...items];
-		currentPage = page + 1;
+		currentPage++;
 		lastPage = lastPageFromAPI;
 	} while (currentPage <= lastPage);
 
