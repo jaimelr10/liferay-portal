@@ -84,6 +84,8 @@ export class ApiApplicationPage {
 	}
 
 	async waitForReady() {
+		await this.page.waitForTimeout(5000);
+
 		for (const label of [
 			'API Application',
 			'API Endpoint',
