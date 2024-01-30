@@ -20,7 +20,7 @@ export const test = mergeTests(
 );
 
 const basicApiApplication = {
-	apiApplicationToAPISchemas: [
+	apiApplicationToApiSchemas: [
 		{
 			description: 'API Application Schema',
 			externalReferenceCode: 'api-application-schema',
@@ -36,9 +36,9 @@ const basicApiApplication = {
 };
 
 const studentSubjectsApplication = {
-	apiApplicationToAPISchemas: [
+	apiApplicationToApiSchemas: [
 		{
-			apiSchemaToAPIProperties: [
+			apiSchemaToApiProperties: [
 				{
 					description: 'Name of the student',
 					externalReferenceCode: 'student-name-property',
@@ -52,7 +52,7 @@ const studentSubjectsApplication = {
 			name: 'Student schema',
 		},
 		{
-			apiSchemaToAPIProperties: [
+			apiSchemaToApiProperties: [
 				{
 					description: 'Name of the subject',
 					externalReferenceCode: 'subject-name-property',
@@ -208,7 +208,7 @@ test('can create post endpoint with different request and response schema', asyn
 	);
 
 	await headlessBuilderPage.goto();
-	await headlessBuilderPage.goToEditAPIApplication(
+	await headlessBuilderPage.goToEditApiApplication(
 		studentSubjectsApplication.title
 	);
 
@@ -216,10 +216,10 @@ test('can create post endpoint with different request and response schema', asyn
 
 	await apiApplicationPage.goToEndpointConfigurationTab();
 	await apiApplicationPage.selectEndpointRequestSchema(
-		studentSubjectsApplication.apiApplicationToAPISchemas[0].name
+		studentSubjectsApplication.apiApplicationToApiSchemas[0].name
 	);
 	await apiApplicationPage.selectEndpointResponseSchema(
-		studentSubjectsApplication.apiApplicationToAPISchemas[1].name
+		studentSubjectsApplication.apiApplicationToApiSchemas[1].name
 	);
 
 	await apiApplicationPage.publishButton.click();
@@ -257,7 +257,7 @@ test('can create post method endpoint with company scope', async ({
 	);
 
 	await headlessBuilderPage.goto();
-	await headlessBuilderPage.goToEditAPIApplication(basicApiApplication.title);
+	await headlessBuilderPage.goToEditApiApplication(basicApiApplication.title);
 
 	await apiApplicationPage.createApiEndpoint(
 		'POST',
@@ -267,7 +267,7 @@ test('can create post method endpoint with company scope', async ({
 
 	await apiApplicationPage.goToEndpointConfigurationTab();
 	await apiApplicationPage.selectEndpointRequestSchema(
-		basicApiApplication.apiApplicationToAPISchemas[0].name
+		basicApiApplication.apiApplicationToApiSchemas[0].name
 	);
 	await apiApplicationPage.publishButton.click();
 

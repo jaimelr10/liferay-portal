@@ -7,14 +7,14 @@ import {Locator, Page} from '@playwright/test';
 
 export class ApiApplicationPage {
 	readonly page: Page;
-	readonly addAPIEndpointButton: Locator;
+	readonly addApiEndpointButton: Locator;
 	readonly endpointPathTextBox: Locator;
 	readonly endpointCreateButton: Locator;
 	readonly publishButton: Locator;
 
 	constructor(page: Page) {
 		this.page = page;
-		this.addAPIEndpointButton = page.getByLabel('Add API Endpoint');
+		this.addApiEndpointButton = page.getByLabel('Add API Endpoint');
 		this.endpointPathTextBox = page.getByPlaceholder('Enter Path');
 		this.endpointCreateButton = page.getByRole('button', {name: 'Create'});
 		this.publishButton = page.getByRole('button', {name: 'Publish'});
@@ -76,7 +76,7 @@ export class ApiApplicationPage {
 		path: string
 	) {
 		await this.goToEndpointsTab();
-		await this.addAPIEndpointButton.click();
+		await this.addApiEndpointButton.click();
 		await this.setEndpointMethod(httpMethod);
 		await this.setEndpointScope(scope);
 		await this.endpointPathTextBox.fill(path);

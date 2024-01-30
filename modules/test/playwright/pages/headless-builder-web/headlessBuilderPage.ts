@@ -10,12 +10,12 @@ import {ApplicationsMenuPage} from '../product-navigation-applications-menu/Appl
 export class HeadlessBuilderPage {
 	readonly applicationsMenuPage: ApplicationsMenuPage;
 	readonly page: Page;
-	readonly addNewAPIApplicationButton: Locator;
+	readonly addNewApiApplicationButton: Locator;
 
 	constructor(page: Page) {
 		this.applicationsMenuPage = new ApplicationsMenuPage(page);
 		this.page = page;
-		this.addNewAPIApplicationButton = page.getByRole('button', {
+		this.addNewApiApplicationButton = page.getByRole('button', {
 			name: 'New',
 		});
 	}
@@ -24,7 +24,7 @@ export class HeadlessBuilderPage {
 		await this.applicationsMenuPage.goToApiBuilder();
 	}
 
-	async goToEditAPIApplication(apiApplicationName: string) {
+	async goToEditApiApplication(apiApplicationName: string) {
 		await this.page.getByRole('link', {name: apiApplicationName}).click();
 	}
 }
