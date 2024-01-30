@@ -92,17 +92,19 @@ export class ApiApplicationPage {
 			'API Schema',
 			'API Sort',
 		]) {
-			while (true) {
+			do {
 				await this.page.goto(
 					'/group/control_panel/manage?p_p_id=com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet&objectFolderName=Default'
 				);
+				await this.page.waitForLoadState();
 				try {
-					await this.page.getByLabel(label).waitFor({state: 'visible'});
+					await this.page
+						.getByRole('link', {name: label})
+						.waitFor({state: 'visible'});
 					break;
-				} catch {
-
 				}
-			}
+				catch {}
+			} while (true);
 		}
 	}
 }
