@@ -82,4 +82,27 @@ export class ApiApplicationPage {
 		await this.endpointPathTextBox.fill(path);
 		await this.endpointCreateButton.click();
 	}
+
+	async waitForReady() {
+		for (const label of [
+			'API Application',
+			'API Endpoint',
+			'API Filter',
+			'API Property',
+			'API Schema',
+			'API Sort',
+		]) {
+			while (true) {
+				await this.page.goto(
+					'/group/control_panel/manage?p_p_id=com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet&objectFolderName=Default'
+				);
+				try {
+					await this.page.getByLabel(label).waitFor({state: 'visible'});
+					break;
+				} catch {
+
+				}
+			}
+		}
+	}
 }

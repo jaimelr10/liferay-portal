@@ -202,6 +202,8 @@ test('can create post endpoint with different request and response schema', asyn
 			code: 0,
 		},
 	});
+
+	await apiApplicationPage.waitForReady();
 	await apiHelpers.object.postObjectEntry(
 		studentSubjectsApplication,
 		'headless-builder/applications'
@@ -251,6 +253,7 @@ test('can create post method endpoint with company scope', async ({
 	headlessBuilderPage,
 	page,
 }) => {
+	await apiApplicationPage.waitForReady();
 	await apiHelpers.object.postObjectEntry(
 		basicApiApplication,
 		'headless-builder/applications'
