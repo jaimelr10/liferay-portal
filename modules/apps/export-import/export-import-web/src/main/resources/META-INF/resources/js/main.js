@@ -82,7 +82,7 @@ AUI.add(
 									portletId,
 									portletTitle
 								);
-
+								document.getElementById("_com_liferay_exportimport_web_portlet_ExportImportPortlet_PORTLET_SETUP_" + portletId).focus()
 								configurationDialog.show();
 							},
 							'.configuration-link'
