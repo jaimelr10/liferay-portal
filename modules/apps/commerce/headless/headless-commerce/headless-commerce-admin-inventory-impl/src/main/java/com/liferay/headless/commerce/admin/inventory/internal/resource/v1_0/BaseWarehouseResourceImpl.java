@@ -499,6 +499,10 @@ public abstract class BaseWarehouseResourceImpl
 		return null;
 	}
 
+	public String getResourceName() {
+		return "Warehouse";
+	}
+
 	public String getVersion() {
 		return "v1.0";
 	}

@@ -734,6 +734,10 @@ public abstract class BaseSkuResourceImpl
 		return null;
 	}
 
+	public String getResourceName() {
+		return "Sku";
+	}
+
 	public String getVersion() {
 		return "v1.0";
 	}
