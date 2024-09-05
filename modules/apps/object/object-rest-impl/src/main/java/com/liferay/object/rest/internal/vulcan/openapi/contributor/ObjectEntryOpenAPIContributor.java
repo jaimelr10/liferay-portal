@@ -202,19 +202,21 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 					(objectRelationship.getObjectDefinitionId2() ==
 						_objectDefinition.getObjectDefinitionId())) {
 
-					Set<Map.Entry<String, Schema>> entrySet =
-						objectDefinitionSchemaProperties.entrySet();
+					Set<Map.Entry<String, Schema>>
+						objectDefinitionSchemaPropertiesEntrySet =
+							objectDefinitionSchemaProperties.entrySet();
 
 					for (Map.Entry<String, Schema>
-							objectDefinitionSchemaPropertyEntry : entrySet) {
+							objectDefinitionSchemaPropertyEntry :
+								objectDefinitionSchemaPropertiesEntrySet) {
 
-						String objectDefinitionSchemaPropertyName =
+						String objectDefinitionSchemaPropertyKey =
 							objectDefinitionSchemaPropertyEntry.getKey();
 
-						if (objectDefinitionSchemaPropertyName.contains(
+						if (objectDefinitionSchemaPropertyKey.contains(
 								objectRelationship.getName())) {
 
-							Schema objectDefinitionSchemaProperty =
+							Schema objectDefinitionSchemaPropertyValue =
 								objectDefinitionSchemaPropertyEntry.getValue();
 
 							Schema anyOfEntrySchema = new Schema<>();
@@ -222,21 +224,22 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 							anyOfEntrySchema.setType("object");
 
 							if (Objects.equals(
-									objectDefinitionSchemaProperty.getType(),
+									objectDefinitionSchemaPropertyValue.
+										getType(),
 									"object")) {
 
 								anyOfEntrySchema.setProperties(
 									HashMapBuilder.put(
 										objectRelationship.getName(),
-										objectDefinitionSchemaProperty
+										objectDefinitionSchemaPropertyValue
 									).build());
 							}
 							else {
 								anyOfEntrySchema.setProperties(
 									HashMapBuilder.put(
-										objectDefinitionSchemaProperty.
+										objectDefinitionSchemaPropertyValue.
 											getName(),
-										objectDefinitionSchemaProperty
+										objectDefinitionSchemaPropertyValue
 									).build());
 							}
 
@@ -247,7 +250,7 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 
 							composedSchema.getProperties(
 							).remove(
-								objectDefinitionSchemaPropertyName
+								objectDefinitionSchemaPropertyKey
 							);
 						}
 					}
