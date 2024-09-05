@@ -40,6 +40,7 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -174,6 +175,90 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 			}
 
 			paths.remove(key);
+		}
+
+		if (!relatedObjectDefinitionsMap.isEmpty()) {
+			ComposedSchema composedSchema = new ComposedSchema();
+
+			composedSchema.setName(objectDefinitionSchema.getName());
+
+			composedSchema.setProperties(
+				HashMapBuilder.putAll(
+					objectDefinitionSchema.getProperties()
+				).build());
+
+			composedSchema.setRequired(objectDefinitionSchema.getRequired());
+			composedSchema.setXml(objectDefinitionSchema.getXml());
+			composedSchema.setAnyOf(new ArrayList<Schema>());
+
+			for (Map.Entry<ObjectRelationship, ObjectDefinition> entry :
+					relatedObjectDefinitionsMap.entrySet()) {
+
+				ObjectRelationship objectRelationship = entry.getKey();
+
+				if (Objects.equals(
+						objectRelationship.getType(),
+						ObjectRelationshipConstants.TYPE_ONE_TO_MANY) &&
+					(objectRelationship.getObjectDefinitionId2() ==
+						_objectDefinition.getObjectDefinitionId())) {
+
+					Set<Map.Entry<String, Schema>> entrySet =
+						objectDefinitionSchemaProperties.entrySet();
+
+					for (Map.Entry<String, Schema>
+							objectDefinitionSchemaPropertyEntry : entrySet) {
+
+						String objectDefinitionSchemaPropertyName =
+							objectDefinitionSchemaPropertyEntry.getKey();
+
+						if (objectDefinitionSchemaPropertyName.contains(
+								objectRelationship.getName())) {
+
+							Schema objectDefinitionSchemaProperty =
+								objectDefinitionSchemaPropertyEntry.getValue();
+
+							Schema anyOfEntrySchema = new Schema<>();
+
+							anyOfEntrySchema.setType("object");
+
+							if (Objects.equals(
+									objectDefinitionSchemaProperty.getType(),
+									"object")) {
+
+								anyOfEntrySchema.setProperties(
+									HashMapBuilder.put(
+										objectRelationship.getName(),
+										objectDefinitionSchemaProperty
+									).build());
+							}
+							else {
+								anyOfEntrySchema.setProperties(
+									HashMapBuilder.put(
+										objectDefinitionSchemaProperty.
+											getName(),
+										objectDefinitionSchemaProperty
+									).build());
+							}
+
+							composedSchema.getAnyOf(
+							).add(
+								anyOfEntrySchema
+							);
+
+							composedSchema.getProperties(
+							).remove(
+								objectDefinitionSchemaPropertyName
+							);
+						}
+					}
+				}
+			}
+
+			if (!composedSchema.getAnyOf(
+				).isEmpty()) {
+
+				schemas.put(_objectDefinition.getShortName(), composedSchema);
+			}
 		}
 
 		if (!_objectDefinition.isEnableCategorization()) {
