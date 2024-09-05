@@ -180,8 +180,6 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 		if (!relatedObjectDefinitionsMap.isEmpty()) {
 			ComposedSchema composedSchema = new ComposedSchema();
 
-			composedSchema.setName(objectDefinitionSchema.getName());
-
 			composedSchema.setProperties(
 				HashMapBuilder.putAll(
 					objectDefinitionSchema.getProperties()
