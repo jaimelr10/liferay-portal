@@ -241,23 +241,23 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 									).build());
 							}
 
-							composedSchema.getAnyOf(
-							).add(
-								anyOfEntrySchema
-							);
+							List<Schema> anyOf = composedSchema.getAnyOf();
 
-							composedSchema.getProperties(
-							).remove(
-								objectDefinitionSchemaPropertyKey
-							);
+							anyOf.add(anyOfEntrySchema);
+
+							Map<String, Schema> composedSchemaProperties =
+								composedSchema.getProperties();
+
+							composedSchemaProperties.remove(
+								objectDefinitionSchemaPropertyKey);
 						}
 					}
 				}
 			}
 
-			if (!composedSchema.getAnyOf(
-				).isEmpty()) {
+			List<Schema> anyOf = composedSchema.getAnyOf();
 
+			if (!anyOf.isEmpty()) {
 				schemas.put(_objectDefinition.getShortName(), composedSchema);
 			}
 		}
