@@ -315,6 +315,41 @@
 				}
 			},
 			"Object2": {
+				"anyOf": [
+					{
+						"properties": {
+							"r_relationship2_c_object1Id": {
+								"extensions": {
+									"x-parent-map": "properties"
+								},
+								"format": "int64",
+								"type": "integer"
+							}
+						},
+						"type": "object"
+					},
+					{
+						"properties": {
+							"relationship2": {
+								"$ref": "#/components/schemas/Object1",
+								"description": "Information about the relationship relationship2 can be embedded with \"nestedFields\".",
+								"type": "object"
+							}
+						},
+						"type": "object"
+					},
+					{
+						"properties": {
+							"r_relationship2_c_object1ERC": {
+								"extensions": {
+									"x-parent-map": "properties"
+								},
+								"type": "string"
+							}
+						},
+						"type": "object"
+					}
+				],
 				"properties": {
 					"actions": {
 						"additionalProperties": {
@@ -407,20 +442,6 @@
 						},
 						"type": "array"
 					},
-					"r_relationship2_c_object1ERC": {
-						"extensions": {
-							"x-parent-map": "properties"
-						},
-						"type": "string"
-					},
-					"r_relationship2_c_object1Id": {
-						"extensions": {
-							"x-parent-map": "properties"
-						},
-						"format": "int64",
-						"readOnly": false,
-						"type": "integer"
-					},
 					"relationship1": {
 						"description": "Information about the relationship relationship1 can be embedded with \"nestedFields\".",
 						"items": {
@@ -428,11 +449,6 @@
 							"type": "object"
 						},
 						"type": "array"
-					},
-					"relationship2": {
-						"$ref": "#/components/schemas/Object1",
-						"description": "Information about the relationship relationship2 can be embedded with \"nestedFields\".",
-						"type": "object"
 					},
 					"scopeKey": {
 						"readOnly": true,
