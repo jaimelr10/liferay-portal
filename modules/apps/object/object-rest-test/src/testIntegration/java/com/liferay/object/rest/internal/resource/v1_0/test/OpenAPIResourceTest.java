@@ -18,7 +18,6 @@ import com.liferay.object.field.builder.MultiselectPicklistObjectFieldBuilder;
 import com.liferay.object.field.builder.ObjectFieldBuilder;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
-import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalServiceUtil;
@@ -123,17 +122,6 @@ public class OpenAPIResourceTest {
 			LocalizedMapUtil.getLocalizedMap("relationship1"), "relationship1",
 			false, ObjectRelationshipConstants.TYPE_MANY_TO_MANY, null);
 
-		ObjectField requiredRelationshipField2 = new ObjectFieldBuilder(
-		).externalReferenceCode(
-			"requiredRelationshipField2"
-		).labelMap(
-			null
-		).readOnly(
-			ObjectFieldConstants.READ_ONLY_FALSE
-		).required(
-			true
-		).build();
-
 		ObjectRelationshipLocalServiceUtil.addObjectRelationship(
 			null, TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(),
@@ -141,7 +129,16 @@ public class OpenAPIResourceTest {
 			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 			LocalizedMapUtil.getLocalizedMap("relationship2"), "relationship2",
 			false, ObjectRelationshipConstants.TYPE_ONE_TO_MANY,
-			requiredRelationshipField2);
+			new ObjectFieldBuilder(
+			).externalReferenceCode(
+				"requiredRelationshipField2"
+			).labelMap(
+				null
+			).readOnly(
+				ObjectFieldConstants.READ_ONLY_FALSE
+			).required(
+				true
+			).build());
 
 		ObjectDefinition inactiveObjectDefinition =
 			ObjectDefinitionTestUtil.addCustomObjectDefinition(
