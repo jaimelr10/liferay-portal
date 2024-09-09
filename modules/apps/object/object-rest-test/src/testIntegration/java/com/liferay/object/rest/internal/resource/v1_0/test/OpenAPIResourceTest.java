@@ -15,8 +15,10 @@ import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.field.builder.MultiselectPicklistObjectFieldBuilder;
+import com.liferay.object.field.builder.ObjectFieldBuilder;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalServiceUtil;
@@ -120,13 +122,26 @@ public class OpenAPIResourceTest {
 			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 			LocalizedMapUtil.getLocalizedMap("relationship1"), "relationship1",
 			false, ObjectRelationshipConstants.TYPE_MANY_TO_MANY, null);
+
+		ObjectField requiredRelationshipField2 = new ObjectFieldBuilder(
+		).externalReferenceCode(
+			"requiredRelationshipField2"
+		).labelMap(
+			null
+		).readOnly(
+			ObjectFieldConstants.READ_ONLY_FALSE
+		).required(
+			true
+		).build();
+
 		ObjectRelationshipLocalServiceUtil.addObjectRelationship(
 			null, TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(),
 			relatedObjectDefinition.getObjectDefinitionId(), 0,
 			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 			LocalizedMapUtil.getLocalizedMap("relationship2"), "relationship2",
-			false, ObjectRelationshipConstants.TYPE_ONE_TO_MANY, null);
+			false, ObjectRelationshipConstants.TYPE_ONE_TO_MANY,
+			requiredRelationshipField2);
 
 		ObjectDefinition inactiveObjectDefinition =
 			ObjectDefinitionTestUtil.addCustomObjectDefinition(

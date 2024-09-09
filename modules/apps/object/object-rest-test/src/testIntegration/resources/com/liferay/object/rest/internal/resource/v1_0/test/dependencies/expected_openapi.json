@@ -494,6 +494,11 @@
 						"type": "string"
 					}
 				},
+				"required": [
+					"r_relationship2_c_object1ERC",
+					"r_relationship2_c_object1Id",
+					"relationship2"
+				],
 				"type": "object",
 				"xml": {
 					"name": "ObjectEntry"
