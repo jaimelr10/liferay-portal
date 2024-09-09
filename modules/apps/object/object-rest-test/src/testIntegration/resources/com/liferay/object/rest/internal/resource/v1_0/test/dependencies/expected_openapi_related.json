@@ -326,6 +326,9 @@
 								"type": "integer"
 							}
 						},
+						"required": [
+							"r_relationship2_c_object1Id"
+						],
 						"type": "object"
 					},
 					{
@@ -336,6 +339,9 @@
 								"type": "object"
 							}
 						},
+						"required": [
+							"relationship2"
+						],
 						"type": "object"
 					},
 					{
@@ -347,6 +353,9 @@
 								"type": "string"
 							}
 						},
+						"required": [
+							"r_relationship2_c_object1ERC"
+						],
 						"type": "object"
 					}
 				],
@@ -495,11 +504,6 @@
 						"type": "string"
 					}
 				},
-				"required": [
-					"r_relationship2_c_object1ERC",
-					"r_relationship2_c_object1Id",
-					"relationship2"
-				],
 				"type": "object",
 				"xml": {
 					"name": "ObjectEntry"
