@@ -52,6 +52,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +188,6 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 					objectDefinitionSchema.getProperties()
 				).build());
 
-			composedSchema.setRequired(objectDefinitionSchema.getRequired());
 			composedSchema.setType(objectDefinitionSchema.getType());
 			composedSchema.setXml(objectDefinitionSchema.getXml());
 
@@ -223,6 +223,13 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 
 							anyOfEntrySchema.setType("object");
 
+							List<String> objectDefinitionRequiredFields =
+								objectDefinitionSchema.getRequired();
+
+							boolean required =
+								objectDefinitionRequiredFields.contains(
+									objectRelationship.getName());
+
 							if (Objects.equals(
 									objectDefinitionSchemaPropertyValue.
 										getType(),
@@ -233,6 +240,12 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 										objectRelationship.getName(),
 										objectDefinitionSchemaPropertyValue
 									).build());
+
+								if (required) {
+									anyOfEntrySchema.setRequired(
+										Collections.singletonList(
+											objectRelationship.getName()));
+								}
 							}
 							else {
 								anyOfEntrySchema.setProperties(
@@ -241,6 +254,13 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 											getName(),
 										objectDefinitionSchemaPropertyValue
 									).build());
+
+								if (required) {
+									anyOfEntrySchema.setRequired(
+										Collections.singletonList(
+											objectDefinitionSchemaPropertyValue.
+												getName()));
+								}
 							}
 
 							List<Schema> anyOf = composedSchema.getAnyOf();
