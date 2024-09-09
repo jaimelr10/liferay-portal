@@ -196,84 +196,85 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 
 				ObjectRelationship objectRelationship = entry.getKey();
 
-				if (Objects.equals(
+				if (!Objects.equals(
 						objectRelationship.getType(),
-						ObjectRelationshipConstants.TYPE_ONE_TO_MANY) &&
-					(objectRelationship.getObjectDefinitionId2() ==
+						ObjectRelationshipConstants.TYPE_ONE_TO_MANY) ||
+					(objectRelationship.getObjectDefinitionId2() !=
 						_objectDefinition.getObjectDefinitionId())) {
 
-					Set<Map.Entry<String, Schema>>
-						objectDefinitionSchemaPropertiesEntrySet =
-							objectDefinitionSchemaProperties.entrySet();
+					continue;
+				}
 
-					for (Map.Entry<String, Schema>
-							objectDefinitionSchemaPropertyEntry :
-								objectDefinitionSchemaPropertiesEntrySet) {
+				Set<Map.Entry<String, Schema>>
+					objectDefinitionSchemaPropertiesEntrySet =
+						objectDefinitionSchemaProperties.entrySet();
 
-						String objectDefinitionSchemaPropertyKey =
-							objectDefinitionSchemaPropertyEntry.getKey();
+				for (Map.Entry<String, Schema>
+						objectDefinitionSchemaPropertyEntry :
+							objectDefinitionSchemaPropertiesEntrySet) {
 
-						if (objectDefinitionSchemaPropertyKey.contains(
-								objectRelationship.getName())) {
+					String objectDefinitionSchemaPropertyKey =
+						objectDefinitionSchemaPropertyEntry.getKey();
 
-							Schema objectDefinitionSchemaPropertyValue =
-								objectDefinitionSchemaPropertyEntry.getValue();
+					if (!objectDefinitionSchemaPropertyKey.contains(
+							objectRelationship.getName())) {
 
-							Schema anyOfEntrySchema = new Schema<>();
+						continue;
+					}
 
-							anyOfEntrySchema.setType("object");
+					Schema objectDefinitionSchemaPropertyValue =
+						objectDefinitionSchemaPropertyEntry.getValue();
 
-							List<String> objectDefinitionRequiredFields =
-								objectDefinitionSchema.getRequired();
+					Schema anyOfEntrySchema = new Schema<>();
 
-							boolean required =
-								objectDefinitionRequiredFields.contains(
-									objectRelationship.getName());
+					anyOfEntrySchema.setType("object");
 
-							if (Objects.equals(
-									objectDefinitionSchemaPropertyValue.
-										getType(),
-									"object")) {
+					List<String> objectDefinitionRequiredFields =
+						objectDefinitionSchema.getRequired();
 
-								anyOfEntrySchema.setProperties(
-									HashMapBuilder.put(
-										objectRelationship.getName(),
-										objectDefinitionSchemaPropertyValue
-									).build());
+					boolean required = objectDefinitionRequiredFields.contains(
+						objectRelationship.getName());
 
-								if (required) {
-									anyOfEntrySchema.setRequired(
-										Collections.singletonList(
-											objectRelationship.getName()));
-								}
-							}
-							else {
-								anyOfEntrySchema.setProperties(
-									HashMapBuilder.put(
-										objectDefinitionSchemaPropertyValue.
-											getName(),
-										objectDefinitionSchemaPropertyValue
-									).build());
+					if (Objects.equals(
+							objectDefinitionSchemaPropertyValue.getType(),
+							"object")) {
 
-								if (required) {
-									anyOfEntrySchema.setRequired(
-										Collections.singletonList(
-											objectDefinitionSchemaPropertyValue.
-												getName()));
-								}
-							}
+						anyOfEntrySchema.setProperties(
+							HashMapBuilder.put(
+								objectRelationship.getName(),
+								objectDefinitionSchemaPropertyValue
+							).build());
 
-							List<Schema> anyOf = composedSchema.getAnyOf();
-
-							anyOf.add(anyOfEntrySchema);
-
-							Map<String, Schema> composedSchemaProperties =
-								composedSchema.getProperties();
-
-							composedSchemaProperties.remove(
-								objectDefinitionSchemaPropertyKey);
+						if (required) {
+							anyOfEntrySchema.setRequired(
+								Collections.singletonList(
+									objectRelationship.getName()));
 						}
 					}
+					else {
+						anyOfEntrySchema.setProperties(
+							HashMapBuilder.put(
+								objectDefinitionSchemaPropertyValue.getName(),
+								objectDefinitionSchemaPropertyValue
+							).build());
+
+						if (required) {
+							anyOfEntrySchema.setRequired(
+								Collections.singletonList(
+									objectDefinitionSchemaPropertyValue.
+										getName()));
+						}
+					}
+
+					List<Schema> anyOf = composedSchema.getAnyOf();
+
+					anyOf.add(anyOfEntrySchema);
+
+					Map<String, Schema> composedSchemaProperties =
+						composedSchema.getProperties();
+
+					composedSchemaProperties.remove(
+						objectDefinitionSchemaPropertyKey);
 				}
 			}
 
