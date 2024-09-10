@@ -96,7 +96,7 @@ public class OpenAPIResourceTest {
 						Collections.singletonMap(
 							LocaleUtil.US, listTypeValue))));
 
-		ObjectDefinition relatedObjectDefinition =
+		ObjectDefinition relatedObjectDefinition1 =
 			ObjectDefinitionTestUtil.publishObjectDefinition(
 				"Object2",
 				Arrays.asList(
@@ -117,7 +117,7 @@ public class OpenAPIResourceTest {
 		ObjectRelationshipLocalServiceUtil.addObjectRelationship(
 			null, TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(),
-			relatedObjectDefinition.getObjectDefinitionId(), 0,
+			relatedObjectDefinition1.getObjectDefinitionId(), 0,
 			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 			LocalizedMapUtil.getLocalizedMap("relationship1"), "relationship1",
 			false, ObjectRelationshipConstants.TYPE_MANY_TO_MANY, null);
@@ -125,7 +125,7 @@ public class OpenAPIResourceTest {
 		ObjectRelationshipLocalServiceUtil.addObjectRelationship(
 			null, TestPropsValues.getUserId(),
 			_objectDefinition.getObjectDefinitionId(),
-			relatedObjectDefinition.getObjectDefinitionId(), 0,
+			relatedObjectDefinition1.getObjectDefinitionId(), 0,
 			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 			LocalizedMapUtil.getLocalizedMap("relationship2"), "relationship2",
 			false, ObjectRelationshipConstants.TYPE_ONE_TO_MANY,
@@ -163,9 +163,27 @@ public class OpenAPIResourceTest {
 			LocalizedMapUtil.getLocalizedMap("relationship4"), "relationship4",
 			false, ObjectRelationshipConstants.TYPE_ONE_TO_MANY, null);
 
+		ObjectDefinition relatedObjectDefinition2 =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				"Object5",
+				Collections.singletonList(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+						"field1", "field1", false)),
+				ObjectDefinitionConstants.SCOPE_COMPANY);
+
+		ObjectRelationshipLocalServiceUtil.addObjectRelationship(
+			null, TestPropsValues.getUserId(),
+			relatedObjectDefinition2.getObjectDefinitionId(),
+			relatedObjectDefinition1.getObjectDefinitionId(), 0,
+			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
+			LocalizedMapUtil.getLocalizedMap("relationship5"), "relationship5",
+			false, ObjectRelationshipConstants.TYPE_ONE_TO_MANY, null);
+
 		_assertOpenAPI("expected_openapi.json", _objectDefinition);
 		_assertOpenAPI(
-			"expected_openapi_related.json", relatedObjectDefinition);
+			"expected_openapi_related.json", relatedObjectDefinition1);
 		_assertOpenAPI(
 			"expected_openapi_site.json",
 			ObjectDefinitionTestUtil.publishObjectDefinition(

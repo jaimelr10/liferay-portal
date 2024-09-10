@@ -357,6 +357,39 @@
 							"r_relationship2_c_object1ERC"
 						],
 						"type": "object"
+					},
+					{
+						"properties": {
+							"r_relationship5_c_object5Id": {
+								"extensions": {
+									"x-parent-map": "properties"
+								},
+								"format": "int64",
+								"type": "integer"
+							}
+						},
+						"type": "object"
+					},
+					{
+						"properties": {
+							"relationship5": {
+								"$ref": "#/components/schemas/Object5",
+								"description": "Information about the relationship relationship5 can be embedded with \"nestedFields\".",
+								"type": "object"
+							}
+						},
+						"type": "object"
+					},
+					{
+						"properties": {
+							"r_relationship5_c_object5ERC": {
+								"extensions": {
+									"x-parent-map": "properties"
+								},
+								"type": "string"
+							}
+						},
+						"type": "object"
 					}
 				],
 				"properties": {
@@ -509,6 +542,147 @@
 					"name": "ObjectEntry"
 				}
 			},
+			"Object5": {
+				"description": "Information about the relationship relationship5 can be embedded with \"nestedFields\".",
+				"properties": {
+					"actions": {
+						"additionalProperties": {
+							"additionalProperties": {
+								"type": "string"
+							},
+							"type": "object"
+						},
+						"extensions": {
+							"x-batch-unsupported-formats": "CSV"
+						},
+						"readOnly": true,
+						"type": "object"
+					},
+					"auditEvents": {
+						"description": "Optional field with the audit events associated with this object entry, can be embedded with nestedFields",
+						"extensions": {
+							"x-batch-unsupported-formats": "CSV"
+						},
+						"items": {
+							"$ref": "#/components/schemas/AuditEvent"
+						},
+						"readOnly": true,
+						"type": "array"
+					},
+					"creator": {
+						"extensions": {
+							"x-batch-unsupported-formats": "CSV",
+							"x-parent-map": "properties"
+						},
+						"readOnly": true,
+						"type": "string"
+					},
+					"dateCreated": {
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"dateModified": {
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
+					},
+					"externalReferenceCode": {
+						"extensions": {
+							"x-parent-map": "properties"
+						},
+						"readOnly": false,
+						"type": "string"
+					},
+					"field1": {
+						"extensions": {
+							"x-parent-map": "properties"
+						},
+						"readOnly": false,
+						"type": "string"
+					},
+					"id": {
+						"extensions": {
+							"x-parent-map": "properties"
+						},
+						"format": "int64",
+						"readOnly": true,
+						"type": "integer"
+					},
+					"keywords": {
+						"description": "A list of keywords describing the object entry.",
+						"extensions": {
+							"x-batch-unsupported-formats": "CSV"
+						},
+						"items": {
+							"description": "A list of keywords describing the object entry.",
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"permissions": {
+						"items": {
+							"$ref": "#/components/schemas/Permission"
+						},
+						"type": "array"
+					},
+					"relationship5": {
+						"description": "Information about the relationship relationship5 can be embedded with \"nestedFields\".",
+						"items": {
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"scopeKey": {
+						"readOnly": true,
+						"type": "string"
+					},
+					"status": {
+						"extensions": {
+							"x-batch-unsupported-formats": "CSV",
+							"x-parent-map": "properties"
+						},
+						"readOnly": true,
+						"type": "string"
+					},
+					"taxonomyCategoryBriefs": {
+						"description": "The categories associated with this object entry.",
+						"extensions": {
+							"x-batch-unsupported-formats": "CSV"
+						},
+						"items": {
+							"$ref": "#/components/schemas/TaxonomyCategoryBrief"
+						},
+						"readOnly": true,
+						"type": "array"
+					},
+					"taxonomyCategoryIds": {
+						"extensions": {
+							"x-batch-unsupported-formats": "CSV"
+						},
+						"items": {
+							"format": "int64",
+							"type": "integer"
+						},
+						"type": "array",
+						"writeOnly": true
+					},
+					"x-class-name": {
+						"default": "com.liferay.object.rest.dto.v1_0.ObjectEntry",
+						"readOnly": true,
+						"type": "string"
+					},
+					"x-schema-name": {
+						"default": "Object5",
+						"readOnly": true,
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"xml": {
+					"name": "ObjectEntry"
+				}
+			},
 			"PageObject1": {
 				"properties": {
 					"actions": {
@@ -601,6 +775,55 @@
 					},
 					"x-schema-name": {
 						"default": "PageObject2",
+						"readOnly": true,
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"PageObject5": {
+				"properties": {
+					"actions": {
+						"additionalProperties": {
+							"additionalProperties": {
+								"type": "string"
+							},
+							"type": "object"
+						},
+						"type": "object"
+					},
+					"facets": {
+						"items": {
+							"$ref": "#/components/schemas/Facet"
+						},
+						"type": "array"
+					},
+					"items": {
+						"extensions": {
+						},
+						"items": {
+							"$ref": "#/components/schemas/Object5"
+						},
+						"type": "array"
+					},
+					"lastPage": {
+						"format": "int64",
+						"type": "integer"
+					},
+					"page": {
+						"format": "int64",
+						"type": "integer"
+					},
+					"pageSize": {
+						"format": "int64",
+						"type": "integer"
+					},
+					"totalCount": {
+						"format": "int64",
+						"type": "integer"
+					},
+					"x-schema-name": {
+						"default": "PageObject5",
 						"readOnly": true,
 						"type": "string"
 					}

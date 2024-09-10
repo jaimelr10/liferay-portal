@@ -357,6 +357,38 @@
 							"r_relationship2_c_object1ERC"
 						],
 						"type": "object"
+					},
+					{
+						"properties": {
+							"r_relationship5_c_object5Id": {
+								"extensions": {
+									"x-parent-map": "properties"
+								},
+								"format": "int64",
+								"type": "integer"
+							}
+						},
+						"type": "object"
+					},
+					{
+						"properties": {
+							"relationship5": {
+								"description": "Information about the relationship relationship5 can be embedded with \"nestedFields\".",
+								"type": "object"
+							}
+						},
+						"type": "object"
+					},
+					{
+						"properties": {
+							"r_relationship5_c_object5ERC": {
+								"extensions": {
+									"x-parent-map": "properties"
+								},
+								"type": "string"
+							}
+						},
+						"type": "object"
 					}
 				],
 				"properties": {
