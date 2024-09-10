@@ -229,11 +229,15 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 
 					anyOfEntrySchema.setType("object");
 
+					boolean required = false;
+
 					List<String> objectDefinitionRequiredFields =
 						objectDefinitionSchema.getRequired();
 
-					boolean required = objectDefinitionRequiredFields.contains(
-						objectRelationship.getName());
+					if (objectDefinitionRequiredFields != null) {
+						required = objectDefinitionRequiredFields.contains(
+							objectRelationship.getName());
+					}
 
 					if (Objects.equals(
 							objectDefinitionSchemaPropertyValue.getType(),
