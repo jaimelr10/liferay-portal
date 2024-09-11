@@ -181,7 +181,7 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 		if (!relatedObjectDefinitionsMap.isEmpty()) {
 			ComposedSchema composedSchema = new ComposedSchema();
 
-			composedSchema.setAnyOf(new ArrayList<>());
+			composedSchema.setAllOf(new ArrayList<>());
 
 			composedSchema.setProperties(
 				HashMapBuilder.putAll(
@@ -204,6 +204,11 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 
 					continue;
 				}
+
+				ComposedSchema anyOfSchema = new ComposedSchema();
+
+				anyOfSchema.setType("object");
+				anyOfSchema.setAnyOf(new ArrayList<>());
 
 				Set<Map.Entry<String, Schema>>
 					objectDefinitionSchemaPropertiesEntrySet =
@@ -270,7 +275,7 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 						}
 					}
 
-					List<Schema> anyOf = composedSchema.getAnyOf();
+					List<Schema> anyOf = anyOfSchema.getAnyOf();
 
 					anyOf.add(anyOfEntrySchema);
 
@@ -280,11 +285,19 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 					composedSchemaProperties.remove(
 						objectDefinitionSchemaPropertyKey);
 				}
+
+				List<Schema> anyOf = anyOfSchema.getAnyOf();
+
+				if (!anyOf.isEmpty()) {
+					List<Schema> allOf = composedSchema.getAllOf();
+
+					allOf.add(anyOfSchema);
+				}
 			}
 
-			List<Schema> anyOf = composedSchema.getAnyOf();
+			List<Schema> allOf = composedSchema.getAllOf();
 
-			if (!anyOf.isEmpty()) {
+			if (!allOf.isEmpty()) {
 				schemas.put(_objectDefinition.getShortName(), composedSchema);
 			}
 		}
