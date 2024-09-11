@@ -315,80 +315,90 @@
 				}
 			},
 			"Object2": {
-				"anyOf": [
+				"allOf": [
 					{
-						"properties": {
-							"r_relationship2_c_object1Id": {
-								"extensions": {
-									"x-parent-map": "properties"
+						"anyOf": [
+							{
+								"properties": {
+									"r_relationship2_c_object1Id": {
+										"extensions": {
+											"x-parent-map": "properties"
+										},
+										"format": "int64",
+										"type": "integer"
+									}
 								},
-								"format": "int64",
-								"type": "integer"
-							}
-						},
-						"required": [
-							"r_relationship2_c_object1Id"
-						],
-						"type": "object"
-					},
-					{
-						"properties": {
-							"relationship2": {
-								"$ref": "#/components/schemas/Object1",
-								"description": "Information about the relationship relationship2 can be embedded with \"nestedFields\".",
+								"required": [
+									"r_relationship2_c_object1Id"
+								],
+								"type": "object"
+							},
+							{
+								"properties": {
+									"relationship2": {
+										"$ref": "#/components/schemas/Object1",
+										"description": "Information about the relationship relationship2 can be embedded with \"nestedFields\".",
+										"type": "object"
+									}
+								},
+								"required": [
+									"relationship2"
+								],
+								"type": "object"
+							},
+							{
+								"properties": {
+									"r_relationship2_c_object1ERC": {
+										"extensions": {
+											"x-parent-map": "properties"
+										},
+										"type": "string"
+									}
+								},
+								"required": [
+									"r_relationship2_c_object1ERC"
+								],
 								"type": "object"
 							}
-						},
-						"required": [
-							"relationship2"
 						],
 						"type": "object"
 					},
 					{
-						"properties": {
-							"r_relationship2_c_object1ERC": {
-								"extensions": {
-									"x-parent-map": "properties"
+						"anyOf": [
+							{
+								"properties": {
+									"r_relationship5_c_object5Id": {
+										"extensions": {
+											"x-parent-map": "properties"
+										},
+										"format": "int64",
+										"type": "integer"
+									}
 								},
-								"type": "string"
-							}
-						},
-						"required": [
-							"r_relationship2_c_object1ERC"
-						],
-						"type": "object"
-					},
-					{
-						"properties": {
-							"r_relationship5_c_object5Id": {
-								"extensions": {
-									"x-parent-map": "properties"
+								"type": "object"
+							},
+							{
+								"properties": {
+									"relationship5": {
+										"$ref": "#/components/schemas/Object5",
+										"description": "Information about the relationship relationship5 can be embedded with \"nestedFields\".",
+										"type": "object"
+									}
 								},
-								"format": "int64",
-								"type": "integer"
-							}
-						},
-						"type": "object"
-					},
-					{
-						"properties": {
-							"relationship5": {
-								"$ref": "#/components/schemas/Object5",
-								"description": "Information about the relationship relationship5 can be embedded with \"nestedFields\".",
+								"type": "object"
+							},
+							{
+								"properties": {
+									"r_relationship5_c_object5ERC": {
+										"extensions": {
+											"x-parent-map": "properties"
+										},
+										"type": "string"
+									}
+								},
 								"type": "object"
 							}
-						},
-						"type": "object"
-					},
-					{
-						"properties": {
-							"r_relationship5_c_object5ERC": {
-								"extensions": {
-									"x-parent-map": "properties"
-								},
-								"type": "string"
-							}
-						},
+						],
 						"type": "object"
 					}
 				],
