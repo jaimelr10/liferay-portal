@@ -244,9 +244,10 @@ public class ObjectEntryOpenAPIContributor extends BaseOpenAPIContributor {
 							objectRelationship.getName());
 					}
 
-					if (Objects.equals(
-							objectDefinitionSchemaPropertyValue.getType(),
-							"object")) {
+					String type = objectDefinitionSchemaPropertyValue.getType();
+
+					if (Objects.equals(type, "object") ||
+						Objects.equals(type, "array")) {
 
 						anyOfEntrySchema.setProperties(
 							HashMapBuilder.put(
