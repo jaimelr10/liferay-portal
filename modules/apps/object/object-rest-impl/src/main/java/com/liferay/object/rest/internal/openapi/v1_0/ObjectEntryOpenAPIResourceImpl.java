@@ -37,6 +37,7 @@ import com.liferay.portal.vulcan.util.OpenAPIUtil;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class ObjectEntryOpenAPIResourceImpl
 			fields.put(
 				propertyName,
 				Field.of(
-					propertySchema.getDescription(), propertyName,
+					null, propertySchema.getDescription(), propertyName,
 					GetterUtil.getBoolean(propertySchema.getReadOnly()),
 					_getRef(propertySchema),
 					requiredPropertySchemaNames.contains(propertyName),
@@ -118,6 +119,65 @@ public class ObjectEntryOpenAPIResourceImpl
 					OpenAPIUtil.getBatchUnsupportedFormats(
 						propertySchema.getExtensions()),
 					GetterUtil.getBoolean(propertySchema.getWriteOnly())));
+		}
+
+		if (schema instanceof ComposedSchema) {
+			ComposedSchema composedSchema = (ComposedSchema)schema;
+
+			for (Schema allOfSchema : composedSchema.getAllOf()) {
+				ComposedSchema composedAllOfSchema =
+					(ComposedSchema)allOfSchema;
+
+				for (Schema anyOfSchema : composedAllOfSchema.getAnyOf()) {
+					Map<String, Schema> anyOfSchemaProperties =
+						anyOfSchema.getProperties();
+
+					List<ObjectRelationship> objectRelationships =
+						_objectRelationshipLocalService.
+							getObjectRelationshipsByObjectDefinitionId2(
+								_objectDefinition.getObjectDefinitionId());
+
+					List<String> requiredProperties =
+						_getRequiredPropertySchemaNames(anyOfSchema);
+
+					for (Map.Entry<String, Schema> anyOfSchemaEntry :
+							anyOfSchemaProperties.entrySet()) {
+
+						String propertyName = anyOfSchemaEntry.getKey();
+						Schema propertySchema = anyOfSchemaEntry.getValue();
+
+						String relationshipName = null;
+
+						for (ObjectRelationship objectRelationship :
+								objectRelationships) {
+
+							String objectRelationshipName =
+								objectRelationship.getName();
+
+							if (propertyName.contains(objectRelationshipName)) {
+								relationshipName = objectRelationshipName;
+
+								break;
+							}
+						}
+
+						fields.put(
+							propertyName,
+							Field.of(
+								relationshipName,
+								propertySchema.getDescription(), propertyName,
+								GetterUtil.getBoolean(
+									propertySchema.getReadOnly()),
+								_getRef(propertySchema),
+								requiredProperties.contains(propertyName),
+								propertySchema.getType(),
+								OpenAPIUtil.getBatchUnsupportedFormats(
+									propertySchema.getExtensions()),
+								GetterUtil.getBoolean(
+									propertySchema.getWriteOnly())));
+					}
+				}
+			}
 		}
 
 		return fields;
