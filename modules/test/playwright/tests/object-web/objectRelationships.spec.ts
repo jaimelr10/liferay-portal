@@ -676,6 +676,10 @@ test.describe('Manage object relationships through Model Builder', () => {
 			objectRelationshipName
 		);
 
+		createdEntities.objectRelationshipIds.splice(
+			createdEntities.objectRelationshipIds.indexOf(objectRelationship.id)
+		);
+
 		await expect(
 			modelBuilderDiagramPage.objectRelationshipEdges.filter({
 				hasText: objectRelationshipLabel,

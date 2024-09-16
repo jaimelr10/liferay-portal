@@ -237,6 +237,8 @@ test.describe('Manage object definitions through Model Builder', () => {
 
 		await modelBuilderObjectDefinitionNodePage.deleteObjectDefinitionOption.click();
 
+		objectDefinitions.splice(objectDefinitions.indexOf(objectDefinition1));
+
 		await expect(
 			modelBuilderLeftSidebarPage.sidebarItems.filter({
 				hasText: objectDefinition2.label['en_US'],
@@ -288,6 +290,8 @@ test.describe('Manage object definitions through Model Builder', () => {
 		await modelBuilderObjectDefinitionNodePage.deleteObjectDefinition(
 			objectDefinition1.name
 		);
+
+		objectDefinitions.splice(objectDefinitions.indexOf(objectDefinition1));
 
 		await expect(
 			modelBuilderDiagramPage.objectDefinitionNodes.filter({
@@ -609,6 +613,8 @@ test.describe('Manage object definitions through View Object Definitions', () =>
 			.click();
 
 		await viewObjectDefinitionsPage.deleteObjectDefinitionOption.click();
+
+		objectDefinitions.splice(objectDefinitions.indexOf(objectDefinition2));
 
 		await expect(
 			viewObjectDefinitionsPage.frontendDataSetEntries.filter({
