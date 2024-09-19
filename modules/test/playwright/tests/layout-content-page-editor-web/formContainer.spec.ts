@@ -916,9 +916,11 @@ test.describe('Multistep', () => {
 			);
 
 			const {id: objectDefinitionId} =
-				await objectAdminRestClient.objectDefinition.getObjectDefinitionByExternalReferenceCode({
-					externalReferenceCode: LEMON_OBJECT_ERC
-				});
+				await objectAdminRestClient.objectDefinition.getObjectDefinitionByExternalReferenceCode(
+					{
+						externalReferenceCode: LEMON_OBJECT_ERC,
+					}
+				);
 
 			// Create a page with a Form fragment
 
