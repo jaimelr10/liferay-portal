@@ -60,6 +60,7 @@ import java.net.URL;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.security.CodeSource;
@@ -1969,6 +1970,19 @@ public class RESTBuilder {
 		return endIndex;
 	}
 
+	private String _getNodePrefix() throws Exception {
+		Path tempPath = Paths.get(
+			System.getProperty("java.io.tmpdir"), RESTBuilder.class.getName());
+
+		File file = tempPath.toFile();
+
+		if (!file.exists()) {
+			tempPath = Files.createDirectory(tempPath);
+		}
+
+		return tempPath.toString();
+	}
+
 	private Set<String> _getRelatedSchemaNames(
 		Map<String, Schema> schemas,
 		List<JavaMethodSignature> javaMethodSignatures) {
@@ -2014,7 +2028,8 @@ public class RESTBuilder {
 
 		ProcessBuilder processBuilder = new ProcessBuilder(
 			Arrays.asList(
-				"npx", "openapi-typescript-codegen@0.27.0", "--input",
+				"npx", "--prefix", _getNodePrefix(),
+				"openapi-typescript-codegen@0.27.0", "--input",
 				openAPIYAMLFile.getPath(), "--output", outputDirPath,
 				"--client", targetClientType, "--name", clientName,
 				"--useOptions", "--useUnionTypes"));
