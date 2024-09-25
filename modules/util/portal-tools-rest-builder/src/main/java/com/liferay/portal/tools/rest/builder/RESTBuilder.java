@@ -2028,7 +2028,7 @@ public class RESTBuilder {
 
 		ProcessBuilder processBuilder = new ProcessBuilder(
 			Arrays.asList(
-				"npx", "--prefix", _getNodePrefix(),
+				"npx", "-y", "--prefix", _getNodePrefix(),
 				"openapi-typescript-codegen@0.27.0", "--input",
 				openAPIYAMLFile.getPath(), "--output", outputDirPath,
 				"--client", targetClientType, "--name", clientName,
