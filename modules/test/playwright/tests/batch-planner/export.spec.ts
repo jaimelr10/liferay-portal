@@ -5,7 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {HeadlessAdminListTypeClient} from '../../../../apps/headless/headless-admin-list-type/headless-admin-list-type-client-js/src/main/resources/META-INF/resources/node';
 import {
 	ObjectAdminRestClient,
 	ObjectDefinition,
@@ -160,27 +159,23 @@ test('can export as JSON with all field types mapped', async ({
 	apiHelpers,
 	dataMigrationCenterPage,
 }) => {
-	const headlessAdminListTypeClient = await apiHelpers.buildRestClient(
-		HeadlessAdminListTypeClient
+	const picklist = await apiHelpers.post(
+		'/o/headless-admin-list-type/v1.0/list-type-definitions',
+		{
+			data: {
+				externalReferenceCode: 'customPicklistERC',
+				name: 'customPicklist',
+				name_i18n: {
+					en_US: 'customPicklist',
+				},
+			},
+		}
 	);
 
-	const picklist =
-		await headlessAdminListTypeClient.listTypeDefinition.postListTypeDefinition(
-			{
-				requestBody: {
-					externalReferenceCode: 'customPicklistERC',
-					name: 'customPicklist',
-					name_i18n: {
-						en_US: 'customPicklist',
-					},
-				},
-			}
-		);
-
-	await headlessAdminListTypeClient.listTypeEntry.postListTypeDefinitionListTypeEntry(
+	await apiHelpers.post(
+		`/o/headless-admin-list-type/v1.0/list-type-definitions/${picklist.id}/list-type-entries`,
 		{
-			listTypeDefinitionId: picklist.id,
-			requestBody: {
+			data: {
 				key: 'distance1',
 				name: 'distance1',
 				name_i18n: {
@@ -382,11 +377,9 @@ test('can export as JSON with all field types mapped', async ({
 		objectDefinitionId: objectDefinition.id,
 	});
 
-	await headlessAdminListTypeClient.listTypeDefinition.deleteListTypeDefinition(
-		{
-			listTypeDefinitionId: picklist.id,
-		}
-	);
+	await apiHelpers.delete(`/o/headless-admin-list-definitions/`, {
+		listTypeDefinitionId: picklist.id,
+	});
 });
 
 test('can export as JSONL with excluded fields', async ({
