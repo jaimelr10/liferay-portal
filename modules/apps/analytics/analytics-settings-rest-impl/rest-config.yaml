@@ -9,5 +9,5 @@ clientDir: "../analytics-settings-rest-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: true
 generateBatch: false
-generateJSClient: true
+generateJSClient: false
 testDir: "../analytics-settings-rest-test/src/testIntegration/java"

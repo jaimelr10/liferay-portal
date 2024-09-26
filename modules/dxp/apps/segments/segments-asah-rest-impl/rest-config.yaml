@@ -8,5 +8,5 @@ author: "Javier Gamarra"
 clientDir: "../segments-asah-rest-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: true
-generateJSClient: true
+generateJSClient: false
 testDir: "../segments-asah-rest-test/src/testIntegration/java"

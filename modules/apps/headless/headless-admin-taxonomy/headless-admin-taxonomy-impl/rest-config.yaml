@@ -9,5 +9,5 @@ clientDir: "../headless-admin-taxonomy-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: true
 generateActionProviders: true
-generateJSClient: true
+generateJSClient: false
 testDir: "../headless-admin-taxonomy-test/src/testIntegration/java"
