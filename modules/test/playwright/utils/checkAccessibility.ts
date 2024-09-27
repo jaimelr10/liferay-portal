@@ -44,7 +44,7 @@ export async function checkAccessibility({
 		}
 	}
 
-	const results = await new AxeBuilder({page})
+	const results = await new AxeBuilder({page} as any)
 		.withTags(tags)
 		.include(selectors)
 		.exclude(selectorsToExclude)
