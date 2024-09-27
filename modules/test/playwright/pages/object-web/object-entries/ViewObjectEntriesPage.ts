@@ -5,7 +5,6 @@
 
 import {FrameLocator, Locator, Page, expect} from '@playwright/test';
 
-import {ObjectField} from '../../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
 
 export class ViewObjectEntriesPage {
@@ -81,7 +80,7 @@ export class ViewObjectEntriesPage {
 		objectFieldLabel,
 		objectFieldValue,
 	}: {
-		objectFieldBusinessType?: ObjectField['businessType'];
+		objectFieldBusinessType?: ObjectFieldBusinessTypeName;
 		objectFieldLabel?: string;
 		objectFieldValue: string;
 	}) {

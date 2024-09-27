@@ -6,11 +6,6 @@
 import {expect, mergeTests} from '@playwright/test';
 import path from 'node:path';
 
-import {
-	ObjectAction,
-	ObjectAdminRestClient,
-	ObjectDefinition,
-} from '../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {editObjectDefinitionPagesTest} from '../../fixtures/editObjectDefinitionPagesTest';
 import {loginTest} from '../../fixtures/loginTest';
@@ -49,13 +44,9 @@ test.beforeEach(async ({apiHelpers}) => {
 });
 
 test.afterEach(async ({apiHelpers}) => {
-	const objectAdminRestClient = await apiHelpers.buildRestClient(
-		ObjectAdminRestClient
+	await apiHelpers.objectAdmin.deleteObjectDefinition(
+		createdEntities.objectDefinition.id
 	);
-
-	await objectAdminRestClient.objectDefinition.deleteObjectDefinition({
-		objectDefinitionId: createdEntities.objectDefinition.id,
-	});
 
 	for (const queueEntryId of createdEntities.notificationQueueEntriesId) {
 		await apiHelpers.notification.deleteNotificationQueueEntry(
@@ -72,9 +63,7 @@ test.afterEach(async ({apiHelpers}) => {
 	createdEntities.notificationTemplatesId = [];
 
 	for (const actionId of createdEntities.objectActionsId) {
-		await objectAdminRestClient.objectAction.deleteObjectAction({
-			objectActionId: actionId,
-		});
+		await apiHelpers.objectAdmin.deleteObjectAction(actionId);
 	}
 
 	createdEntities.objectActionsId = [];
@@ -150,15 +139,9 @@ test.describe('Manage object actions through object actions tab', () => {
 			);
 		}
 
-		const objectAdminRestClient = await apiHelpers.buildRestClient(
-			ObjectAdminRestClient
-		);
-
 		const objectActions =
-			await objectAdminRestClient.objectAction.getObjectDefinitionByExternalReferenceCodeObjectActionsPage(
-				{
-					externalReferenceCode: 'L_COMMERCE_ORDER',
-				}
+			await apiHelpers.objectAdmin.getObjectActionsByExternalReferenceCode(
+				'L_COMMERCE_ORDER'
 			);
 
 		objectActions.items.forEach((objectAction: ObjectAction) =>
@@ -260,25 +243,19 @@ test('can send notification email via download action', async ({
 
 	// Create an action to send notification after attachment download
 
-	const objectAdminRestClient = await apiHelpers.buildRestClient(
-		ObjectAdminRestClient
-	);
-
-	await objectAdminRestClient.objectAction.postObjectDefinitionByExternalReferenceCodeObjectAction(
+	await apiHelpers.objectAdmin.postObjectActionByExternalReferenceCode(
+		objectDefinition.externalReferenceCode,
 		{
-			externalReferenceCode: objectDefinition.externalReferenceCode,
-			requestBody: {
-				active: true,
-				label: {
-					en_US: 'downloadAttachmentArchive',
-				},
-				name: 'downloadAttachmentArchive',
-				objectActionExecutorKey: 'notification',
-				objectActionTriggerKey: 'onAfterAttachmentDownload',
-				parameters: {
-					notificationTemplateId: notificationTemplate.id,
-					type: 'email',
-				},
+			active: true,
+			label: {
+				en_US: 'downloadAttachmentArchive',
+			},
+			name: 'downloadAttachmentArchive',
+			objectActionExecutorKey: 'notification',
+			objectActionTriggerKey: 'onAfterAttachmentDownload',
+			parameters: {
+				notificationTemplateId: notificationTemplate.id,
+				type: 'email',
 			},
 		}
 	);

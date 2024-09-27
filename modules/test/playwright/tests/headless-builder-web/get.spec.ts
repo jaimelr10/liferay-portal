@@ -5,7 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {ObjectAdminRestClient} from '../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {headlessDiscoveryPagesTest} from '../../fixtures/headlessDiscoveryWebPagesTest';
 import {loginTest} from '../../fixtures/loginTest';
@@ -240,47 +239,41 @@ test('can list site scoped endpoint', async ({
 	headlessBuilderPage,
 	page,
 }) => {
-	const objectAdminRestClient = await apiHelpers.buildRestClient(
-		ObjectAdminRestClient
-	);
-
 	const studentSiteDefinition =
-		await objectAdminRestClient.objectDefinition.postObjectDefinition({
-			requestBody: {
-				active: true,
-				externalReferenceCode: 'site-student-definition',
-				label: {
-					en_US: 'Student',
-				},
-				name: 'Student',
-				objectFields: [
-					{
-						DBType: 'String',
-						businessType: 'Text',
-						externalReferenceCode: 'student-name-field',
-						indexed: true,
-						indexedAsKeyword: false,
-						indexedLanguageId: 'en_US',
-						label: {
-							en_US: 'Student name',
-						},
-						listTypeDefinitionId: 0,
-						name: 'studentName',
-						required: true,
-						state: false,
-						system: false,
-						type: 'String',
+		await apiHelpers.objectAdmin.postObjectDefinition({
+			active: true,
+			externalReferenceCode: 'site-student-definition',
+			label: {
+				en_US: 'Student',
+			},
+			name: 'Student',
+			objectFields: [
+				{
+					DBType: 'String',
+					businessType: 'Text',
+					externalReferenceCode: 'student-name-field',
+					indexed: true,
+					indexedAsKeyword: false,
+					indexedLanguageId: 'en_US',
+					label: {
+						en_US: 'Student name',
 					},
-				],
-				pluralLabel: {
-					en_US: 'Students',
+					listTypeDefinitionId: 0,
+					name: 'studentName',
+					required: true,
+					state: false,
+					system: false,
+					type: 'String',
 				},
-				portlet: true,
-				restContextPath: '/o/c/students',
-				scope: 'site',
-				status: {
-					code: 0,
-				},
+			],
+			pluralLabel: {
+				en_US: 'Students',
+			},
+			portlet: true,
+			restContextPath: '/o/c/students',
+			scope: 'site',
+			status: {
+				code: 0,
 			},
 		});
 
@@ -339,8 +332,7 @@ test('can list site scoped endpoint', async ({
 		'headless-builder/applications',
 		studentApplication.externalReferenceCode
 	);
-
-	await objectAdminRestClient.objectDefinition.deleteObjectDefinition({
-		objectDefinitionId: studentSiteDefinition.id,
-	});
+	await apiHelpers.objectAdmin.deleteObjectDefinition(
+		studentSiteDefinition.id
+	);
 });

@@ -5,10 +5,6 @@
 
 import {Page, expect, mergeTests} from '@playwright/test';
 
-import {
-	ObjectAdminRestClient,
-	ObjectDefinition,
-} from '../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
 import {accountSettingsPagesTest} from '../../fixtures/accountSettingsPagesTest';
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {formsPagesTest} from '../../fixtures/formsPagesTest';
@@ -47,15 +43,9 @@ test.afterEach(
 		page,
 		siteSettingsLocalizationPage,
 	}) => {
-		const objectAdminRestClient = await apiHelpers.buildRestClient(
-			ObjectAdminRestClient
-		);
-
 		for (const objectDefinition of createdEntities.objectDefinitions) {
-			await objectAdminRestClient.objectDefinition.deleteObjectDefinition(
-				{
-					objectDefinitionId: objectDefinition.id,
-				}
+			await apiHelpers.objectAdmin.deleteObjectDefinition(
+				objectDefinition.id
 			);
 		}
 

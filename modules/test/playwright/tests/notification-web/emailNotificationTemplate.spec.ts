@@ -5,10 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {
-	ObjectAdminRestClient,
-	ObjectDefinition,
-} from '../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
 import {apiHelpersTest} from '../../fixtures/apiHelpersTest';
 import {loginTest} from '../../fixtures/loginTest';
 import {notificationPagesTest} from '../../fixtures/notificationPagesTest';
@@ -30,13 +26,7 @@ test.beforeEach(async ({apiHelpers}) => {
 });
 
 test.afterEach(async ({apiHelpers, notificationTemplatesPage, page}) => {
-	const objectAdminRestClient = await apiHelpers.buildRestClient(
-		ObjectAdminRestClient
-	);
-
-	await objectAdminRestClient.objectDefinition.deleteObjectDefinition({
-		objectDefinitionId: objectDefinition.id,
-	});
+	await apiHelpers.objectAdmin.deleteObjectDefinition(objectDefinition.id);
 
 	await notificationTemplatesPage.goto();
 

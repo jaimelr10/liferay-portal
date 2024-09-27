@@ -5,7 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {ObjectAdminRestClient} from '../../../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
 import {apiHelpersTest} from '../../../../fixtures/apiHelpersTest';
 import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
 import {isolatedLayoutTest} from '../../../../fixtures/isolatedLayoutTest';
@@ -71,46 +70,36 @@ test.beforeEach(
 			});
 		});
 
-		const objectAdminRestClient = await apiHelpers.buildRestClient(
-			ObjectAdminRestClient
-		);
-
 		await test.step('Create a Headless application and populate with filter values', async () => {
 			objectDefinition =
-				await objectAdminRestClient.objectDefinition.postObjectDefinition(
-					{
-						requestBody: {
-							enableLocalization: true,
+				await apiHelpers.objectAdmin.postObjectDefinition({
+					enableLocalization: true,
+					label: {
+						en_US: 'Field Type',
+					},
+					modifiable: true,
+					name: apiHeadlessName,
+					objectFields: [
+						{
+							DBType: 'String',
+							businessType: 'Text',
+							indexed: true,
+							indexedAsKeyword: true,
 							label: {
-								en_US: 'Field Type',
+								en_US: 'type',
 							},
-							modifiable: true,
-							name: apiHeadlessName,
-							objectFields: [
-								{
-									DBType: 'String',
-									businessType: 'Text',
-									indexed: true,
-									indexedAsKeyword: true,
-									label: {
-										en_US: 'type',
-									},
-									localized: true,
-									name: 'type',
-									required: false,
-									state: false,
-								},
-							],
-							pluralLabel: {en_US: `${apiHeadlessName}s`},
-							scope: 'company',
+							localized: true,
+							name: 'type',
+							required: false,
+							state: false,
 						},
-					}
-				);
+					],
+					pluralLabel: {en_US: `${apiHeadlessName}s`},
+					scope: 'company',
+				});
 
-			await objectAdminRestClient.objectDefinition.postObjectDefinitionPublish(
-				{
-					objectDefinitionId: objectDefinition.id,
-				}
+			await apiHelpers.objectAdmin.postObjectDefinitionPublish(
+				objectDefinition.id
 			);
 
 			await apiHelpers.objectEntry.postObjectEntry(
@@ -149,13 +138,9 @@ test.afterEach(
 
 		await picklistApiHelpers.deletePicklist(picklistName);
 
-		const objectAdminRestClient = await apiHelpers.buildRestClient(
-			ObjectAdminRestClient
+		await apiHelpers.objectAdmin.deleteObjectDefinition(
+			objectDefinition.id
 		);
-
-		await objectAdminRestClient.objectDefinition.deleteObjectDefinition({
-			objectDefinitionId: objectDefinition.id,
-		});
 	}
 );
 

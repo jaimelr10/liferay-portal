@@ -5,7 +5,6 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
-import {ObjectAdminRestClient} from '../../../../../apps/object/object-admin-rest-client-js/src/main/resources/META-INF/resources/node';
 import {applicationsMenuPageTest} from '../../../fixtures/applicationsMenuPageTest';
 import {commercePagesTest} from '../../../fixtures/commercePagesTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
@@ -255,25 +254,19 @@ test('LPD-4174 Sales agent can receive email notifications for new orders placed
 			type: 'email',
 		});
 
-	const objectAdminRestClient = await apiHelpers.buildRestClient(
-		ObjectAdminRestClient
-	);
-
 	const objectAction =
-		await objectAdminRestClient.objectAction.postObjectDefinitionByExternalReferenceCodeObjectAction(
+		await apiHelpers.objectAdmin.postObjectActionByExternalReferenceCode(
+			'L_COMMERCE_ORDER',
 			{
-				externalReferenceCode: 'L_COMMERCE_ORDER',
-				requestBody: {
-					active: true,
-					label: {
-						en_US: 'commerceOrderStatusOnChange',
-					},
-					name: 'commerceOrderStatusOnChange',
-					objectActionExecutorKey: 'notification',
-					objectActionTriggerKey: 'liferay/commerce_order_status',
-					parameters: {
-						notificationTemplateId: notificationTemplate.id,
-					},
+				active: true,
+				label: {
+					en_US: 'commerceOrderStatusOnChange',
+				},
+				name: 'commerceOrderStatusOnChange',
+				objectActionExecutorKey: 'notification',
+				objectActionTriggerKey: 'liferay/commerce_order_status',
+				parameters: {
+					notificationTemplateId: notificationTemplate.id,
 				},
 			}
 		);
@@ -314,9 +307,7 @@ test('LPD-4174 Sales agent can receive email notifications for new orders placed
 			'Sales agent can receive email notifications'
 		);
 
-		await objectAdminRestClient.objectAction.deleteObjectAction({
-			objectActionId: objectAction.id,
-		});
+		await apiHelpers.objectAdmin.deleteObjectAction(objectAction.id);
 
 		const notificationQueueEntry =
 			await apiHelpers.notification.getNotificationQueueEntriesPage(
