@@ -13,6 +13,7 @@ components:
                 - properties:
                       property2:
                           type: string
+            type: object
         ChildTestEntity3:
             allOf:
                 - $ref: "#/components/schemas/TestEntity"
