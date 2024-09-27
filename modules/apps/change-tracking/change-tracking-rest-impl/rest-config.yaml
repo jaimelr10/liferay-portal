@@ -8,5 +8,4 @@ author: "David Truong"
 clientDir: "../change-tracking-rest-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: true
-generateJSClient: false
 testDir: "../change-tracking-rest-test/src/testIntegration/java"

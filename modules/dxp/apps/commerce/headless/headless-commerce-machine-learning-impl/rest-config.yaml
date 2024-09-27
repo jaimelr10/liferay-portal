@@ -8,5 +8,4 @@ author: "Riccardo Ferrari"
 clientDir: "../headless-commerce-machine-learning-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableSchemaPropertyName: true
-generateJSClient: false
 testDir: "../headless-commerce-machine-learning-test/src/testIntegration/java"

@@ -8,5 +8,4 @@ author: "Alessio Antonio Rendina"
 clientDir: "../headless-commerce-admin-inventory-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableSchemaPropertyName: false
-generateJSClient: false
 testDir: "../headless-commerce-admin-inventory-test/src/testIntegration/java"

@@ -8,5 +8,4 @@ author: "Petteri Karttunen"
 clientDir: "../portal-search-rest-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: true
-generateJSClient: false
 testDir: "../portal-search-rest-test/src/testIntegration/java"

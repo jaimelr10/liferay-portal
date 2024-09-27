@@ -9,5 +9,4 @@ clientDir: "../scim-rest-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: false
 generateGraphQL: false
-generateJSClient: false
 testDir: "../scim-rest-test/src/testIntegration/java"

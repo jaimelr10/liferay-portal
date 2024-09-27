@@ -8,5 +8,4 @@ author: "Nilton Vieira"
 clientDir: "../dispatch-rest-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: true
-generateJSClient: false
 testDir: "../dispatch-rest-test/src/testIntegration/java"

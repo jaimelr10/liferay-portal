@@ -10,5 +10,4 @@ compatibilityVersion: 6
 forcePredictableOperationId: true
 generateBatch: false
 generateGraphQL: false
-generateJSClient: false
 testDir: "../captcha-rest-test/src/testIntegration/java"

@@ -10,5 +10,4 @@ compatibilityVersion: 6
 forcePredictableOperationId: true
 generateBatch: false
 generateGraphQL: false
-generateJSClient: false
 testDir: "../headless-portal-instances-test/src/testIntegration/java"

@@ -9,5 +9,4 @@ clientDir: "../portal-language-rest-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: true
 generateGraphQL: false
-generateJSClient: false
 testDir: "../portal-language-rest-test/src/testIntegration/java"

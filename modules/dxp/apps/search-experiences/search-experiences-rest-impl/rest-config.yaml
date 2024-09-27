@@ -8,5 +8,4 @@ author: "Brian Wing Shun Chan"
 clientDir: "../search-experiences-rest-client/src/main/java"
 compatibilityVersion: 6
 forcePredictableOperationId: true
-generateJSClient: false
 testDir: "../search-experiences-rest-test/src/testIntegration/java"

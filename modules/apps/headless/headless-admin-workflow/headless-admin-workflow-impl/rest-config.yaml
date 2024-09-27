@@ -7,5 +7,4 @@ application:
 author: "Javier Gamarra"
 clientDir: "../headless-admin-workflow-client/src/main/java"
 compatibilityVersion: 6
-generateJSClient: false
 testDir: "../headless-admin-workflow-test/src/testIntegration/java"
