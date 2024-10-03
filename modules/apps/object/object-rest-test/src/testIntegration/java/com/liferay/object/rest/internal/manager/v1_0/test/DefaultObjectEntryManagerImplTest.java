@@ -1308,6 +1308,52 @@ public class DefaultObjectEntryManagerImplTest
 	}
 
 	@Test
+	public void testAddObjectWithMandatoryRelationshipUsingExternalReferenceCode()
+		throws Exception {
+		// Create Obj1
+		ObjectDefinition objectDefinition1 = _createObjectDefinition(
+			Collections.singletonList(
+				new TextObjectFieldBuilder(
+				).labelMap(
+					LocalizedMapUtil.getLocalizedMap(
+						RandomTestUtil.randomString())
+				).name(
+					"textObjectFieldName"
+				).build()));
+
+
+		// Create Obj2
+		ObjectDefinition objectDefinition2 = _createObjectDefinition(
+			Collections.singletonList(
+				new TextObjectFieldBuilder(
+				).labelMap(
+					LocalizedMapUtil.getLocalizedMap(
+						RandomTestUtil.randomString())
+				).name(
+					"textObjectFieldName2"
+				).build()));
+
+
+		// Create a oneToMany mandatory relationship from obj1 to obj2
+		ObjectRelationship objectRelationship = _objectRelationshipLocalService.addObjectRelationship(
+				null, adminUser.getUserId(),
+				objectDefinition1.getObjectDefinitionId(),
+				objectDefinition2.getObjectDefinitionId(), 0,
+				ObjectRelationshipConstants.DELETION_TYPE_CASCADE,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				"oneToManyRelationship", false,
+				ObjectRelationshipConstants.TYPE_ONE_TO_MANY, null);
+
+		_addRelatedObjectEntries(
+			objectDefinition1, objectDefinition2, "externalReferenceCode1",
+			"externalReferenceCode2", objectRelationship);
+
+		// Add ObjEntry with ERC entry1_ERC
+		// curl to create
+		// Check que se crea bien
+	}
+
+	@Test
 	public void testAddObjectEntryWithAccountEntryRestricted2()
 		throws Exception {
 
