@@ -74,15 +74,14 @@ export default function BaseAPISchemaProperty({
 		});
 	};
 
-	const localizedPropertyName =
-		objectField.label[Liferay.ThemeDisplay.getDefaultLanguageId()]!;
-
 	return (
 		ALLOWED_BUSINESS_TYPES.includes(objectField.businessType) && (
 			<ClayButton
 				aria-label={sub(
 					Liferay.Language.get('add-x-property'),
-					localizedPropertyName
+					objectField.label[
+						Liferay.ThemeDisplay.getDefaultLanguageId()
+					]!
 				)}
 				className="property-container"
 				displayType="unstyled"
