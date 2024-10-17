@@ -84,8 +84,8 @@ export function AddObjectFieldsDataToProperties({
 	);
 
 	return (
-		propertiesTreeViewItems.length
-			? propertiesTreeViewItems
+		propertiesTreeViewItems.length && !!propertiesTreeViewItems.find(treeViewItem => typeof(treeViewItem) == undefined)
+			? propertiesTreeViewItems 
 			: schemaProperties
 	) as TreeViewItemData[];
 }
