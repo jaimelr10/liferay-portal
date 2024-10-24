@@ -1,9 +1,10 @@
+modules/_node-scripts/    @liferay-frontend
 modules/apps/accessibility/    @liferay-platform-experience
 modules/apps/account/    @liferay-commerce
 modules/apps/adaptive-media/    @liferay-content-management
 modules/apps/address/    @liferay-commerce
 modules/apps/ai-creator/
-modules/apps/analytics/
+modules/apps/analytics/    @liferay-ac
 modules/apps/announcements/    @liferay-content-management
 modules/apps/application-list/    @liferay-platform-experience
 modules/apps/archived/
@@ -110,7 +111,6 @@ modules/apps/item-selector/    @liferay-content-management
 modules/apps/journal/    @liferay-content-management
 modules/apps/json-storage/
 modules/apps/knowledge-base/    @liferay-content-management
-modules/apps/layout/
 modules/apps/layout/layout-admin-api    @liferay-page-management
 modules/apps/layout/layout-admin-web    @liferay-page-management
 modules/apps/layout/layout-admin-web-test    @liferay-page-management
@@ -118,28 +118,53 @@ modules/apps/layout/layout-api    @liferay-page-management
 modules/apps/layout/layout-content-page-editor-api    @liferay-page-management
 modules/apps/layout/layout-content-page-editor-web    @liferay-page-management
 modules/apps/layout/layout-content-page-editor-web-test    @liferay-page-management
+modules/apps/layout/layout-display-page-api
+modules/apps/layout/layout-display-page-impl
+modules/apps/layout/layout-display-page-test
+modules/apps/layout/layout-dynamic-data-mapping-form-field-type
+modules/apps/layout/layout-dynamic-data-mapping-form-field-type-api
 modules/apps/layout/layout-impl    @liferay-page-management
+modules/apps/layout/layout-item-selector-api
+modules/apps/layout/layout-item-selector-web
+modules/apps/layout/layout-js-components-web    @liferay-page-management
+modules/apps/layout/layout-locked-layouts-web
+modules/apps/layout/layout-locked-layouts-web-test
 modules/apps/layout/layout-page-template-admin-api    @liferay-page-management
 modules/apps/layout/layout-page-template-admin-web    @liferay-page-management
 modules/apps/layout/layout-page-template-admin-web-test    @liferay-page-management
 modules/apps/layout/layout-page-template-api    @liferay-page-management
+modules/apps/layout/layout-page-template-item-selector-api
+modules/apps/layout/layout-page-template-item-selector-web
 modules/apps/layout/layout-page-template-service    @liferay-page-management
 modules/apps/layout/layout-page-template-test    @liferay-page-management
+modules/apps/layout/layout-portlets-web
 modules/apps/layout/layout-prototype-api    @liferay-page-management
 modules/apps/layout/layout-prototype-impl    @liferay-page-management
 modules/apps/layout/layout-prototype-test    @liferay-page-management
-modules/apps/layout/layout-reports-web/layout-reports-web    @liferay-page-management
+modules/apps/layout/layout-reports-test
+modules/apps/layout/layout-reports-web    @liferay-page-management
 modules/apps/layout/layout-seo-api    @liferay-page-management
 modules/apps/layout/layout-seo-service    @liferay-page-management
 modules/apps/layout/layout-seo-test    @liferay-page-management
 modules/apps/layout/layout-seo-web    @liferay-page-management
 modules/apps/layout/layout-seo-web-test    @liferay-page-management
+modules/apps/layout/layout-service
+modules/apps/layout/layout-set-prototype-api
+modules/apps/layout/layout-set-prototype-impl
+modules/apps/layout/layout-set-prototype-test
+modules/apps/layout/layout-set-prototype-web
 modules/apps/layout/layout-taglib    @liferay-page-management
 modules/apps/layout/layout-test    @liferay-page-management
 modules/apps/layout/layout-test-util    @liferay-page-management
-modules/apps/layout/layout-utility-page/layout-utility-page-api    @liferay-page-management
-modules/apps/layout/layout-utility-page/layout-utility-page-service    @liferay-page-management
-modules/apps/layout/layout-utility-page/layout-utility-page-test    @liferay-page-management
+modules/apps/layout/layout-theme-item-selector-api
+modules/apps/layout/layout-theme-item-selector-web
+modules/apps/layout/layout-type-controller
+modules/apps/layout/layout-uad
+modules/apps/layout/layout-uad-test
+modules/apps/layout/layout-utility-page
+modules/apps/layout/layout-utility-page-api    @liferay-page-management
+modules/apps/layout/layout-utility-page-service    @liferay-page-management
+modules/apps/layout/layout-utility-page-test    @liferay-page-management
 modules/apps/learn/
 modules/apps/license-manager/
 modules/apps/list-type/
@@ -242,7 +267,7 @@ modules/apps/rss/rss-impl    @liferay-page-management
 modules/apps/rss/rss-taglib    @liferay-page-management
 modules/apps/rss/rss-web    @liferay-page-management
 modules/apps/saved-content/    @liferay-content-management
-modules/apps/segments/
+modules/apps/segments/    @liferay-ac
 modules/apps/server/
 modules/apps/service-component/
 modules/apps/shared-dependencies/
@@ -262,7 +287,7 @@ modules/apps/staging/    @liferay-headless
 modules/apps/static/
 modules/apps/style-book/    @liferay-platform-experience
 modules/apps/subscription/    @liferay-content-management
-modules/apps/template/
+modules/apps/template/    @liferay-page-management
 modules/apps/text-localizer/
 modules/apps/translation/    @liferay-content-management
 modules/apps/trash/    @liferay-content-management
@@ -278,7 +303,7 @@ modules/apps/wiki/    @liferay-content-management
 modules/apps/words/
 modules/apps/xstream/
 modules/dxp/apps/akismet/
-modules/dxp/apps/analytics/
+modules/dxp/apps/analytics/    @liferay-ac
 modules/dxp/apps/antivirus/
 modules/dxp/apps/commerce-avalara/    @liferay-commerce
 modules/dxp/apps/commerce-demo-pack/    @liferay-commerce
@@ -289,6 +314,7 @@ modules/dxp/apps/enterprise-product-notification/
 modules/dxp/apps/frontend-theme/    @liferay-platform-experience
 modules/dxp/apps/multi-factor-authentication/
 modules/dxp/apps/osb/
+modules/dxp/apps/osb/osb-faro/    @liferay-ac
 modules/dxp/apps/portal-reports-engine-console/
 modules/dxp/apps/portal-rules-engine-drools/
 modules/dxp/apps/portal-search-elasticsearch-cross-cluster-replication/
@@ -304,7 +330,7 @@ modules/dxp/apps/salesforce-connector/
 modules/dxp/apps/saml/
 modules/dxp/apps/scim/
 modules/dxp/apps/search-experiences/
-modules/dxp/apps/segments/
+modules/dxp/apps/segments/    @liferay-ac
 modules/dxp/apps/sharepoint-rest/    @liferay-content-management
 modules/dxp/apps/sharepoint-soap/    @liferay-content-management
 modules/util/portal-tools-rest-builder/    @liferay-headless
