@@ -84,18 +84,15 @@ public class PublishCTCollectionMVCActionCommand extends BaseMVCActionCommand {
 
 				if (_log.isInfoEnabled()) {
 					_log.info(
-						StringBundler.concat(
-							"Publication ", ctCollection.getName(),
-							" is temporarily being used in place of ",
-							"production."));
+						"Using publication ", ctCollection.getName(),
+							" temporarily in place of production");
 				}
 			}
 			catch (PortalException portalException) {
 				if (_log.isWarnEnabled()) {
 					_log.warn(
-						"Can not instantly publish publication because of " +
-							"error, publication will attempt to continue to " +
-								"publish normally",
+						"Unable to instantly publish publication. Attempting " +
+							"to publish normally.",
 						portalException);
 				}
 			}

@@ -9,7 +9,6 @@ import com.liferay.change.tracking.model.CTCollection;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.change.tracking.service.CTPreferencesLocalService;
 import com.liferay.change.tracking.spi.listener.CTEventListener;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -25,21 +24,26 @@ public class CTPreferencesEventListener implements CTEventListener {
 
 	@Override
 	public void onAfterPublish(long ctCollectionId) {
-		if (FeatureFlagManagerUtil.isEnabled("LPD-39203")) {
-			_ctPreferencesLocalService.resetCTPreferences(ctCollectionId);
-
-			if (_log.isInfoEnabled()) {
-				CTCollection ctCollection =
-					_ctCollectionLocalService.fetchCTCollection(ctCollectionId);
-
-				if (ctCollection != null) {
-					_log.info(
-						StringBundler.concat(
-							"Publication ", ctCollection.getName(),
-							" has been published. Production is live."));
-				}
-			}
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-39203")) {
+			return;
 		}
+
+		_ctPreferencesLocalService.resetCTPreferences(ctCollectionId);
+
+		if (!_log.isInfoEnabled()) {
+			return;
+		}
+
+		CTCollection ctCollection = _ctCollectionLocalService.fetchCTCollection(
+			ctCollectionId);
+
+		if (ctCollection == null) {
+			return;
+		}
+
+		_log.info(
+			"Publication " + ctCollection.getName() +
+				" was published. Production is live.");
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
