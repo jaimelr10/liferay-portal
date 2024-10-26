@@ -381,20 +381,20 @@ public class AssetListAssetEntryProviderImpl
 	}
 
 	private Map<AssetListEntryAssetEntryRel, Long>
-		_getAssetListEntryAssetEntryRelGroupIdMap(
+		_getGroupIds(
 			AssetListEntry assetListEntry, long[] segmentsEntryIds) {
 
 		if (_assetListConfiguration.combineAssetsFromAllSegmentsManual()) {
 			Map<AssetListEntryAssetEntryRel, Long>
-				assetListEntryAssetEntryRelGroupIdMap = new HashMap<>();
+				groupIds = new HashMap<>();
 
 			segmentsEntryIds = _sortSegmentsByPriority(
 				assetListEntry,
 				_getCombinedSegmentsEntryIds(assetListEntry, segmentsEntryIds));
 
 			for (long segmentId : segmentsEntryIds) {
-				assetListEntryAssetEntryRelGroupIdMap.putAll(
-					_getAssetListEntryAssetEntryRelGroupIdMap(
+				groupIds.putAll(
+					_getGroupIds(
 						_assetListEntryAssetEntryRelLocalService.
 							getAssetListEntryAssetEntryRels(
 								assetListEntry.getAssetListEntryId(),
@@ -402,10 +402,10 @@ public class AssetListAssetEntryProviderImpl
 								QueryUtil.ALL_POS)));
 			}
 
-			return assetListEntryAssetEntryRelGroupIdMap;
+			return groupIds;
 		}
 
-		return _getAssetListEntryAssetEntryRelGroupIdMap(
+		return _getGroupIds(
 			_assetListEntryAssetEntryRelLocalService.
 				getAssetListEntryAssetEntryRels(
 					assetListEntry.getAssetListEntryId(),
@@ -417,11 +417,11 @@ public class AssetListAssetEntryProviderImpl
 	}
 
 	private Map<AssetListEntryAssetEntryRel, Long>
-		_getAssetListEntryAssetEntryRelGroupIdMap(
+		_getGroupIds(
 			List<AssetListEntryAssetEntryRel> assetListEntryAssetEntryRels) {
 
 		Map<AssetListEntryAssetEntryRel, Long>
-			assetListEntryAssetEntryRelGroupIdMap = new HashMap<>();
+			groupIds = new HashMap<>();
 
 		for (AssetListEntryAssetEntryRel assetListEntryAssetEntryRel :
 				assetListEntryAssetEntryRels) {
@@ -448,11 +448,11 @@ public class AssetListAssetEntryProviderImpl
 				continue;
 			}
 
-			assetListEntryAssetEntryRelGroupIdMap.put(
+			groupIds.put(
 				assetListEntryAssetEntryRel, assetEntry.getGroupId());
 		}
 
-		return assetListEntryAssetEntryRelGroupIdMap;
+		return groupIds;
 	}
 
 	private String[] _getAssetTagNames(UnicodeProperties unicodeProperties) {
@@ -810,17 +810,17 @@ public class AssetListAssetEntryProviderImpl
 		int start, int end) {
 
 		Map<AssetListEntryAssetEntryRel, Long>
-			assetListEntryAssetEntryRelGroupIdMap =
-				_getAssetListEntryAssetEntryRelGroupIdMap(
+			groupIds =
+				_getGroupIds(
 					assetListEntry, segmentsEntryIds);
 
-		if (MapUtil.isEmpty(assetListEntryAssetEntryRelGroupIdMap)) {
+		if (MapUtil.isEmpty(groupIds)) {
 			return InfoPage.of(Collections.emptyList());
 		}
 
 		List<Long> assetEntryIds = ListUtil.toList(
 			ListUtil.sort(
-				ListUtil.fromMapKeys(assetListEntryAssetEntryRelGroupIdMap),
+				ListUtil.fromMapKeys(groupIds),
 				Comparator.comparing(
 					AssetListEntryAssetEntryRelModel::getPosition)),
 			AssetListEntryAssetEntryRelModel::getAssetEntryId);
@@ -833,7 +833,7 @@ public class AssetListAssetEntryProviderImpl
 				_getManualAssetEntryQuery(
 					assetListEntry,
 					ArrayUtil.toLongArray(
-						assetListEntryAssetEntryRelGroupIdMap.values())),
+						groupIds.values())),
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 			List<AssetEntry> assetEntries = _assetHelper.getAssetEntries(hits);
