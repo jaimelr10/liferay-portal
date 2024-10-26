@@ -3753,11 +3753,11 @@ public class BundleSiteInitializerTest {
 			siteNavigationMenuItem1.getType());
 		Assert.assertTrue(
 			StringUtil.contains(
-				siteNavigationMenuItem1.getTypeSettings(), "useCustomName",
+				siteNavigationMenuItem1.getTypeSettings(), "Test Layout",
 				StringPool.BLANK));
 		Assert.assertTrue(
 			StringUtil.contains(
-				siteNavigationMenuItem1.getTypeSettings(), "Test Layout",
+				siteNavigationMenuItem1.getTypeSettings(), "useCustomName",
 				StringPool.BLANK));
 
 		SiteNavigationMenuItem siteNavigationMenuItem2 =
