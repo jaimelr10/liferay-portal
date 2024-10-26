@@ -103,7 +103,6 @@ public abstract class BaseObjectDefinitionsDisplayContext {
 
 		this.objectDefinitionModelResourcePermission =
 			objectDefinitionModelResourcePermission;
-
 		_objectFolderLocalService = objectFolderLocalService;
 
 		objectRequestHelper = new ObjectRequestHelper(httpServletRequest);
