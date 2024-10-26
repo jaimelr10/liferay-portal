@@ -12,7 +12,6 @@ import com.liferay.change.tracking.model.CTPreferences;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.change.tracking.service.CTCollectionService;
 import com.liferay.change.tracking.service.CTPreferencesLocalService;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -84,7 +83,7 @@ public class PublishCTCollectionMVCActionCommand extends BaseMVCActionCommand {
 
 				if (_log.isInfoEnabled()) {
 					_log.info(
-						"Using publication ", ctCollection.getName(),
+						"Using publication " + ctCollection.getName() +
 							" temporarily in place of production");
 				}
 			}
