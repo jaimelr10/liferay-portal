@@ -38,9 +38,9 @@ public class ContentSecurityPolicyHTMLRewriterImpl
 
 		Element bodyElement = document.body();
 
-		boolean containsBodyTag = _containsBodyTag(html);
+		boolean containsBody = _containsBody(html);
 
-		if (containsBodyTag) {
+		if (containsBody) {
 			_extractInlineHandlers(bodyElement, recursive, sb);
 		}
 		else {
@@ -60,14 +60,14 @@ public class ContentSecurityPolicyHTMLRewriterImpl
 
 		bodyElement.appendChild(element);
 
-		if (containsBodyTag) {
+		if (containsBody) {
 			return bodyElement.outerHtml();
 		}
 
 		return bodyElement.html();
 	}
 
-	private boolean _containsBodyTag(String html) {
+	private boolean _containsBody(String html) {
 		html = StringUtil.toLowerCase(html.trim());
 
 		return html.startsWith("<body");
