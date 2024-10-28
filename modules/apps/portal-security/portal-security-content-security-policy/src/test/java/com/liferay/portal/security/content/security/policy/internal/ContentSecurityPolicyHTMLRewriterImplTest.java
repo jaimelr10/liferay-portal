@@ -69,26 +69,6 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 	}
 
 	@Test
-	public void testRewriteInlineEventHandlersNonrecursive() {
-		ContentSecurityPolicyHTMLRewriterImpl
-			contentSecurityPolicyHTMLRewriterImpl =
-				new ContentSecurityPolicyHTMLRewriterImpl();
-
-		String html =
-			"<body onload=\"alert(1);\"><div onclick=\"alert(2);\">hey</div>" +
-				"</body>";
-
-		html = contentSecurityPolicyHTMLRewriterImpl.rewriteInlineEventHandlers(
-			html, "TEST_NONCE", false);
-
-		Assert.assertFalse(
-			_matches(
-				html,
-				".*<script nonce=\"TEST_NONCE\">.*onclick.*alert\\(2\\);.*" +
-					"</script>.*"));
-	}
-
-	@Test
 	public void testRewriteInlineEventHandlersPassingBodyTag() {
 		ContentSecurityPolicyHTMLRewriterImpl
 			contentSecurityPolicyHTMLRewriterImpl =
@@ -168,12 +148,16 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 			"<body onload=\"alert(1);\"><div onclick=\"alert(2);\">hey</div>" +
 				"</body>";
 
-		html = contentSecurityPolicyHTMLRewriterImpl.rewriteInlineEventHandlers(
-			html, "TEST_NONCE", true);
-
+		Assert.assertFalse(
+			_matches(
+				contentSecurityPolicyHTMLRewriterImpl.
+					rewriteInlineEventHandlers(html, "TEST_NONCE", false),
+				".*<script nonce=\"TEST_NONCE\">.*onclick.*alert\\(2\\);.*" +
+					"</script>.*"));
 		Assert.assertTrue(
 			_matches(
-				html,
+				contentSecurityPolicyHTMLRewriterImpl.
+					rewriteInlineEventHandlers(html, "TEST_NONCE", true),
 				".*<script nonce=\"TEST_NONCE\">.*onclick.*alert\\(2\\);.*" +
 					"</script>.*"));
 	}
