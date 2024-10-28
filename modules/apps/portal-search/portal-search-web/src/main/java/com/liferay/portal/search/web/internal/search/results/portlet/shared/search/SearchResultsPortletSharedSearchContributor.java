@@ -83,15 +83,15 @@ public class SearchResultsPortletSharedSearchContributor
 		portletSharedSearchSettings.setPaginationDelta(paginationDelta);
 		searchRequestBuilder.size(paginationDelta);
 
+		SearchContext searchContext = searchRequestBuilder.withSearchContextGet(
+			Function.identity());
+
 		int paginationStart = GetterUtil.getInteger(
 			portletSharedSearchSettings.getParameter(
 				paginationStartParameterName));
 
 		int[] startAndEnd = SearchPaginationUtil.calculateStartAndEnd(
 			paginationStart, paginationDelta);
-
-		SearchContext searchContext = searchRequestBuilder.withSearchContextGet(
-			Function.identity());
 
 		searchContext.setEnd(startAndEnd[1]);
 		searchContext.setStart(startAndEnd[0]);
