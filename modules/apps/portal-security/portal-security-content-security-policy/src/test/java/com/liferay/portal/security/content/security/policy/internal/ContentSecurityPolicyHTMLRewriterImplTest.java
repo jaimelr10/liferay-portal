@@ -27,15 +27,10 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 
 	@Test
 	public void testRewriteInlineEventHandlers() {
-		ContentSecurityPolicyHTMLRewriterImpl
-			contentSecurityPolicyHTMLRewriterImpl =
-				new ContentSecurityPolicyHTMLRewriterImpl();
-
 		String html =
 			"<div onclick=\"alert(1);\" onchange=\"alert(2);\">hey</div>";
 
-		html = contentSecurityPolicyHTMLRewriterImpl.rewriteInlineEventHandlers(
-			html, "TEST_NONCE", false);
+		html = _rewriteInlineEventHandlers(html, "TEST_NONCE", false);
 
 		Assert.assertTrue(
 			_matches(html, ".*<script nonce=\"TEST_NONCE\">.*</script>"));
@@ -54,14 +49,9 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 
 	@Test
 	public void testRewriteInlineEventHandlersMantainsIdWhenPresent() {
-		ContentSecurityPolicyHTMLRewriterImpl
-			contentSecurityPolicyHTMLRewriterImpl =
-				new ContentSecurityPolicyHTMLRewriterImpl();
-
 		String html = "<div id=\"TEST_ID\" onclick=\"alert(1);\">hey</div>";
 
-		html = contentSecurityPolicyHTMLRewriterImpl.rewriteInlineEventHandlers(
-			html, "TEST_NONCE", false);
+		html = _rewriteInlineEventHandlers(html, "TEST_NONCE", false);
 
 		Assert.assertTrue(
 			_matches(html, ".*document\\.getElementById\\('TEST_ID'\\).*"));
@@ -70,15 +60,10 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 
 	@Test
 	public void testRewriteInlineEventHandlersPassingBodyTag() {
-		ContentSecurityPolicyHTMLRewriterImpl
-			contentSecurityPolicyHTMLRewriterImpl =
-				new ContentSecurityPolicyHTMLRewriterImpl();
-
 		String html =
 			"<body onclick=\"alert(1);\" onchange=\"alert(2);\">hey</body>";
 
-		html = contentSecurityPolicyHTMLRewriterImpl.rewriteInlineEventHandlers(
-			html, "TEST_NONCE", false);
+		html = _rewriteInlineEventHandlers(html, "TEST_NONCE", false);
 
 		Assert.assertTrue(_matches(html, ".*</body>"));
 		Assert.assertTrue(
@@ -98,14 +83,9 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 
 	@Test
 	public void testRewriteInlineEventHandlersPassingUpperCaseBodyTag() {
-		ContentSecurityPolicyHTMLRewriterImpl
-			contentSecurityPolicyHTMLRewriterImpl =
-				new ContentSecurityPolicyHTMLRewriterImpl();
-
 		String html = "<BODY onclick=\"alert(1);\">hey</BODY>";
 
-		html = contentSecurityPolicyHTMLRewriterImpl.rewriteInlineEventHandlers(
-			html, "TEST_NONCE", false);
+		html = _rewriteInlineEventHandlers(html, "TEST_NONCE", false);
 
 		Assert.assertTrue(_matches(html, ".*</body>"));
 		Assert.assertTrue(
@@ -120,16 +100,11 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 
 	@Test
 	public void testRewriteInlineEventHandlersProcessesMultipleTopNodes() {
-		ContentSecurityPolicyHTMLRewriterImpl
-			contentSecurityPolicyHTMLRewriterImpl =
-				new ContentSecurityPolicyHTMLRewriterImpl();
-
 		String html =
 			"<div onclick=\"alert(1);\">hey</div><div onclick=\"alert(2);\">" +
 				"hey</div>";
 
-		html = contentSecurityPolicyHTMLRewriterImpl.rewriteInlineEventHandlers(
-			html, "TEST_NONCE", false);
+		html = _rewriteInlineEventHandlers(html, "TEST_NONCE", false);
 
 		Assert.assertTrue(
 			_matches(
@@ -140,24 +115,18 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 
 	@Test
 	public void testRewriteInlineEventHandlersRecursive() {
-		ContentSecurityPolicyHTMLRewriterImpl
-			contentSecurityPolicyHTMLRewriterImpl =
-				new ContentSecurityPolicyHTMLRewriterImpl();
-
 		String html =
 			"<body onload=\"alert(1);\"><div onclick=\"alert(2);\">hey</div>" +
 				"</body>";
 
 		Assert.assertFalse(
 			_matches(
-				contentSecurityPolicyHTMLRewriterImpl.
-					rewriteInlineEventHandlers(html, "TEST_NONCE", false),
+				_rewriteInlineEventHandlers(html, "TEST_NONCE", false),
 				".*<script nonce=\"TEST_NONCE\">.*onclick.*alert\\(2\\);.*" +
 					"</script>.*"));
 		Assert.assertTrue(
 			_matches(
-				contentSecurityPolicyHTMLRewriterImpl.
-					rewriteInlineEventHandlers(html, "TEST_NONCE", true),
+				_rewriteInlineEventHandlers(html, "TEST_NONCE", true),
 				".*<script nonce=\"TEST_NONCE\">.*onclick.*alert\\(2\\);.*" +
 					"</script>.*"));
 	}
@@ -169,5 +138,16 @@ public class ContentSecurityPolicyHTMLRewriterImplTest {
 
 		return matcher.matches();
 	}
+
+	private String _rewriteInlineEventHandlers(
+		String html, String nonce, boolean recursive) {
+
+		return _contentSecurityPolicyHTMLRewriterImpl.
+			rewriteInlineEventHandlers(html, nonce, recursive);
+	}
+
+	private final ContentSecurityPolicyHTMLRewriterImpl
+		_contentSecurityPolicyHTMLRewriterImpl =
+			new ContentSecurityPolicyHTMLRewriterImpl();
 
 }
