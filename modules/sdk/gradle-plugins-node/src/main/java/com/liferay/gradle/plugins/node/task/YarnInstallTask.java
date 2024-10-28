@@ -34,12 +34,21 @@ public class YarnInstallTask extends ExecutePackageManagerTask {
 	}
 
 	@Input
+	public long getNetworkTimeout() {
+		return _networkTimeout;
+	}
+
+	@Input
 	public boolean isFrozenLockFile() {
 		return GradleUtil.toBoolean(_frozenLockFile);
 	}
 
 	public void setFrozenLockFile(Object frozenLockFile) {
 		_frozenLockFile = frozenLockFile;
+	}
+
+	public void setNetworkTimeout(long networkTimeout) {
+		_networkTimeout = networkTimeout;
 	}
 
 	@Internal
@@ -54,6 +63,13 @@ public class YarnInstallTask extends ExecutePackageManagerTask {
 		}
 
 		completeArgs.add("--ignore-engines");
+
+		long networkTimeout = getNetworkTimeout();
+
+		if (networkTimeout > 0) {
+			completeArgs.add("--network-timeout");
+			completeArgs.add(String.valueOf(networkTimeout));
+		}
 
 		return completeArgs;
 	}
@@ -73,5 +89,6 @@ public class YarnInstallTask extends ExecutePackageManagerTask {
 	}
 
 	private Object _frozenLockFile;
+	private long _networkTimeout = 120000;
 
 }
