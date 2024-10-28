@@ -20,9 +20,6 @@ public class ContentSecurityPolicyHTMLRewriterUtil {
 		return _snapshot.get();
 	}
 
-	/**
-	 * @see ContentSecurityPolicyHTMLRewriter#rewriteInlineEventHandlers(String, String, boolean)
-	 */
 	public static String rewriteInlineEventHandlers(
 		String html, String nonce, boolean recursive) {
 
