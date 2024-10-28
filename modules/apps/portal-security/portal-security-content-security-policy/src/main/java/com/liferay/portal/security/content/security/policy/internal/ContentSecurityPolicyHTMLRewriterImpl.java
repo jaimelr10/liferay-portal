@@ -68,11 +68,9 @@ public class ContentSecurityPolicyHTMLRewriterImpl
 	}
 
 	private boolean _containsBodyTag(String html) {
-		String trimmedHTML = html.trim();
+		html = StringUtil.toLowerCase(html.trim());
 
-		String lowerCaseTrimmedHTML = StringUtil.toLowerCase(trimmedHTML);
-
-		return lowerCaseTrimmedHTML.startsWith("<body");
+		return html.startsWith("<body");
 	}
 
 	private void _extractInlineHandlers(
