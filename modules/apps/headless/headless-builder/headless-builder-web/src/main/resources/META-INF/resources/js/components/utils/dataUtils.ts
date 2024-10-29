@@ -129,7 +129,9 @@ export function hasEndpointDataChanged({
 		scope: uiScope,
 	} = localUIData;
 
-	const descriptionChanged = description !== uiDescription;
+	const descriptionChanged =
+		!(description === uiDescription) &&
+		!(description === '' && uiDescription === undefined);
 
 	const filtersArrayLengthChanged = !!(
 		localUIData.apiEndpointToAPIFilters &&
