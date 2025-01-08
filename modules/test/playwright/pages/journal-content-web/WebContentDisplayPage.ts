@@ -38,9 +38,7 @@ export class WebContentDisplayPage {
 			.getByRole('button', {
 				name: 'Save',
 			});
-		this.selectButton = this.app.getByRole('button', {
-			name: 'Select',
-		});
+		this.selectButton = this.app.getByLabel('Asset PublisherDocuments and').locator('li').filter({ hasText: 'Web Content Display' }).getByLabel('Add Content')
 		this.selectWebContentButton = page
 			.frameLocator('iframe[title*="Web Content Display"]')
 			.getByRole('button', {name: 'Select'});
@@ -125,9 +123,8 @@ export class WebContentDisplayPage {
 			.getByText('Success:The application was added to the page.')
 			.waitFor({state: 'visible'});
 		await this.page
-			.getByRole('heading', {name: 'Web Content Display'})
+			.getByLabel('Asset PublisherDocuments and').getByText('Web Content Display')
 			.hover();
-		await this.selectButton.waitFor({state: 'visible'});
 		await this.selectButton.click();
 		await this.page
 			.getByText('Success:The application was added to the page.')
