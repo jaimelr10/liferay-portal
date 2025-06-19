@@ -219,12 +219,16 @@ export async function loadData({
 		});
 	}
 
+	console.log({url})
+
 	const response = await fetch(url.toString(), {
 		headers: DEFAULT_FETCH_HEADERS,
 		method: 'GET',
 	});
 
 	const responseJSON = await response.json();
+
+	console.log({responseJSON})
 
 	return {
 		data: responseJSON,

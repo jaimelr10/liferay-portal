@@ -6,7 +6,11 @@
 import {worker} from './mocks/browser';
 
 export function setupExportImportMocks() {
-	worker
+	if (worker?.context?.isMockingEnabled) {
+		return;
+	}
+	
+	return worker
 		.start({
 			onUnhandledRequest: 'bypass',
 			serviceWorker: {
@@ -20,10 +24,12 @@ export function setupExportImportMocks() {
 			Liferay.on('destroyPortlet', async () => {
 				await registration?.unregister?.();
 			});
+
+			return registration;
 		})
 		.catch((error) => {
 			console.error('Error starting the service worker:', error);
 		});
 }
 
-setupExportImportMocks();
+setupExportImportMocks().then(console.log).then(() => console.log('hola'));

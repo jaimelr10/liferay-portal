@@ -575,6 +575,8 @@ const FrontendDataSet = ({
 
 		setComponentLoading(true);
 
+		console.log({View, contentRendererModuleURL})
+
 		loadModule(contentRendererModuleURL)
 			.then((view: TViews) => {
 				if (isMounted()) {
@@ -636,6 +638,7 @@ const FrontendDataSet = ({
 					handleApiError({data, statusCode});
 				}
 				else {
+					console.log({data});
 					setCreationMenu((currentCreationMenu) => {
 						if (!currentCreationMenu) {
 							return;
