@@ -27,6 +27,6 @@
 	</c:if>
 
 	<c:if test="<%= viewDetailsMenu %>">
-		<%@ include file="/process_list_menu/items/viewDetails.jspf" %>
+		<%@ include file="/process_list_menu/items/view_details.jspf" %>
 	</c:if>
 </liferay-ui:icon-menu>
