@@ -564,7 +564,7 @@
 			<type>boolean</type>
 		</attribute>
 		<attribute>
-			<description>Whether to show the view details menu. The default value is false.</description>
+			<description>Whether to show the details menu. The default value is false.</description>
 			<name>viewDetailsMenu</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -612,7 +612,7 @@
 			<type>boolean</type>
 		</attribute>
 		<attribute>
-			<description>Whether to show the view details menu. The default value is false.</description>
+			<description>Whether to show the details menu. The default value is false.</description>
 			<name>viewDetailsMenu</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
