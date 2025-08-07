@@ -354,3 +354,42 @@ test('can list site scoped endpoint', async ({
 	await applicationPage.goToEndpointsTab();
 	await applicationPage.goToEditEndpoint('/gettest/{entryerc}/');
 });
+
+test(
+	'can create endpoint with success alert',
+	async ({apiHelpers, applicationPage, endpointPage, headlessBuilderPage}) => {
+		const application = await apiHelpers.objectEntry.postObjectEntry(
+			applicationData,
+			'headless-builder/applications'
+		);
+
+		apiHelpers.data.push({id: application.id, type: 'apiApplication'});
+
+		await headlessBuilderPage.goto();
+		await headlessBuilderPage.goToEditApplication(application.title);
+
+		await applicationPage.createEndpoint({
+			method: 'GET',
+			path: 'testendpoint2',
+			retrieveType: 'Collection',
+			scope: 'Company',
+		});
+
+		await expect(
+			endpointPage.endpointSuccessAlert
+		).toBeVisible();
+
+		await expect(
+			headlessBuilderPage.page.getByText('Retrieve TypeCollection').getByLabel('Type Collection is selected.')
+		).toBeVisible();
+
+		await expect(
+			await endpointPage.scopeSelector('Company')
+		).toBeVisible();
+
+		await expect(
+			await endpointPage.endpointName('GET /testendpoint2')
+		).toBeVisible();
+	}
+);
+
