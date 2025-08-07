@@ -11,7 +11,6 @@ import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
-import {headlessDiscoveryPagesTest} from '../../../fixtures/headlessDiscoveryWebPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {headlessBuilderPagesTest} from './fixtures/headlessBuilderPagesTest';
 
@@ -20,7 +19,6 @@ export const test = mergeTests(
 	dataApiHelpersTest,
 	loginTest(),
 	headlessBuilderPagesTest(),
-	headlessDiscoveryPagesTest
 );
 
 const applicationData = {
@@ -129,11 +127,13 @@ test('can see available path parameter properties of a singleElement endpoint', 
 	await applicationPage.setSchemaMainObjectDefinition('objectDefinition');
 	await applicationPage.createButton.click();
 
-	await applicationPage.createSingleElementEndpoint(
-		'Company',
-		'gettest',
-		'entryid'
-	);
+	await applicationPage.createEndpoint({
+		method: 'GET',
+		path: 'gettest',
+		pathParameter: 'entryid',
+		retrieveType: 'Single Element',
+		scope: 'Company',
+	});
 	await applicationPage.goToEndpointConfigurationTab();
 	await applicationPage.selectEndpointResponseSchema(
 		'API Application schema'
@@ -179,11 +179,13 @@ test('can see path parameter property with map details', async ({
 	await applicationPage.setSchemaMainObjectDefinition('objectDefinition');
 	await applicationPage.createButton.click();
 
-	await applicationPage.createSingleElementEndpoint(
-		'Company',
-		'gettest',
-		'entryid'
-	);
+	await applicationPage.createEndpoint({
+		method: 'GET',
+		path: 'gettest',
+		pathParameter: 'entryid',
+		retrieveType: 'Single Element',
+		scope: 'Company',
+	});
 	await applicationPage.goToEndpointConfigurationTab();
 	await applicationPage.selectEndpointResponseSchema(
 		'API Application schema'
@@ -328,11 +330,13 @@ test('can list site scoped endpoint', async ({
 
 	await headlessBuilderPage.goto();
 	await headlessBuilderPage.goToEditApplication(studentApplication.title);
-	await applicationPage.createSingleElementEndpoint(
-		'Site',
-		'gettest',
-		'entryerc'
-	);
+	await applicationPage.createEndpoint({
+		method: 'GET',
+		path: 'gettest',
+		pathParameter: 'entryerc',
+		retrieveType: 'Single Element',
+		scope: 'Site',
+	});
 
 	await applicationPage.goToEndpointConfigurationTab();
 	await page.getByLabel('Response Body Schema').click();

@@ -4,6 +4,7 @@
  */
 
 import {Locator, Page} from '@playwright/test';
+import path from 'path';
 
 export class ApplicationPage {
 	readonly addEndpointButton: Locator;
@@ -97,31 +98,27 @@ export class ApplicationPage {
 		await this.page.getByRole('menuitem', {name: objectName}).click();
 	}
 
-	async createEndpoint(
-		method: 'GET' | 'POST',
-		scope: 'Company' | 'Site',
-		path: string
-	) {
+	async createEndpoint({
+		method,
+		scope,
+		path,
+		pathParameter,
+		retrieveType
+	}: {
+		method: 'GET' | 'POST';
+		scope: 'Company' | 'Site';
+		path: string;
+		pathParameter?: string;
+		retrieveType?: 'Collection' | 'Single Element';
+	}) {
 		await this.goToEndpointsTab();
 		await this.addEndpointButton.click();
 		await this.setEndpointMethod(method);
 		await this.setEndpointScope(scope);
 		await this.endpointPathTextBox.fill(path);
+		pathParameter && await this.pathParameterTextBox.fill(pathParameter);
+		retrieveType && await this.setEndpointType(retrieveType);
 		await this.createButton.click();
 	}
 
-	async createSingleElementEndpoint(
-		scope: 'Company' | 'Site',
-		path: string,
-		pathParameter: string
-	) {
-		await this.goToEndpointsTab();
-		await this.addEndpointButton.click();
-		await this.setEndpointMethod('GET');
-		await this.setEndpointType('Single Element');
-		await this.setEndpointScope(scope);
-		await this.endpointPathTextBox.fill(path);
-		await this.pathParameterTextBox.fill(pathParameter);
-		await this.createButton.click();
-	}
 }
