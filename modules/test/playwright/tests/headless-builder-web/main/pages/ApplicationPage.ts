@@ -4,7 +4,6 @@
  */
 
 import {Locator, Page} from '@playwright/test';
-import path from 'path';
 
 export class ApplicationPage {
 	readonly addEndpointButton: Locator;
@@ -100,25 +99,24 @@ export class ApplicationPage {
 
 	async createEndpoint({
 		method,
-		scope,
 		path,
 		pathParameter,
-		retrieveType
+		retrieveType,
+		scope,
 	}: {
 		method: 'GET' | 'POST';
-		scope: 'Company' | 'Site';
 		path: string;
 		pathParameter?: string;
 		retrieveType?: 'Collection' | 'Single Element';
+		scope: 'Company' | 'Site';
 	}) {
 		await this.goToEndpointsTab();
 		await this.addEndpointButton.click();
 		await this.setEndpointMethod(method);
 		await this.setEndpointScope(scope);
 		await this.endpointPathTextBox.fill(path);
-		pathParameter && await this.pathParameterTextBox.fill(pathParameter);
-		retrieveType && await this.setEndpointType(retrieveType);
+		pathParameter && (await this.pathParameterTextBox.fill(pathParameter));
+		retrieveType && (await this.setEndpointType(retrieveType));
 		await this.createButton.click();
 	}
-
 }

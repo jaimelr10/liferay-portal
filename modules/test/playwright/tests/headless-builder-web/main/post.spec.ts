@@ -88,7 +88,11 @@ test('can create post endpoint and can not disassociate request api schema', asy
 	await headlessBuilderPage.goto();
 	await headlessBuilderPage.goToEditApplication(applicationData.title);
 
-	await applicationPage.createEndpoint('POST', 'Company', 'student');
+	await applicationPage.createEndpoint({
+		method: 'POST',
+		path: 'student',
+		scope: 'Company',
+	});
 
 	await applicationPage.goToEndpointConfigurationTab();
 
@@ -121,7 +125,11 @@ test('can create post endpoint and can not edit http method', async ({
 	await headlessBuilderPage.goto();
 	await headlessBuilderPage.goToEditApplication(applicationData.title);
 
-	await applicationPage.createEndpoint('POST', 'Company', 'student');
+	await applicationPage.createEndpoint({
+		method: 'POST',
+		path: 'student',
+		scope: 'Company',
+	});
 
 	await applicationPage.goToEndpointInfoTab();
 
@@ -292,7 +300,11 @@ test('can create post endpoint with different request and response schema', asyn
 		studentSubjectsApplicationData.title
 	);
 
-	await applicationPage.createEndpoint('POST', 'Company', 'student');
+	await applicationPage.createEndpoint({
+		method: 'POST',
+		path: 'student',
+		scope: 'Company',
+	});
 
 	await applicationPage.goToEndpointConfigurationTab();
 	await applicationPage.selectEndpointRequestSchema(
@@ -336,11 +348,11 @@ test('can create post method endpoint with company scope', async ({
 	await headlessBuilderPage.goto();
 	await headlessBuilderPage.goToEditApplication(applicationData.title);
 
-	await applicationPage.createEndpoint(
-		'POST',
-		'Company',
-		'test-post-endpoint'
-	);
+	await applicationPage.createEndpoint({
+		method: 'POST',
+		path: 'test-post-endpoint',
+		scope: 'Company',
+	});
 
 	await applicationPage.goToEndpointConfigurationTab();
 	await applicationPage.selectEndpointRequestSchema(
