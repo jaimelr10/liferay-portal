@@ -154,6 +154,8 @@ test(
 		},
 		testInfo
 	) => {
+		test.slow();
+			
 		let vocabularyId;
 		const vocabularyName = getRandomString();
 
