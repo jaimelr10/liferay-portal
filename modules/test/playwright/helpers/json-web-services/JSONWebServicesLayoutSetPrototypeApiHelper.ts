@@ -43,9 +43,9 @@ export class JSONWebServicesLayoutSetPrototypeApiHelper {
 		const urlSearchParams = new URLSearchParams();
 
 		const company =
-			await this.apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await this.apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		urlSearchParams.append('companyId', company.companyId);
 

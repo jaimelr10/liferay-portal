@@ -642,9 +642,9 @@ test(
 		// Switch to a new user with update page permissions and without edit segments entry permissions
 
 		const company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		const user = await createUserWithPermissions({
 			apiHelpers,

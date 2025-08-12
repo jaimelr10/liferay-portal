@@ -159,9 +159,14 @@ test(
 			let vocabularyId;
 
 			await test.step('Setup remote staging and create vocabulary', async () => {
+				const remoteUrl = new URL(remoteApiHelpers.baseUrl);
+
 				const globalSiteId = await getGlobalSiteId(apiHelpers);
-				const remoteGlobalSiteId =
-					await getGlobalSiteId(remoteApiHelpers);
+				const remoteGlobalSiteId = await getGlobalSiteId(
+					remoteApiHelpers,
+					remoteUrl.origin
+				);
+
 				await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
 					groupId: globalSiteId,
 					remoteGroupId: remoteGlobalSiteId,

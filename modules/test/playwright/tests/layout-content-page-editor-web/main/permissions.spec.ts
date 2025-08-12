@@ -40,9 +40,9 @@ test(
 		// Add new user with 'Update - Advanced Options' and 'Update - Basic' permissions
 
 		const company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		const user = await createUserWithPermissions({
 			apiHelpers,
@@ -115,9 +115,9 @@ test(
 		// Add new user with 'Update - Limited' permission
 
 		const company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		const role = await apiHelpers.headlessAdminUser.postRole({
 			name: 'role' + getRandomInt(),
@@ -188,9 +188,9 @@ test(
 		// Create user with correct permissions
 
 		const company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		const user = await createUserWithPermissions({
 			apiHelpers,

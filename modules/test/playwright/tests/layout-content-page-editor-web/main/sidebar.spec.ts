@@ -611,9 +611,9 @@ test.describe('Fragments Panel', () => {
 			// Check that a new user with update permissions cannot see the changes
 
 			const company =
-				await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-					'liferay.com'
-				);
+				await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+					webId: 'liferay.com',
+				});
 
 			const user = await createUserWithPermissions({
 				apiHelpers,
@@ -667,9 +667,9 @@ test.describe('Fragments Panel', () => {
 		});
 
 		const company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		const user1 = await createUserWithPermissions({
 			apiHelpers,

@@ -1863,9 +1863,9 @@ test('LPD-56043 and LPD-56046: Verify User and User Group Provisioning source is
 	const spApiHelpers = new ApiHelpers(spAdminPage, DEFAULT_SP_URL);
 
 	const spCompany =
-		await spApiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-			DEFAULT_SP_NAME
-		);
+		await spApiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+			webId: DEFAULT_SP_NAME,
+		});
 
 	const spUserAccount =
 		await spApiHelpers.headlessAdminUser.getUserAccountByEmailAddress(
@@ -2084,9 +2084,9 @@ test('LPD-56047: Verify User Group membership deletions from the IdP only apply 
 	const spApiHelpers = new ApiHelpers(spAdminPage, DEFAULT_SP_URL);
 
 	const spCompany =
-		await spApiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-			DEFAULT_SP_NAME
-		);
+		await spApiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+			webId: DEFAULT_SP_NAME,
+		});
 
 	const secondarySpUserGroup =
 		await spApiHelpers.headlessAdminUser.getUserGroupByName(

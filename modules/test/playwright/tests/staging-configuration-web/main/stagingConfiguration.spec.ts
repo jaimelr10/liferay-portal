@@ -213,9 +213,9 @@ testFlagsEnabled(
 			await getBasicWebContentStructureId(apiHelpers);
 
 		const company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		const group = await apiHelpers.jsonWebServicesGroup.getGroupByKey(
 			company.companyId,

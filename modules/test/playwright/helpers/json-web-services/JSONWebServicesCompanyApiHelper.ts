@@ -19,13 +19,19 @@ export class JSONWebServicesCompanyApiHelper {
 		this.basePath = '/api/jsonws/company';
 	}
 
-	async getCompanyByWebId(webId: string): Promise<Company> {
+	async getCompanyByWebId({
+		portalUrl = liferayConfig.environment.baseUrl,
+		webId,
+	}: {
+		portalUrl?: string;
+		webId: string;
+	}): Promise<Company> {
 		const urlSearchParams = new URLSearchParams();
 
 		urlSearchParams.append('webId', webId);
 
 		return this.apiHelpers.post(
-			`${liferayConfig.environment.baseUrl}${this.basePath}/get-company-by-web-id`,
+			`${portalUrl}${this.basePath}/get-company-by-web-id`,
 			{
 				data: urlSearchParams.toString(),
 				failOnStatusCode: true,

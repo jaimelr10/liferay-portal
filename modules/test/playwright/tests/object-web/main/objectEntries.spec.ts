@@ -1789,9 +1789,9 @@ test.describe('Manage object entries through View Object Entries', () => {
 			});
 
 			const company =
-				await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-					'liferay.com'
-				);
+				await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+					webId: 'liferay.com',
+				});
 
 			const user = await createUserWithPermissions({
 				apiHelpers,
@@ -2423,9 +2423,9 @@ test.describe('Manage object entries through Workflow', () => {
 			// Create user with permissions
 
 			const company =
-				await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-					'liferay.com'
-				);
+				await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+					webId: 'liferay.com',
+				});
 
 			const user = await createUserWithPermissions({
 				apiHelpers,

@@ -578,9 +578,9 @@ test(
 		// Add new user with 'Update - Limited' permission
 
 		const company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		const userWithLimited = await createUserWithPermissions({
 			apiHelpers,
@@ -746,9 +746,9 @@ test(
 		// Add new user with 'Update - Limited' permission
 
 		const company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+				webId: 'liferay.com',
+			});
 
 		const userWithLimited = await createUserWithPermissions({
 			apiHelpers,

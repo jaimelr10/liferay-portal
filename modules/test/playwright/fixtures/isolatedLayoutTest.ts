@@ -55,7 +55,9 @@ function isolatedLayoutTest(options: IsolatedLayoutOptions = {}) {
 
 					const company =
 						await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-							'liferay.com'
+							{
+								webId: 'liferay.com',
+							}
 						);
 
 					const group =

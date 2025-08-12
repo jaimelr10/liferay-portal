@@ -28,10 +28,9 @@ export const createSitePage = async function ({
 	pageTitle: string;
 	siteName?: string;
 }) {
-	const company =
-		await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-			'liferay.com'
-		);
+	const company = await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+		webId: 'liferay.com',
+	});
 
 	const group = await apiHelpers.jsonWebServicesGroup.getGroupByKey(
 		company.companyId,

@@ -135,10 +135,9 @@ test('ensure that next and previous buttons acessibility label in the mini calen
 	let user;
 
 	try {
-		company =
-			await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-				'liferay.com'
-			);
+		company = await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+			webId: 'liferay.com',
+		});
 
 		defaultUser =
 			await apiHelpers.headlessAdminUser.getUserAccountByEmailAddress(

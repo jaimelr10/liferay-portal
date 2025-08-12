@@ -36,13 +36,16 @@ export class JSONWebServicesGroupApiHelper {
 		);
 	}
 
-	async getCompanyGroup(companyId: string): Promise<Group> {
+	async getCompanyGroup(
+		companyId: string,
+		portalUrl: string = liferayConfig.environment.baseUrl
+	): Promise<Group> {
 		const urlSearchParams = new URLSearchParams();
 
 		urlSearchParams.append('companyId', companyId);
 
 		return this.apiHelpers.post(
-			`${liferayConfig.environment.baseUrl}${this.basePath}/get-company-group`,
+			`${portalUrl}${this.basePath}/get-company-group`,
 			{
 				data: urlSearchParams.toString(),
 				failOnStatusCode: true,

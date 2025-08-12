@@ -42,10 +42,9 @@ async function enableSingleApproverWorkflow(
 }
 
 async function createPageEditorUser(apiHelpers: ApiHelpers) {
-	const company =
-		await apiHelpers.jsonWebServicesCompany.getCompanyByWebId(
-			'liferay.com'
-		);
+	const company = await apiHelpers.jsonWebServicesCompany.getCompanyByWebId({
+		webId: 'liferay.com',
+	});
 
 	return await createUserWithPermissions({
 		apiHelpers,
