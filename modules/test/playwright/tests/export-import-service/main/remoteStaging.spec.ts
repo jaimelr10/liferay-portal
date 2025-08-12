@@ -46,7 +46,7 @@ export const test = mergeTests(
 );
 
 test(
-	'Check Web contents can be published via their portlet using remote staging',
+	'check web contents can be published via their portlet using remote staging',
 	{tag: '@LPS-81950'},
 	async ({
 		apiHelpers,
@@ -141,7 +141,7 @@ test(
 );
 
 test(
-	'Can publish vocabulary deletion from the Global Site using remote staging',
+	'can publish vocabulary deletion from the Global Site using remote staging',
 	{tag: ['@LPS-89981', '@LPS-88298']},
 	async (
 		{
