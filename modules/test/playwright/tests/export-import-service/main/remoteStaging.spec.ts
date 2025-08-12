@@ -154,25 +154,27 @@ test(
 		},
 		testInfo
 	) => {
+		let vocabularyId;
+		const vocabularyName = getRandomString();
+
+		const remoteUrl = new URL(remoteApiHelpers.baseUrl);
+		const remoteGlobalSiteId = await getGlobalSiteId(
+			remoteApiHelpers,
+			remoteUrl.origin
+		);
+
+		const globalSiteId = await getGlobalSiteId(apiHelpers);
+
+		await test.step('Setup remote staging', async () => {
+			await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
+				groupId: globalSiteId,
+				remoteGroupId: remoteGlobalSiteId,
+				remotePort,
+			});
+		});
+
 		try {
-			const vocabularyName = getRandomString();
-			let vocabularyId;
-
-			await test.step('Setup remote staging and create vocabulary', async () => {
-				const remoteUrl = new URL(remoteApiHelpers.baseUrl);
-
-				const globalSiteId = await getGlobalSiteId(apiHelpers);
-				const remoteGlobalSiteId = await getGlobalSiteId(
-					remoteApiHelpers,
-					remoteUrl.origin
-				);
-
-				await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
-					groupId: globalSiteId,
-					remoteGroupId: remoteGlobalSiteId,
-					remotePort,
-				});
-
+			await test.step('Create vocabulary', async () => {
 				const {id} =
 					await apiHelpers.headlessAdminTaxonomy.postSiteTaxonomyVocabulary(
 						{
