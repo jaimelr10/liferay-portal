@@ -58,24 +58,36 @@ test(
 		testInfo
 	) => {
 		test.slow();
+
+		const site = await apiHelpers.headlessSite.createSite({
+			name: 'Site Name',
+		});
+
+		apiHelpers.data.push({id: site.id, type: 'site'});
+
+		const remoteSite = await remoteApiHelpers.headlessSite.createSite({
+			name: 'Remote Site Name',
+		});
+
+		remoteApiHelpers.data.push({id: remoteSite.id, type: 'site'});
 			
 		let vocabularyId;
 		const vocabularyName = getRandomString();
 
-		const remoteUrl = new URL(remoteApiHelpers.baseUrl);
-		const remoteGlobalSiteId = await getGlobalSiteId(
-			remoteApiHelpers,
-			remoteUrl.origin
-		);
+		// const remoteUrl = new URL(remoteApiHelpers.baseUrl);
+		// const remoteGlobalSiteId = await getGlobalSiteId(
+		// 	remoteApiHelpers,
+		// 	remoteUrl.origin
+		// );
 
 		const globalSiteId = await getGlobalSiteId(apiHelpers);
 
 		await test.step('Setup remote staging', async () => {
-			await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
-				groupId: globalSiteId,
-				remoteGroupId: remoteGlobalSiteId,
-				remotePort,
-			});
+				await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
+			groupId: site.id,
+			remoteGroupId: remoteSite.id,
+			remotePort,
+		});
 		});
 
 		try {
