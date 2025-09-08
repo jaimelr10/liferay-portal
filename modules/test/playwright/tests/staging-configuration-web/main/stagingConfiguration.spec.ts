@@ -18,10 +18,12 @@ import {pageViewModePagesTest} from '../../../fixtures/pageViewModePagesTest';
 import {pagesAdminPagesTest} from '../../../fixtures/pagesAdminPagesTest';
 import {portletConfigurationPermissionsPageTest} from '../../../fixtures/portletConfigurationPermissionsPagesTest';
 import {productMenuPageTest} from '../../../fixtures/productMenuPageTest';
+import {systemSettingsPageTest} from '../../../fixtures/systemSettingsPageTest';
 import {uiElementsPageTest} from '../../../fixtures/uiElementsTest';
 import {webContentDisplayPageTest} from '../../../fixtures/webContentDisplayPageTest';
 import getRandomString from '../../../utils/getRandomString';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
+import {reloadUntilVisible} from '../../../utils/reloadUntilVisible';
 import {enableLocalStaging} from '../../../utils/staging';
 import getBasicWebContentStructureId from '../../../utils/structured-content/getBasicWebContentStructureId';
 import {stagingPageTest} from '../../export-import-web/main/fixtures/stagingPageTest';
@@ -42,7 +44,8 @@ export const test = mergeTests(
 	stagingConfigurationPageTest,
 	webContentDisplayPageTest,
 	uiElementsPageTest,
-	journalPagesTest
+	journalPagesTest,
+	systemSettingsPageTest
 );
 
 export const testFlagsEnabled = mergeTests(
@@ -59,6 +62,113 @@ export const testFlagsEnabled = mergeTests(
 	stagingPageTest,
 	test,
 	webContentDisplayPageTest
+);
+
+test(
+	'verify there is advanced staging configuration checkbox with description in Instance Setting,the configuration checkbox can be enabled',
+	{tag: ['@LPS-189238']},
+	async ({
+		apiHelpers,
+		instanceSettingsPage,
+		page,
+		portletPublishToLivePage,
+	}) => {
+		const site = await apiHelpers.headlessSite.createSite({
+			name: getRandomString(),
+		});
+
+		apiHelpers.data.push({id: site.id, type: 'site'});
+
+		const layout = await apiHelpers.jsonWebServicesLayout.addLayout({
+			groupId: site.id,
+			options: {type: 'content'},
+			title: getRandomString(),
+		});
+
+		await instanceSettingsPage.goToInstanceSetting(
+			'Infrastructure',
+			'Export/Import, Staging'
+		);
+
+		await instanceSettingsPage.checkSetting({
+			label: 'Show Advanced Staging Configuration by Default',
+		});
+		await enableLocalStaging(apiHelpers, page, site);
+
+		const stagingSite =
+			await apiHelpers.headlessAdminUser.getSiteByFriendlyUrlPath(
+				`${site.friendlyUrlPath}-staging`
+			);
+
+		await page.goto(
+			`/web${stagingSite.friendlyUrlPath}${layout.friendlyURL}`
+		);
+		await reloadUntilVisible({
+			myLocator: portletPublishToLivePage.publishToLiveButton,
+			page,
+		});
+		await portletPublishToLivePage.publishToLiveButton.click();
+
+		expect(
+			portletPublishToLivePage.publishToLiveIframe.getByRole('link', {
+				name: 'Switch to Advanced Publish',
+			})
+		).toBeVisible();
+	}
+);
+
+test(
+	'verify there is advanced staging configuration checkbox with description in System Setting,the configuration checkbox can be enabled',
+	{tag: ['@LPS-189238']},
+	async ({
+		apiHelpers,
+		page,
+		portletPublishToLivePage,
+		systemSettingsPage,
+	}) => {
+		const site = await apiHelpers.headlessSite.createSite({
+			name: getRandomString(),
+		});
+
+		apiHelpers.data.push({id: site.id, type: 'site'});
+
+		const layout = await apiHelpers.jsonWebServicesLayout.addLayout({
+			groupId: site.id,
+			options: {type: 'content'},
+			title: getRandomString(),
+		});
+
+		await systemSettingsPage.goToSystemSetting(
+			'Infrastructure',
+			'Export/Import, Staging'
+		);
+
+		await systemSettingsPage.checkSetting({
+			label: 'Show Advanced Staging Configuration by Default',
+		});
+
+		await enableLocalStaging(apiHelpers, page, site);
+
+		const stagingSite =
+			await apiHelpers.headlessAdminUser.getSiteByFriendlyUrlPath(
+				`${site.friendlyUrlPath}-staging`
+			);
+
+		await page.goto(
+			`/web${stagingSite.friendlyUrlPath}${layout.friendlyURL}`
+		);
+		await reloadUntilVisible({
+			myLocator: portletPublishToLivePage.publishToLiveButton,
+			page,
+		});
+		await portletPublishToLivePage.publishToLiveButton.click();
+
+		expect(
+			portletPublishToLivePage.publishToLiveIframe.getByRole('link', {
+				name: 'Switch to Advanced Publish',
+			})
+		).toBeVisible();
+	}
 );
 
 test('check if local staging can be enabled', async ({
