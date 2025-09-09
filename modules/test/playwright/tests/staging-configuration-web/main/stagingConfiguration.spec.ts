@@ -65,7 +65,7 @@ export const testFlagsEnabled = mergeTests(
 );
 
 test(
-	'verify there is advanced staging configuration checkbox with description in Instance Setting,the configuration checkbox can be enabled',
+	'Verify there is advanced staging configuration checkbox with description in Instance Setting,the configuration checkbox can be enabled',
 	{tag: ['@LPS-189238']},
 	async ({
 		apiHelpers,
@@ -118,7 +118,7 @@ test(
 );
 
 test(
-	'verify there is advanced staging configuration checkbox with description in System Setting,the configuration checkbox can be enabled',
+	'Verify there is advanced staging configuration checkbox with description in System Setting,the configuration checkbox can be enabled',
 	{tag: ['@LPS-189238']},
 	async ({
 		apiHelpers,
@@ -171,7 +171,7 @@ test(
 	}
 );
 
-test('check if local staging can be enabled', async ({
+test('Check if local staging can be enabled', async ({
 	apiHelpers,
 	applicationsMenuPage,
 	stagingConfigurationPage,
@@ -192,7 +192,7 @@ test('check if local staging can be enabled', async ({
 });
 
 test(
-	'validate friendlyURL with special characters',
+	'Validate friendlyURL with special characters',
 	{tag: ['@LPS-89116']},
 	async ({
 		apiHelpers,
@@ -259,7 +259,7 @@ test(
 );
 
 test(
-	'verify that the admin could configure staging to ignore previews and thumbnails during the local staging publish process',
+	'Verify that the admin could configure staging to ignore previews and thumbnails during the local staging publish process',
 	{tag: ['@LPS-189191', '@LPS-190360']},
 	async ({
 		apiHelpers,
@@ -342,7 +342,7 @@ test(
 );
 
 test(
-	'verify if information about staging system settings are present',
+	'Verify if information about staging system settings are present',
 	{tag: ['@LPS-123156']},
 	async ({instanceSettingsPage}) => {
 		await instanceSettingsPage.goToInstanceSetting(
@@ -377,7 +377,7 @@ test(
 );
 
 testFlagsEnabled(
-	'check if local staging with page-scoped Web Content can be enabled',
+	'Check if local staging with page-scoped Web Content can be enabled',
 	{tag: ['@LPS-83147']},
 	async ({apiHelpers, page, webContentDisplayPage, widgetPagePage}) => {
 		const siteName = getRandomString();
