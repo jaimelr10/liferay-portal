@@ -33,7 +33,7 @@ export class InstanceSettingsPage {
 		await expect(checkbox).toBeChecked();
 	}
 
-	async checkSetting(options: {
+	async assertOptionVisible(options: {
 		customLocator?: Locator;
 		description?: string;
 		label?: string;
