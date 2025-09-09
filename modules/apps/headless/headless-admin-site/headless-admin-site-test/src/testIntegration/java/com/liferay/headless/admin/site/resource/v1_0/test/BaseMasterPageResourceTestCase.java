@@ -129,6 +129,18 @@ public abstract class BaseMasterPageResourceTestCase {
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
+
+		permissionsMasterPageResource = MasterPageResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).locale(
+			LocaleUtil.getDefault()
+		).parameter(
+			"nestedFields", "permissions"
+		).build();
 	}
 
 	@After
@@ -339,6 +351,18 @@ public abstract class BaseMasterPageResourceTestCase {
 			page,
 			testGetSiteMasterPagesPage_getExpectedActions(
 				siteExternalReferenceCode));
+
+		for (MasterPage masterPage : page.getItems()) {
+			Assert.assertNull(masterPage.getPermissions());
+		}
+
+		page = permissionsMasterPageResource.getSiteMasterPagesPage(
+			siteExternalReferenceCode, null, null, null, Pagination.of(1, 10),
+			null);
+
+		for (MasterPage masterPage : page.getItems()) {
+			Assert.assertNotNull(masterPage.getPermissions());
+		}
 	}
 
 	protected Map<String, Map<String, String>>
@@ -736,6 +760,21 @@ public abstract class BaseMasterPageResourceTestCase {
 
 		assertEquals(randomMasterPage, postMasterPage);
 		assertValid(postMasterPage);
+
+		MasterPage randomPermissionsMasterPage1 = randomPermissionsMasterPage();
+
+		MasterPage postPermissionsMasterPage1 =
+			testPostSiteMasterPage_addMasterPage(randomPermissionsMasterPage1);
+
+		Assert.assertNull(postPermissionsMasterPage1.getPermissions());
+
+		MasterPage randomPermissionsMasterPage2 = randomPermissionsMasterPage();
+
+		MasterPage postPermissionsMasterPage2 =
+			testPostSiteMasterPage_addPermissionsMasterPage(
+				randomPermissionsMasterPage2);
+
+		Assert.assertNotNull(postPermissionsMasterPage2.getPermissions());
 	}
 
 	protected MasterPage testPostSiteMasterPage_addMasterPage(
@@ -744,6 +783,15 @@ public abstract class BaseMasterPageResourceTestCase {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	protected MasterPage testPostSiteMasterPage_addPermissionsMasterPage(
+			MasterPage masterPage)
+		throws Exception {
+
+		return permissionsMasterPageResource.postSiteMasterPage(
+			testGetSiteMasterPagesPage_getSiteExternalReferenceCode(),
+			masterPage);
 	}
 
 	@Test
@@ -1065,6 +1113,14 @@ public abstract class BaseMasterPageResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (masterPage.getPermissions() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals(
 					"taxonomyCategoryItemExternalReferences",
 					additionalAssertFieldName)) {
@@ -1372,6 +1428,17 @@ public abstract class BaseMasterPageResourceTestCase {
 				if (!Objects.deepEquals(
 						masterPage1.getPageSpecifications(),
 						masterPage2.getPageSpecifications())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						masterPage1.getPermissions(),
+						masterPage2.getPermissions())) {
 
 					return false;
 				}
@@ -1859,6 +1926,11 @@ public abstract class BaseMasterPageResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("permissions")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("taxonomyCategoryItemExternalReferences")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -1985,6 +2057,25 @@ public abstract class BaseMasterPageResourceTestCase {
 		return randomMasterPage();
 	}
 
+	protected MasterPage randomPermissionsMasterPage() throws Exception {
+		MasterPage masterPage = randomMasterPage();
+
+		com.liferay.portal.kernel.model.Role role = RoleTestUtil.addRole(
+			RoleConstants.TYPE_REGULAR);
+
+		masterPage.setPermissions(
+			new Permission[] {
+				new Permission() {
+					{
+						setActionIds(new String[] {"VIEW"});
+						setRoleName(role.getName());
+					}
+				}
+			});
+
+		return masterPage;
+	}
+
 	protected ContentPageSpecification randomContentPageSpecification()
 		throws Exception {
 
@@ -2021,6 +2112,7 @@ public abstract class BaseMasterPageResourceTestCase {
 	protected MasterPageResource masterPageResource;
 	protected ImportTaskResource importTaskResource;
 	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected MasterPageResource permissionsMasterPageResource;
 	protected com.liferay.portal.kernel.model.Company testCompany;
 	protected com.liferay.portal.kernel.model.Group testGroup;
 

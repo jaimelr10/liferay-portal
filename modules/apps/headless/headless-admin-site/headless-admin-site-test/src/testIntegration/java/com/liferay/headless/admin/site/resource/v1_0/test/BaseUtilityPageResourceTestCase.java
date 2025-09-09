@@ -129,6 +129,18 @@ public abstract class BaseUtilityPageResourceTestCase {
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
+
+		permissionsUtilityPageResource = UtilityPageResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).locale(
+			LocaleUtil.getDefault()
+		).parameter(
+			"nestedFields", "permissions"
+		).build();
 	}
 
 	@After
@@ -338,6 +350,18 @@ public abstract class BaseUtilityPageResourceTestCase {
 			page,
 			testGetSiteUtilityPagesPage_getExpectedActions(
 				siteExternalReferenceCode));
+
+		for (UtilityPage utilityPage : page.getItems()) {
+			Assert.assertNull(utilityPage.getPermissions());
+		}
+
+		page = permissionsUtilityPageResource.getSiteUtilityPagesPage(
+			siteExternalReferenceCode, null, null, null, Pagination.of(1, 10),
+			null);
+
+		for (UtilityPage utilityPage : page.getItems()) {
+			Assert.assertNotNull(utilityPage.getPermissions());
+		}
 	}
 
 	protected Map<String, Map<String, String>>
@@ -750,6 +774,24 @@ public abstract class BaseUtilityPageResourceTestCase {
 
 		assertEquals(randomUtilityPage, postUtilityPage);
 		assertValid(postUtilityPage);
+
+		UtilityPage randomPermissionsUtilityPage1 =
+			randomPermissionsUtilityPage();
+
+		UtilityPage postPermissionsUtilityPage1 =
+			testPostSiteUtilityPage_addUtilityPage(
+				randomPermissionsUtilityPage1);
+
+		Assert.assertNull(postPermissionsUtilityPage1.getPermissions());
+
+		UtilityPage randomPermissionsUtilityPage2 =
+			randomPermissionsUtilityPage();
+
+		UtilityPage postPermissionsUtilityPage2 =
+			testPostSiteUtilityPage_addPermissionsUtilityPage(
+				randomPermissionsUtilityPage2);
+
+		Assert.assertNotNull(postPermissionsUtilityPage2.getPermissions());
 	}
 
 	protected UtilityPage testPostSiteUtilityPage_addUtilityPage(
@@ -758,6 +800,15 @@ public abstract class BaseUtilityPageResourceTestCase {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	protected UtilityPage testPostSiteUtilityPage_addPermissionsUtilityPage(
+			UtilityPage utilityPage)
+		throws Exception {
+
+		return permissionsUtilityPageResource.postSiteUtilityPage(
+			testGetSiteUtilityPagesPage_getSiteExternalReferenceCode(),
+			utilityPage);
 	}
 
 	@Test
@@ -1077,6 +1128,14 @@ public abstract class BaseUtilityPageResourceTestCase {
 					"pageSpecifications", additionalAssertFieldName)) {
 
 				if (utilityPage.getPageSpecifications() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (utilityPage.getPermissions() == null) {
 					valid = false;
 				}
 
@@ -1403,6 +1462,17 @@ public abstract class BaseUtilityPageResourceTestCase {
 				if (!Objects.deepEquals(
 						utilityPage1.getPageSpecifications(),
 						utilityPage2.getPageSpecifications())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						utilityPage1.getPermissions(),
+						utilityPage2.getPermissions())) {
 
 					return false;
 				}
@@ -1857,6 +1927,11 @@ public abstract class BaseUtilityPageResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("permissions")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("thumbnail")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -1987,6 +2062,25 @@ public abstract class BaseUtilityPageResourceTestCase {
 		return randomUtilityPage();
 	}
 
+	protected UtilityPage randomPermissionsUtilityPage() throws Exception {
+		UtilityPage utilityPage = randomUtilityPage();
+
+		com.liferay.portal.kernel.model.Role role = RoleTestUtil.addRole(
+			RoleConstants.TYPE_REGULAR);
+
+		utilityPage.setPermissions(
+			new Permission[] {
+				new Permission() {
+					{
+						setActionIds(new String[] {"VIEW"});
+						setRoleName(role.getName());
+					}
+				}
+			});
+
+		return utilityPage;
+	}
+
 	protected ContentPageSpecification randomContentPageSpecification()
 		throws Exception {
 
@@ -2023,6 +2117,7 @@ public abstract class BaseUtilityPageResourceTestCase {
 	protected UtilityPageResource utilityPageResource;
 	protected ImportTaskResource importTaskResource;
 	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected UtilityPageResource permissionsUtilityPageResource;
 	protected com.liferay.portal.kernel.model.Company testCompany;
 	protected com.liferay.portal.kernel.model.Group testGroup;
 

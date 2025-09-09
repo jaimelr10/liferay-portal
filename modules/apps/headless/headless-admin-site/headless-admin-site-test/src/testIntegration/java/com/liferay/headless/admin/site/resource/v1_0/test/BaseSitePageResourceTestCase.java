@@ -129,6 +129,18 @@ public abstract class BaseSitePageResourceTestCase {
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
+
+		permissionsSitePageResource = SitePageResource.builder(
+		).authentication(
+			_testCompanyAdminUser.getEmailAddress(),
+			PropsValues.DEFAULT_ADMIN_PASSWORD
+		).endpoint(
+			testCompany.getVirtualHostname(), 8080, "http"
+		).locale(
+			LocaleUtil.getDefault()
+		).parameter(
+			"nestedFields", "permissions"
+		).build();
 	}
 
 	@After
@@ -330,6 +342,18 @@ public abstract class BaseSitePageResourceTestCase {
 			page,
 			testGetSiteSitePagesPage_getExpectedActions(
 				siteExternalReferenceCode));
+
+		for (SitePage sitePage : page.getItems()) {
+			Assert.assertNull(sitePage.getPermissions());
+		}
+
+		page = permissionsSitePageResource.getSiteSitePagesPage(
+			siteExternalReferenceCode, null, null, null, Pagination.of(1, 10),
+			null);
+
+		for (SitePage sitePage : page.getItems()) {
+			Assert.assertNotNull(sitePage.getPermissions());
+		}
 	}
 
 	protected Map<String, Map<String, String>>
@@ -716,6 +740,21 @@ public abstract class BaseSitePageResourceTestCase {
 
 		assertEquals(randomSitePage, postSitePage);
 		assertValid(postSitePage);
+
+		SitePage randomPermissionsSitePage1 = randomPermissionsSitePage();
+
+		SitePage postPermissionsSitePage1 = testPostSiteSitePage_addSitePage(
+			randomPermissionsSitePage1);
+
+		Assert.assertNull(postPermissionsSitePage1.getPermissions());
+
+		SitePage randomPermissionsSitePage2 = randomPermissionsSitePage();
+
+		SitePage postPermissionsSitePage2 =
+			testPostSiteSitePage_addPermissionsSitePage(
+				randomPermissionsSitePage2);
+
+		Assert.assertNotNull(postPermissionsSitePage2.getPermissions());
 	}
 
 	protected SitePage testPostSiteSitePage_addSitePage(SitePage sitePage)
@@ -723,6 +762,14 @@ public abstract class BaseSitePageResourceTestCase {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	protected SitePage testPostSiteSitePage_addPermissionsSitePage(
+			SitePage sitePage)
+		throws Exception {
+
+		return permissionsSitePageResource.postSiteSitePage(
+			testGetSiteSitePagesPage_getSiteExternalReferenceCode(), sitePage);
 	}
 
 	@Test
@@ -1063,6 +1110,14 @@ public abstract class BaseSitePageResourceTestCase {
 					additionalAssertFieldName)) {
 
 				if (sitePage.getParentSitePageExternalReferenceCode() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (sitePage.getPermissions() == null) {
 					valid = false;
 				}
 
@@ -1426,6 +1481,17 @@ public abstract class BaseSitePageResourceTestCase {
 				if (!Objects.deepEquals(
 						sitePage1.getParentSitePageExternalReferenceCode(),
 						sitePage2.getParentSitePageExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						sitePage1.getPermissions(),
+						sitePage2.getPermissions())) {
 
 					return false;
 				}
@@ -1896,6 +1962,11 @@ public abstract class BaseSitePageResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("permissions")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("taxonomyCategoryItemExternalReferences")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -2026,6 +2097,25 @@ public abstract class BaseSitePageResourceTestCase {
 		return randomSitePage();
 	}
 
+	protected SitePage randomPermissionsSitePage() throws Exception {
+		SitePage sitePage = randomSitePage();
+
+		com.liferay.portal.kernel.model.Role role = RoleTestUtil.addRole(
+			RoleConstants.TYPE_REGULAR);
+
+		sitePage.setPermissions(
+			new Permission[] {
+				new Permission() {
+					{
+						setActionIds(new String[] {"VIEW"});
+						setRoleName(role.getName());
+					}
+				}
+			});
+
+		return sitePage;
+	}
+
 	protected ContentPageSpecification randomContentPageSpecification()
 		throws Exception {
 
@@ -2062,6 +2152,7 @@ public abstract class BaseSitePageResourceTestCase {
 	protected SitePageResource sitePageResource;
 	protected ImportTaskResource importTaskResource;
 	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected SitePageResource permissionsSitePageResource;
 	protected com.liferay.portal.kernel.model.Company testCompany;
 	protected com.liferay.portal.kernel.model.Group testGroup;
 

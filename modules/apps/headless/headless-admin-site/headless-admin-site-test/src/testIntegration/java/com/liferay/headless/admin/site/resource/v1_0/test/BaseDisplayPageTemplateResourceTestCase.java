@@ -129,6 +129,19 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 		).locale(
 			LocaleUtil.getDefault()
 		).build();
+
+		permissionsDisplayPageTemplateResource =
+			DisplayPageTemplateResource.builder(
+			).authentication(
+				_testCompanyAdminUser.getEmailAddress(),
+				PropsValues.DEFAULT_ADMIN_PASSWORD
+			).endpoint(
+				testCompany.getVirtualHostname(), 8080, "http"
+			).locale(
+				LocaleUtil.getDefault()
+			).parameter(
+				"nestedFields", "permissions"
+			).build();
 	}
 
 	@After
@@ -493,6 +506,20 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 			page,
 			testGetSiteDisplayPageTemplatesPage_getExpectedActions(
 				siteExternalReferenceCode));
+
+		for (DisplayPageTemplate displayPageTemplate : page.getItems()) {
+			Assert.assertNull(displayPageTemplate.getPermissions());
+		}
+
+		page =
+			permissionsDisplayPageTemplateResource.
+				getSiteDisplayPageTemplatesPage(
+					siteExternalReferenceCode, null, null, null,
+					Pagination.of(1, 10), null);
+
+		for (DisplayPageTemplate displayPageTemplate : page.getItems()) {
+			Assert.assertNotNull(displayPageTemplate.getPermissions());
+		}
 	}
 
 	protected Map<String, Map<String, String>>
@@ -961,6 +988,25 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 
 		assertEquals(randomDisplayPageTemplate, postDisplayPageTemplate);
 		assertValid(postDisplayPageTemplate);
+
+		DisplayPageTemplate randomPermissionsDisplayPageTemplate1 =
+			randomPermissionsDisplayPageTemplate();
+
+		DisplayPageTemplate postPermissionsDisplayPageTemplate1 =
+			testPostSiteDisplayPageTemplate_addDisplayPageTemplate(
+				randomPermissionsDisplayPageTemplate1);
+
+		Assert.assertNull(postPermissionsDisplayPageTemplate1.getPermissions());
+
+		DisplayPageTemplate randomPermissionsDisplayPageTemplate2 =
+			randomPermissionsDisplayPageTemplate();
+
+		DisplayPageTemplate postPermissionsDisplayPageTemplate2 =
+			testPostSiteDisplayPageTemplate_addPermissionsDisplayPageTemplate(
+				randomPermissionsDisplayPageTemplate2);
+
+		Assert.assertNotNull(
+			postPermissionsDisplayPageTemplate2.getPermissions());
 	}
 
 	protected DisplayPageTemplate
@@ -970,6 +1016,17 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	protected DisplayPageTemplate
+			testPostSiteDisplayPageTemplate_addPermissionsDisplayPageTemplate(
+				DisplayPageTemplate displayPageTemplate)
+		throws Exception {
+
+		return permissionsDisplayPageTemplateResource.
+			postSiteDisplayPageTemplate(
+				testGetSiteDisplayPageTemplatesPage_getSiteExternalReferenceCode(),
+				displayPageTemplate);
 	}
 
 	@Test
@@ -1389,6 +1446,14 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (displayPageTemplate.getPermissions() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("thumbnail", additionalAssertFieldName)) {
 				if (displayPageTemplate.getThumbnail() == null) {
 					valid = false;
@@ -1745,6 +1810,17 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 				if (!Objects.deepEquals(
 						displayPageTemplate1.getParentFolder(),
 						displayPageTemplate2.getParentFolder())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("permissions", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						displayPageTemplate1.getPermissions(),
+						displayPageTemplate2.getPermissions())) {
 
 					return false;
 				}
@@ -2242,6 +2318,11 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("permissions")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("thumbnail")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -2368,6 +2449,27 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 		return randomDisplayPageTemplate();
 	}
 
+	protected DisplayPageTemplate randomPermissionsDisplayPageTemplate()
+		throws Exception {
+
+		DisplayPageTemplate displayPageTemplate = randomDisplayPageTemplate();
+
+		com.liferay.portal.kernel.model.Role role = RoleTestUtil.addRole(
+			RoleConstants.TYPE_REGULAR);
+
+		displayPageTemplate.setPermissions(
+			new Permission[] {
+				new Permission() {
+					{
+						setActionIds(new String[] {"VIEW"});
+						setRoleName(role.getName());
+					}
+				}
+			});
+
+		return displayPageTemplate;
+	}
+
 	protected ContentPageSpecification randomContentPageSpecification()
 		throws Exception {
 
@@ -2404,6 +2506,8 @@ public abstract class BaseDisplayPageTemplateResourceTestCase {
 	protected DisplayPageTemplateResource displayPageTemplateResource;
 	protected ImportTaskResource importTaskResource;
 	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected DisplayPageTemplateResource
+		permissionsDisplayPageTemplateResource;
 	protected com.liferay.portal.kernel.model.Company testCompany;
 	protected com.liferay.portal.kernel.model.Group testGroup;
 
