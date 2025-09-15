@@ -2,4 +2,6 @@
 
 source $(dirname ${BASH_SOURCE[0]})/../../../../env/common.sh
 
-cluster_set_up 1
+prepare_additional_bundles 2 "true"
+
+start_additional_bundles 2

@@ -29,7 +29,6 @@ import {reloadUntilVisible} from '../../../utils/reloadUntilVisible';
 import {enableLocalStaging} from '../../../utils/staging';
 import getBasicWebContentStructureId from '../../../utils/structured-content/getBasicWebContentStructureId';
 import {remoteStagingPagesTest} from '../../export-import-service/main/fixtures/remoteStagingPagesTest';
-import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
 import getDataStructureDefinition from '../../journal-web/main/utils/getDataStructureDefinition';
 import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
 import {exportImportConfig} from './export_import.config';
@@ -69,7 +68,7 @@ const test = mergeTests(
 );
 
 test(
-	'can publish web content with URL references to live via remote staging.',
+	'can publish web content with URL references to live via remote staging',
 	{tag: '@LPS-159626'},
 	async ({
 		apiHelpers,
@@ -130,8 +129,6 @@ test(
 				}
 			}
 		}
-
-		
 
 		for (const layout of layouts) {
 			await pageEditorPage.goto(layout, site.friendlyUrlPath);
@@ -266,24 +263,30 @@ test(
 		i = 0;
 		for (const layout of layouts) {
 			await pageEditorPage.goto(layout, site.friendlyUrlPath);
-			try {
-				await webContentDisplayPage.addWebContentWithDisplay({
-					pageType: 'content',
-					webContentName: webContentTitle,
-				});
-			}
-			catch {}
-
-			await page.waitForTimeout(2000);
-			await page.reload();
-			try {
-				await webContentDisplayPage.addWebContentWithDisplay({
-					pageType: 'content',
-					webContentName: `Title-${pageNumbers[i]}`,
-				});
-			}
-			catch {}
-			await page.waitForTimeout(2000);
+			
+			await webContentDisplayPage.addWebContentWithDisplay({
+				pageType: 'content',
+				webContentName: webContentTitle,
+			});
+		
+			await reloadUntilVisible({
+				myLocator: page.getByText(
+					webContentTitle, {exact: true}
+				),
+				page,
+			});
+			
+			await webContentDisplayPage.addWebContentWithDisplay({
+				pageType: 'content',
+				webContentName: `Title-${pageNumbers[i]}`,
+			});
+			
+			await reloadUntilVisible({
+				myLocator: page.getByText(
+					`Title-${pageNumbers[i]}`, {exact: true}
+				),
+				page,
+			});
 			i++;
 		}
 
@@ -312,7 +315,7 @@ test(
 				remotePage.locator('h1').filter({hasText: `Title-${num}`})
 			).toBeVisible();
 
-			expect(remotePage.url()).toContain(`/web/${site.name}/page-${num}`);
+			await expect(remotePage.url()).toContain(`/web/${site.name}/page-${num}`);
 		}
 	}
 );
