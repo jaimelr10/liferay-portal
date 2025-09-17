@@ -1888,8 +1888,8 @@ public class ObjectEntryLocalServiceImpl
 					"update ObjectEntry set rootObjectEntryId = ? where " +
 						"rootObjectEntryId = ?")) {
 
-			long objectDefinition2RootObjectDefinitionId =
-				objectDefinition2.getRootObjectDefinitionId();
+			long[] objectDefinition2RootObjectDefinitionIds =
+				objectDefinition2.getRootObjectDefinitionIds();
 
 			_performActions(
 				objectDefinition1.getObjectDefinitionId(),
@@ -1897,7 +1897,7 @@ public class ObjectEntryLocalServiceImpl
 					try {
 						_updateRootObjectEntryIds(
 							objectDefinition1RootNode, objectDefinition2,
-							objectDefinition2RootObjectDefinitionId,
+							objectDefinition2RootObjectDefinitionIds,
 							objectEntry, preparedStatement1, preparedStatement2,
 							preparedStatement3);
 					}
@@ -1908,7 +1908,9 @@ public class ObjectEntryLocalServiceImpl
 
 			preparedStatement2.executeBatch();
 
-			if (objectDefinition2RootObjectDefinitionId != 0) {
+			if (ArrayUtil.isNotEmpty(
+					objectDefinition2RootObjectDefinitionIds)) {
+
 				preparedStatement3.executeBatch();
 			}
 		}
@@ -6222,7 +6224,7 @@ public class ObjectEntryLocalServiceImpl
 	private void _updateRootObjectEntryIds(
 			AtomicBoolean objectDefinition1RootNode,
 			ObjectDefinition objectDefinition2,
-			long objectDefinition2RootObjectDefinitionId,
+			long[] objectDefinition2RootObjectDefinitionIds,
 			ObjectEntry objectEntry, PreparedStatement preparedStatement1,
 			PreparedStatement preparedStatement2,
 			PreparedStatement preparedStatement3)
@@ -6249,7 +6251,7 @@ public class ObjectEntryLocalServiceImpl
 				long relatedObjectEntryId = resultSet.getLong(
 					objectDefinition2.getPKObjectFieldDBColumnName());
 
-				if (objectDefinition2RootObjectDefinitionId == 0) {
+				if (ArrayUtil.isEmpty(objectDefinition2RootObjectDefinitionIds)) {
 					preparedStatement2.setLong(1, rootObjectEntryId);
 					preparedStatement2.setLong(2, relatedObjectEntryId);
 
