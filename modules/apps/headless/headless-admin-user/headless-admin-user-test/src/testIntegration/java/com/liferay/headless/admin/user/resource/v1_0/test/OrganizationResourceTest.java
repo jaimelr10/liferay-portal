@@ -1249,10 +1249,6 @@ public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
 					accountBrief.getId() == accountEntry2.getAccountEntryId()));
 		Assert.assertNotNull(getOrganization.getCreator());
 
-		Creator creator = getOrganization.getCreator();
-
-		Assert.assertTrue(creator.getId() == TestPropsValues.getUserId());
-
 		Assert.assertNotNull(getOrganization.getImageBase64());
 		Assert.assertNotEquals(
 			0, GetterUtil.getLong(getOrganization.getImageId()));
@@ -1292,6 +1288,17 @@ public class OrganizationResourceTest extends BaseOrganizationResourceTestCase {
 				getOrganization.getUserAccountBriefs(),
 				userAccountBrief ->
 					userAccountBrief.getId() == user2.getUserId()));
+
+		Creator creator = getOrganization.getCreator();
+
+		Assert.assertTrue(creator.getId() == TestPropsValues.getUserId());
+
+		User user3 = TestPropsValues.getUser();
+
+		Assert.assertTrue(
+			Objects.equals(
+				creator.getExternalReferenceCode(),
+				user3.getExternalReferenceCode()));
 	}
 
 	private void _testPatchOrganizationByExternalReferenceCodeWithImageExternalReferenceCode()
