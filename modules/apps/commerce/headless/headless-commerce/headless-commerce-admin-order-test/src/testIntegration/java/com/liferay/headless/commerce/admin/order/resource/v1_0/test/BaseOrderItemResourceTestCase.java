@@ -2223,6 +2223,14 @@ public abstract class BaseOrderItemResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("productId", additionalAssertFieldName)) {
+				if (orderItem.getProductId() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("promoPrice", additionalAssertFieldName)) {
 				if (orderItem.getPromoPrice() == null) {
 					valid = false;
@@ -2864,6 +2872,16 @@ public abstract class BaseOrderItemResourceTestCase {
 				if (!Objects.deepEquals(
 						orderItem1.getPrintedNote(),
 						orderItem2.getPrintedNote())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("productId", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						orderItem1.getProductId(), orderItem2.getProductId())) {
 
 					return false;
 				}
@@ -3653,6 +3671,11 @@ public abstract class BaseOrderItemResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("productId")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("promoPrice")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -4137,6 +4160,7 @@ public abstract class BaseOrderItemResourceTestCase {
 				priceManuallyAdjusted = RandomTestUtil.randomBoolean();
 				printedNote = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
+				productId = RandomTestUtil.randomLong();
 				replacedSku = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				replacedSkuExternalReferenceCode = StringUtil.toLowerCase(
