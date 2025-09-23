@@ -1103,10 +1103,10 @@ public class JournalArticleActionDropdownItemsProvider {
 			return false;
 		}
 
-		int versionsCount = JournalArticleLocalServiceUtil.getArticlesCount(
+		int count = JournalArticleLocalServiceUtil.getArticlesCount(
 			_article.getGroupId(), _article.getArticleId());
 
-		if (versionsCount > 1) {
+		if (count > 1) {
 			return true;
 		}
 
