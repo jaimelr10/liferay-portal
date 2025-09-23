@@ -67,7 +67,7 @@ public class WishListResourceTest extends BaseWishListResourceTestCase {
 	@Override
 	@Test
 	public void testPatchWishList() throws Exception {
-		WishList postWishList = testPatchChannelWishList_addWishList();
+		WishList postWishList = testPatchWishList_addWishList();
 
 		WishList randomPatchWishList = randomPatchWishList();
 
@@ -150,7 +150,7 @@ public class WishListResourceTest extends BaseWishListResourceTestCase {
 	}
 
 	@Override
-	protected WishList testPatchChannelWishList_addWishList() throws Exception {
+	protected WishList testPatchWishList_addWishList() throws Exception {
 		return _postChannelWishList(randomWishList());
 	}
 
