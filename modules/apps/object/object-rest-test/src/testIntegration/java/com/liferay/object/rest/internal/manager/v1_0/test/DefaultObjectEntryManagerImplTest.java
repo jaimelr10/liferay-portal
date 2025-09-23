@@ -9005,7 +9005,7 @@ public class DefaultObjectEntryManagerImplTest
 			NoSuchObjectEntryException.class,
 			StringBundler.concat(
 				"No ObjectEntry exists with the key {objectEntryId=",
-				serviceBuilderObjectEntry.getObjectEntryId(), ", status!=",
+				serviceBuilderObjectEntry.getObjectEntryId(), ", status=",
 				WorkflowConstants.STATUS_IN_TRASH, "}"),
 			() -> unsafeConsumer.accept(
 				serviceBuilderObjectEntry.getObjectEntryId()));

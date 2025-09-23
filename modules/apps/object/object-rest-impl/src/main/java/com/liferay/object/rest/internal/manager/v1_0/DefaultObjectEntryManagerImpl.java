@@ -1696,7 +1696,7 @@ public class DefaultObjectEntryManagerImpl
 			throw new NoSuchObjectEntryException(
 				StringBundler.concat(
 					"No ObjectEntry exists with the key {objectEntryId=",
-					serviceBuilderObjectEntry.getObjectEntryId(), ", status!=",
+					serviceBuilderObjectEntry.getObjectEntryId(), ", status=",
 					WorkflowConstants.STATUS_IN_TRASH, "}"));
 		}
 	}
