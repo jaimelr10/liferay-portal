@@ -73,7 +73,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 		BatchEngineTaskItemDelegateRegistry batchEngineTaskItemDelegateRegistry,
 		String className, CompanyLocalService companyLocalService,
 		ExportImportVulcanBatchEngineTaskItemDelegate
-			exportImportVulcanBatchEngineTaskItemDelegate,
+		exportImportVulcanBatchEngineTaskItemDelegate,
 		String itemClassName, String taskItemDelegateName,
 		UserLocalService userLocalService) {
 

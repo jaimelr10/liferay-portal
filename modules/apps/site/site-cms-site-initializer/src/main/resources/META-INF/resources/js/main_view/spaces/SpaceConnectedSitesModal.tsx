@@ -3,12 +3,13 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import Autocomplete from '@clayui/autocomplete';
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
+import {ClayInput} from '@clayui/form';
 import ClayModal from '@clayui/modal';
-import ClaySticker from '@clayui/sticker';
+import ClaySticker, { DisplayType } from '@clayui/sticker';
 import {openToast} from 'frontend-js-components-web';
+import {ItemSelector} from 'frontend-js-item-selector-web';
 import React, {useEffect, useId, useState} from 'react';
 
 import ConnectedSiteService from '../../common/services/ConnectedSiteService';
@@ -109,15 +110,13 @@ const SitesSelector = ({
 	externalReferenceCode: string;
 	onSiteConnected: (site: Site) => void;
 }) => {
-	const [value, setValue] = useState('');
-	const [sites, setSites] = useState<Site[]>([]);
-	const [siteSelected, setSiteSelected] = useState<Site>();
+	const [site, setSite] = useState<Site>();
 
 	const connectSiteToSpace = async () => {
-		if (siteSelected) {
+		if (site) {
 			const {data, error} = await ConnectedSiteService.connectSiteToSpace(
 				externalReferenceCode,
-				siteSelected.externalReferenceCode
+				site.externalReferenceCode
 			);
 
 			if (data) {
@@ -132,18 +131,6 @@ const SitesSelector = ({
 		}
 	};
 
-	useEffect(() => {
-		const fetchSites = async () => {
-			const {data} = await ConnectedSiteService.getAllSites();
-
-			if (data) {
-				setSites(data.items);
-			}
-		};
-
-		fetchSites();
-	}, []);
-
 	return (
 		<div className="p-4">
 			<div className="align-items-end autofit-row c-gap-3">
@@ -152,25 +139,50 @@ const SitesSelector = ({
 						{Liferay.Language.get('site')}
 					</label>
 
-					<Autocomplete
-						allowsCustomValue
-						id="siteSelector"
-						menuTrigger="focus"
-						onChange={setValue}
-						placeholder={Liferay.Language.get('select-a-site')}
-						value={value}
-					>
-						{sites.map((site) => (
-							<Autocomplete.Item
-								key={site.id}
-								onClick={() => {
-									setSiteSelected(site);
-								}}
-							>
-								{site.name}
-							</Autocomplete.Item>
-						))}
-					</Autocomplete>
+					<ClayInput.GroupItem append>
+						<ItemSelector<Site>
+							apiURL={`${location.origin}/o/headless-site/v1.0/sites?active=true`}
+							as={ClayInput}
+							items={site ? [site] : []}
+							locator={{
+								id: 'id',
+								label: 'name',
+								value: 'id',
+							}}
+							onItemsChange={(items: Site[]) => {
+								if (items.length) {
+									setSite(items[0]);
+								}
+								else {
+									setSite(undefined);
+								}
+							}}
+						>
+							{(item: Site) => {
+								console.log(item);
+								return (
+									<ItemSelector.Item
+										key={item.id}
+										textValue={item.name}
+									>
+										<span className="inline-item inline-item-before">
+											<ClaySticker
+												displayType={
+													`outline-${item.id % 10}` as DisplayType
+												}
+												size="sm"
+											>
+												{typeof item.name === 'string' ? item.name.slice(0, 1) : ''}
+											</ClaySticker>
+										</span>
+
+										<span className="inline-item inline-item-after">
+											{item.name}
+										</span>
+									</ItemSelector.Item>
+								)}}
+						</ItemSelector>
+					</ClayInput.GroupItem>
 				</div>
 
 				<div className="autofit-col">
