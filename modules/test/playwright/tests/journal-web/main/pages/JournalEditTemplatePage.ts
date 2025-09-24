@@ -63,7 +63,7 @@ export class JournalEditTemplatePage {
 		}
 	}
 
-	async getDDMTemplateKey(title?: string, script?: string): Promise<string> {
+	async getDDMTemplateKey(): Promise<string> {
 		await this.page.getByLabel('Properties').click();
 
 		return this.page.getByLabel('DDM Template Key').inputValue();
