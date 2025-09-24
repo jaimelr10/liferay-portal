@@ -172,21 +172,19 @@ public class AssetLibraryResourceTest extends BaseAssetLibraryResourceTestCase {
 		AssetLibrary randomAssetLibrary = randomAssetLibrary();
 
 		randomAssetLibrary.setSettings(new Settings());
-
 		randomAssetLibrary.setType(AssetLibrary.Type.SPACE);
 
 		AssetLibrary postedAssetLibrary = assetLibraryResource.postAssetLibrary(
 			randomAssetLibrary);
 
-		Assert.assertEquals(
-			AssetLibrary.Type.SPACE, postedAssetLibrary.getType());
-
 		Settings settings = postedAssetLibrary.getSettings();
 
 		Assert.assertEquals("outline-0", settings.getLogoColor());
-
 		Assert.assertTrue(settings.getSharingEnabled());
 		Assert.assertTrue(settings.getTrashEnabled());
+
+		Assert.assertEquals(
+			AssetLibrary.Type.SPACE, postedAssetLibrary.getType());
 	}
 
 	@Override
