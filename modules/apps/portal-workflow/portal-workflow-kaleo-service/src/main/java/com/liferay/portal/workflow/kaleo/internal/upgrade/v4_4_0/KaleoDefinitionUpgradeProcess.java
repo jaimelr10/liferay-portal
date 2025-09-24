@@ -23,7 +23,6 @@ public class KaleoDefinitionUpgradeProcess extends UpgradeProcess {
 				"update KaleoDefinition set status = ",
 				WorkflowConstants.STATUS_APPROVED,
 				" where active_ = [$TRUE$]"));
-
 		runSQL(
 			StringBundler.concat(
 				"update KaleoDefinition set status = ",
