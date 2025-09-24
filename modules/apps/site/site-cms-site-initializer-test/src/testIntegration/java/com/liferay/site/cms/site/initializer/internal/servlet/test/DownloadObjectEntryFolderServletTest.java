@@ -75,60 +75,56 @@ public class DownloadObjectEntryFolderServletTest {
 			PermissionThreadLocal.getPermissionChecker();
 		String originalName = PrincipalThreadLocal.getName();
 
-		try {
-			PermissionThreadLocal.setPermissionChecker(
-				PermissionCheckerFactoryUtil.create(TestPropsValues.getUser()));
+		PermissionThreadLocal.setPermissionChecker(
+			PermissionCheckerFactoryUtil.create(TestPropsValues.getUser()));
 
-			PrincipalThreadLocal.setName(TestPropsValues.getUserId());
+		PrincipalThreadLocal.setName(TestPropsValues.getUserId());
 
-			ObjectEntryFolder objectEntryFolder = _addObjectFolderEntry(
-				_depotEntry.getGroupId());
+		ObjectEntryFolder objectEntryFolder = _addObjectFolderEntry(
+			_depotEntry.getGroupId());
 
-			MockHttpServletRequest mockHttpServletRequest =
-				_getMockHttpServletRequest(
-					_jsonFactory.createJSONObject(
+		MockHttpServletRequest mockHttpServletRequest =
+			_getMockHttpServletRequest(
+				_jsonFactory.createJSONObject(
+				).put(
+					"bulkActionItems",
+					_jsonFactory.createJSONArray(
 					).put(
-						"bulkActionItems",
-						_jsonFactory.createJSONArray(
+						_jsonFactory.createJSONObject(
 						).put(
-							_jsonFactory.createJSONObject(
-							).put(
-								"className",
-								"com.liferay.object.model.ObjectEntryFolder"
-							).put(
-								"classPK",
-								objectEntryFolder.getObjectEntryFolderId()
-							).put(
-								"classExternalReferenceCode",
-								objectEntryFolder.getExternalReferenceCode()
-							).put(
-								"name", objectEntryFolder.getName()
-							)
+							"className",
+							"com.liferay.object.model.ObjectEntryFolder"
+						).put(
+							"classPK",
+							objectEntryFolder.getObjectEntryFolderId()
+						).put(
+							"classExternalReferenceCode",
+							objectEntryFolder.getExternalReferenceCode()
+						).put(
+							"name", objectEntryFolder.getName()
 						)
-					).put(
-						"selectAll", false
-					).put(
-						"type", "DownloadBulkAction"
-					).toString(
-					).getBytes(),
-					HttpMethods.POST, 0);
+					)
+				).put(
+					"selectAll", false
+				).put(
+					"type", "DownloadBulkAction"
+				).toString(
+				).getBytes(),
+				HttpMethods.POST, 0);
 
-			MockHttpServletResponse mockHttpServletResponse =
-				new MockHttpServletResponse();
+		MockHttpServletResponse mockHttpServletResponse =
+			new MockHttpServletResponse();
 
-			_servlet.service(mockHttpServletRequest, mockHttpServletResponse);
+		_servlet.service(mockHttpServletRequest, mockHttpServletResponse);
 
-			Assert.assertEquals(
-				ContentTypes.APPLICATION_ZIP,
-				mockHttpServletResponse.getContentType());
-			Assert.assertEquals(
-				HttpServletResponse.SC_OK, mockHttpServletResponse.getStatus());
-		}
-		finally {
-			PermissionThreadLocal.setPermissionChecker(
-				originalPermissionChecker);
-			PrincipalThreadLocal.setName(originalName);
-		}
+		Assert.assertEquals(
+			ContentTypes.APPLICATION_ZIP,
+			mockHttpServletResponse.getContentType());
+		Assert.assertEquals(
+			HttpServletResponse.SC_OK, mockHttpServletResponse.getStatus());
+
+		PermissionThreadLocal.setPermissionChecker(originalPermissionChecker);
+		PrincipalThreadLocal.setName(originalName);
 	}
 
 	@Test
@@ -137,36 +133,32 @@ public class DownloadObjectEntryFolderServletTest {
 			PermissionThreadLocal.getPermissionChecker();
 		String originalName = PrincipalThreadLocal.getName();
 
-		try {
-			PermissionThreadLocal.setPermissionChecker(
-				PermissionCheckerFactoryUtil.create(TestPropsValues.getUser()));
+		PermissionThreadLocal.setPermissionChecker(
+			PermissionCheckerFactoryUtil.create(TestPropsValues.getUser()));
 
-			PrincipalThreadLocal.setName(TestPropsValues.getUserId());
+		PrincipalThreadLocal.setName(TestPropsValues.getUserId());
 
-			ObjectEntryFolder objectEntryFolder = _addObjectFolderEntry(
-				_depotEntry.getGroupId());
+		ObjectEntryFolder objectEntryFolder = _addObjectFolderEntry(
+			_depotEntry.getGroupId());
 
-			MockHttpServletRequest mockHttpServletRequest =
-				_getMockHttpServletRequest(
-					null, HttpMethods.GET,
-					objectEntryFolder.getObjectEntryFolderId());
+		MockHttpServletRequest mockHttpServletRequest =
+			_getMockHttpServletRequest(
+				null, HttpMethods.GET,
+				objectEntryFolder.getObjectEntryFolderId());
 
-			MockHttpServletResponse mockHttpServletResponse =
-				new MockHttpServletResponse();
+		MockHttpServletResponse mockHttpServletResponse =
+			new MockHttpServletResponse();
 
-			_servlet.service(mockHttpServletRequest, mockHttpServletResponse);
+		_servlet.service(mockHttpServletRequest, mockHttpServletResponse);
 
-			Assert.assertEquals(
-				ContentTypes.APPLICATION_ZIP,
-				mockHttpServletResponse.getContentType());
-			Assert.assertEquals(
-				HttpServletResponse.SC_OK, mockHttpServletResponse.getStatus());
-		}
-		finally {
-			PermissionThreadLocal.setPermissionChecker(
-				originalPermissionChecker);
-			PrincipalThreadLocal.setName(originalName);
-		}
+		Assert.assertEquals(
+			ContentTypes.APPLICATION_ZIP,
+			mockHttpServletResponse.getContentType());
+		Assert.assertEquals(
+			HttpServletResponse.SC_OK, mockHttpServletResponse.getStatus());
+
+		PermissionThreadLocal.setPermissionChecker(originalPermissionChecker);
+		PrincipalThreadLocal.setName(originalName);
 	}
 
 	private DepotEntry _addDepotEntry() throws Exception {
