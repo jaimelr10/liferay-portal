@@ -162,7 +162,7 @@ public class DownloadObjectEntryFolderServlet extends HttpServlet {
 			httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unsupported Operation");
+				_log.warn("Type is not \"DownloadBulkAction\"");
 			}
 
 			return;
@@ -174,7 +174,7 @@ public class DownloadObjectEntryFolderServlet extends HttpServlet {
 			httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unsupported Operation");
+				_log.warn("The value for \"selectAll\" is true");
 			}
 
 			return;
@@ -218,7 +218,7 @@ public class DownloadObjectEntryFolderServlet extends HttpServlet {
 					HttpServletResponse.SC_BAD_REQUEST);
 
 				if (_log.isWarnEnabled()) {
-					_log.warn("Unsupported Operation");
+					_log.warn("Invalid class name " + className);
 				}
 
 				return;
