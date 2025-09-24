@@ -537,7 +537,7 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 				objectDefinition.getObjectDefinitionId());
 		}
 		else if (!objectLayouts.isEmpty()) {
-			objectLayout = objectLayouts.getFirst();
+			objectLayout = objectLayouts.get(0);
 		}
 
 		if (objectLayout != null) {
