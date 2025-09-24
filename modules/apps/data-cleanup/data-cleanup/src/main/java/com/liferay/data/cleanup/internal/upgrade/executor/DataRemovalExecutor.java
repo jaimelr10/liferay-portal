@@ -96,11 +96,6 @@ public class DataRemovalExecutor {
 			() -> new ExpiredJournalArticleUpgradeProcess(
 				_journalArticleLocalService));
 		_removeModuleData(
-			dataRemovalConfiguration::removeWidgetLayoutTypeSettings,
-			"com.liferay.layout.service",
-			() -> new WidgetLayoutTypeSettingsUpgradeProcess(
-				_layoutLocalService));
-		_removeModuleData(
 			dataRemovalConfiguration::removeLayoutClassedModelUsageOrphanData,
 			"com.liferay.layout.service",
 			() -> new LayoutClassedModelUsageOrphanDataUpgradeProcess(
@@ -109,6 +104,11 @@ public class DataRemovalExecutor {
 				_layoutClassedModelUsageLocalService,
 				_layoutPageTemplateStructureLocalService,
 				_layoutPageTemplateStructureRelLocalService));
+		_removeModuleData(
+			dataRemovalConfiguration::removeWidgetLayoutTypeSettings,
+			"com.liferay.layout.service",
+			() -> new WidgetLayoutTypeSettingsUpgradeProcess(
+				_layoutLocalService));
 
 		_executeDataCleanupPreupgradeProcesses(dataRemovalConfiguration);
 	}
