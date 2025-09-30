@@ -54,9 +54,10 @@
 	}
 
 	.sidebar-close-button {
+		border-radius: 0.25rem;
 		position: absolute;
-		right: 0;
-		top: 0;
+		right: 14px;
+		top: 8px;
 		z-index: 1;
 	}
 
