@@ -714,7 +714,9 @@ const Multishipping = ({
 							<ClayInput.Group>
 								<ClayInput.GroupItem>
 									<ClayInput
-										aria-label="search"
+										aria-label={Liferay.Language.get(
+											'search'
+										)}
 										className="form-control"
 										disabled={loading}
 										onChange={({target: {value}}) => {

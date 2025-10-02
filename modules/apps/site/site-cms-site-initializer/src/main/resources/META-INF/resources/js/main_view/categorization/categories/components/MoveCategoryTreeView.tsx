@@ -151,7 +151,9 @@ function TreeViewLink({
 					>
 						{hasSubItems && (
 							<ClayButton
-								aria-label="Expand or collapse Vocabulary tree node"
+								aria-label={Liferay.Language.get(
+									'expand-or-collapse-vocabulary-tree-node'
+								)}
 								className="component-expander"
 								disabled={disabled}
 								displayType={null}

@@ -139,7 +139,7 @@ export default function SidebarHeader({
 
 							<ClayResultsBar.Item className="results-close-button">
 								<ClayButtonWithIcon
-									aria-label="Search"
+									aria-label={Liferay.Language.get('search')}
 									displayType="unstyled"
 									onClick={() =>
 										setNavHistory((previous) => [

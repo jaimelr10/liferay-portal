@@ -152,7 +152,9 @@ export function ManagementToolbar() {
 
 							<ClayInput.GroupInsetItem after tag="span">
 								<ClayButtonWithIcon
-									aria-label="Close search"
+									aria-label={Liferay.Language.get(
+										'close-search'
+									)}
 									className="navbar-breakpoint-d-none"
 									displayType="unstyled"
 									onClick={() => setSearchMobile(false)}
@@ -160,7 +162,7 @@ export function ManagementToolbar() {
 								/>
 
 								<ClayButtonWithIcon
-									aria-label="Search"
+									aria-label={Liferay.Language.get('search')}
 									displayType="unstyled"
 									onClick={() =>
 										setProductSearchParams({

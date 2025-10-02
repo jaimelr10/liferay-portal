@@ -96,7 +96,9 @@ export function GroovyScriptUsesModalContent({
 												weight="semi-bold"
 											>
 												<ClayIcon
-													aria-label="shortcut"
+													aria-label={Liferay.Language.get(
+														'shortcut'
+													)}
 													symbol="shortcut"
 												/>
 											</ClayLink>

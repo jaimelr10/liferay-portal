@@ -12,7 +12,7 @@ import CategorizationPermissionsTable from './CategorizationPermissionsTable';
 function PermissionsFormGroup({onChange, ...props}: {onChange: Function}) {
 	return (
 		<ClayPanel
-			aria-label="permissions"
+			aria-label={Liferay.Language.get('permissions')}
 			className="mb-4"
 			collapsable={false}
 			displayType="secondary"

@@ -445,7 +445,10 @@ const OrderItemRow = ({
 				</ClayTable.Cell>
 			)}
 
-			<ClayTable.Cell aria-label="sku-name" className="td-sku-name">
+			<ClayTable.Cell
+				aria-label={Liferay.Language.get('sku-name')}
+				className="td-sku-name"
+			>
 				<ClayTooltipProvider>
 					<div className="align-items-center d-flex flex-nowrap sku-name">
 						<ClayLink
@@ -692,7 +695,7 @@ const OrderItemRow = ({
 			</ClayTable.Cell>
 
 			<ClayTable.Cell
-				aria-label="quantity"
+				aria-label={Liferay.Language.get('quantity')}
 				className="td-quantity"
 				data-qa-id={`orderItem${orderItem.id}Quantity`}
 			>

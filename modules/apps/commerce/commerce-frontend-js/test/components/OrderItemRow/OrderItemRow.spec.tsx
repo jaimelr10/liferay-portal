@@ -78,7 +78,7 @@ const getLocators = (
 			'row0SplitQuantity'
 		) as HTMLButtonElement,
 		skuNameCell: renderedComponent.queryByRole('cell', {
-			name: 'sku-name',
+			name: 'SKU Name',
 		}) as HTMLElement,
 	};
 };

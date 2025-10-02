@@ -90,7 +90,7 @@ export default function DefaultPermissionForm({
 					<ClayInput.Group>
 						<ClayInput.GroupItem>
 							<ClayInput
-								aria-label="search"
+								aria-label={Liferay.Language.get('search')}
 								className="form-control input-group-inset input-group-inset-after"
 								data-testid="input-search"
 								disabled={disabled}
@@ -104,7 +104,7 @@ export default function DefaultPermissionForm({
 
 							<ClayInput.GroupInsetItem after tag="span">
 								<ClayButtonWithIcon
-									aria-label="Search"
+									aria-label={Liferay.Language.get('search')}
 									disabled={disabled}
 									displayType="unstyled"
 									symbol="search"

@@ -211,7 +211,7 @@ export default function EditAssociatedAssetTypes({
 	return (
 		<div className="container-fluid container-fluid-max-md p-0 p-md-4">
 			<ClayPanel
-				aria-label="associated-asset-types"
+				aria-label={Liferay.Language.get('associated-asset-types')}
 				className="mb-4"
 				collapsable={false}
 				displayType="secondary"
@@ -232,7 +232,9 @@ export default function EditAssociatedAssetTypes({
 						<label>{Liferay.Language.get('asset-types')}</label>
 
 						<ClayMultiSelect
-							aria-label="Asset Type Selector"
+							aria-label={Liferay.Language.get(
+								'asset-type-selector'
+							)}
 							disabled={allAssetTypesSelected}
 							items={allAssetTypesSelected ? [] : selectedItems}
 							onItemsChange={(items: Structure[]) => {

@@ -83,7 +83,7 @@ const EditCategoryGeneralInfoTab = ({
 	return (
 		<div className="container-fluid container-fluid-max-md p-0 p-md-4">
 			<ClayPanel
-				aria-label="basic-info"
+				aria-label={Liferay.Language.get('basic-info')}
 				className="mb-4"
 				collapsable={false}
 				displayType="secondary"

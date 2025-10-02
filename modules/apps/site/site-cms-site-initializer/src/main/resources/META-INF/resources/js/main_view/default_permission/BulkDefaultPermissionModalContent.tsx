@@ -268,7 +268,10 @@ export default function BulkDefaultPermissionModalContent({
 							'setting-default-permissions-for-this-folder-will-automatically-apply-them-to-all-newly-created-items'
 						)}
 					>
-						<ClayIcon aria-label="Info" symbol="info-circle" />
+						<ClayIcon
+							aria-label={Liferay.Language.get('info')}
+							symbol="info-circle"
+						/>
 					</span>
 				</ClayTooltipProvider>
 			</ClayModal.Header>

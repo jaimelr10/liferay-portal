@@ -122,7 +122,7 @@ export default function EditGeneralInfo({
 	return (
 		<div className="container-fluid container-fluid-max-md p-0 p-md-4">
 			<ClayPanel
-				aria-label="basic-info"
+				aria-label={Liferay.Language.get('basic-info')}
 				className="mb-4"
 				collapsable={false}
 				displayType="secondary"
@@ -209,7 +209,7 @@ export default function EditGeneralInfo({
 
 					<label className="toggle-switch">
 						<ClayToggle
-							aria-label="Multi Value"
+							aria-label={Liferay.Language.get('multi-value')}
 							onToggle={(checked) => {
 								onChangeVocabulary(() => ({
 									...vocabulary,
@@ -267,7 +267,7 @@ export default function EditGeneralInfo({
 			</ClayPanel>
 
 			<ClayPanel
-				aria-label="space"
+				aria-label={Liferay.Language.get('space')}
 				className="mb-4"
 				collapsable={false}
 				displayType="secondary"

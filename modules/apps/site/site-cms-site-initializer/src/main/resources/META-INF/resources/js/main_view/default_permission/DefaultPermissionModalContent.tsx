@@ -151,7 +151,10 @@ export default function DefaultPermissionModalContent({
 							'setting-default-permissions-for-this-folder-will-automatically-apply-them-to-all-newly-created-items'
 						)}
 					>
-						<ClayIcon aria-label="Info" symbol="info-circle" />
+						<ClayIcon
+							aria-label={Liferay.Language.get('info')}
+							symbol="info-circle"
+						/>
 					</span>
 				</ClayTooltipProvider>
 			</ClayModal.Header>
@@ -191,7 +194,7 @@ export default function DefaultPermissionModalContent({
 								)}
 							>
 								<ClayIcon
-									aria-label="Info"
+									aria-label={Liferay.Language.get('info')}
 									symbol="info-circle"
 								/>
 							</span>

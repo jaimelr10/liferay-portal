@@ -337,7 +337,7 @@ export default function MergeTagsModalContent({
 						</label>
 
 						<ClayMultiSelect
-							aria-label="multiSelect"
+							aria-label={Liferay.Language.get('multiSelect')}
 							inputName="multiSelect"
 							items={selectedTags}
 							loadingState={3}

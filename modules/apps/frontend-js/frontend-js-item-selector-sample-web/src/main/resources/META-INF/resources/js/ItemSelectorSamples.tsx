@@ -441,7 +441,9 @@ export default function ItemSelectorSamples() {
 								<ClayList.ItemField>
 									<ClayList.QuickActionMenu>
 										<ClayList.QuickActionMenu.Item
-											aria-label="Delete"
+											aria-label={Liferay.Language.get(
+												'delete'
+											)}
 											onClick={() =>
 												setDocuments((documents) =>
 													documents.filter(

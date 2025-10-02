@@ -140,7 +140,7 @@ const EditCategoryPropertiesTab = ({
 	return (
 		<div className="container-fluid container-fluid-max-md p-0 p-md-4">
 			<ClayPanel
-				aria-label="properties"
+				aria-label={Liferay.Language.get('properties')}
 				className="mb-4"
 				collapsable={false}
 				displayType="secondary"
