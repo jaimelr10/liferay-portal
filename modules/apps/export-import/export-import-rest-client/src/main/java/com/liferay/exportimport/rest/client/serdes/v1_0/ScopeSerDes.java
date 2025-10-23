@@ -201,7 +201,7 @@ public class ScopeSerDes {
 			else if (Objects.equals(jsonParserFieldName, "type")) {
 				if (jsonParserFieldValue != null) {
 					scope.setType(
-						TypeSerDes.toDTO((String)jsonParserFieldValue));
+						Scope.Type.create((String)jsonParserFieldValue));
 				}
 			}
 		}
