@@ -179,10 +179,12 @@ public class ReportEntryResourceImpl extends BaseReportEntryResourceImpl {
 		return null;
 	}
 
-	private Scope _getScope(Group group) {
-		if (group == null) {
+	private Scope _getScope(long groupId) throws Exception {
+		if (groupId == 0) {
 			return null;
 		}
+
+		Group group = _groupLocalService.getGroup(groupId);
 
 		return new Scope() {
 			{
@@ -258,9 +260,6 @@ public class ReportEntryResourceImpl extends BaseReportEntryResourceImpl {
 			_exportImportConfigurationLocalService.getExportImportConfiguration(
 				exportImportReportEntry.getExportImportConfigurationId());
 
-		Group group = _groupLocalService.getGroup(
-			exportImportReportEntry.getGroupId());
-
 		return new ReportEntry() {
 			{
 				setClassExternalReferenceCode(
@@ -285,7 +284,7 @@ public class ReportEntryResourceImpl extends BaseReportEntryResourceImpl {
 				setModelName(
 					() -> _toModelName(exportImportReportEntry.getModelName()));
 				setOrigin(() -> _toOrigin(exportImportReportEntry.getOrigin()));
-				setScope(() -> _getScope(group));
+				setScope(() -> _getScope(exportImportReportEntry.getGroupId()));
 				setStatus(() -> _toStatus(exportImportReportEntry.getStatus()));
 				setType(() -> _toType(exportImportReportEntry.getType()));
 			}
