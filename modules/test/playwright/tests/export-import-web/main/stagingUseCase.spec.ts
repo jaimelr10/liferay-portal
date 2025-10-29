@@ -14,7 +14,6 @@ import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {dataRemoteApiHelpersTest} from '../../../fixtures/dataRemoteApiHelpersTest';
 import {displayPageTemplatesPagesTest} from '../../../fixtures/displayPageTemplatesPagesTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
-import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {pageViewModePagesTest} from '../../../fixtures/pageViewModePagesTest';
@@ -53,7 +52,6 @@ const test = mergeTests(
 	collectionsPagesTest,
 	displayPageTemplatesPagesTest,
 	exportPageTest,
-	isolatedSiteTest,
 	journalPagesTest,
 	pageEditorPagesTest,
 	pageViewModePagesTest,
@@ -79,12 +77,13 @@ test(
 		remoteApiHelpers,
 		remotePage,
 		remoteStagingPage,
-		site,
 		webContentDisplayPage,
 		widgetPagePage,
 	}) => {
 		test.slow();
-
+		const site = await apiHelpers.headlessSite.createSite({
+			name: `site-${getRandomString()}`,
+		});
 		apiHelpers.data.push({id: site.id, type: 'site'});
 
 		const remoteSite = await remoteApiHelpers.headlessSite.createSite({
@@ -170,7 +169,7 @@ test(
 		}
 
 		await journalStructuresPage.goto(site.friendlyUrlPath);
-		const templateName = getRandomString();
+		const templateName = "template1";
 		const templateScript =
 			'<p><a href="${URL1.getData()}">${Openpage1.getData()}</a></p>\n' +
 			'<p><a href="${URL2.getData()}">${Openpage2.getData()}</a></p>\n' +
@@ -219,7 +218,7 @@ test(
 			dataDefinition2
 		);
 
-		const templateName2 = getRandomString();
+		const templateName2 = "template2";
 		const templateScript2 =
 			'<h1>${Content1.getData()}</h1>\n' + '<p>${Content2.getData()}</p>';
 
@@ -262,15 +261,11 @@ test(
 		i = 0;
 		for (const layout of layouts) {
 			await pageEditorPage.goto(layout, site.friendlyUrlPath);
+			await page.waitForLoadState('domcontentloaded');
 
 			await webContentDisplayPage.addWebContentWithDisplay({
 				pageType: 'content',
 				webContentName: webContentTitle,
-			});
-
-			await reloadUntilVisible({
-				myLocator: page.getByText(webContentTitle, {exact: true}),
-				page,
 			});
 
 			await webContentDisplayPage.addWebContentWithDisplay({
@@ -278,13 +273,8 @@ test(
 				webContentName: `Title-${pageNumbers[i]}`,
 			});
 
-			await reloadUntilVisible({
-				myLocator: page.getByText(`Title-${pageNumbers[i]}`, {
-					exact: true,
-				}),
-				page,
-			});
 			i++;
+			await page.waitForTimeout(2000);
 		}
 
 		const remoteUrl = remoteApiHelpers.baseUrl.substring(

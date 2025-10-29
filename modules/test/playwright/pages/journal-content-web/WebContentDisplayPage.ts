@@ -128,16 +128,17 @@ export class WebContentDisplayPage {
 	}
 
 	async addWebContentWithDisplay(
-		options: {pageType?: 'content' | 'widget'; webContentName?: string} = {
+		options: {pageType?: 'content' | 'widget'; webContentName?: string; waitAfterAddingWebcontent?: boolean} = {
 			pageType: 'content',
 			webContentName: '',
+			waitAfterAddingWebcontent: false
 		}
 	) {
 		await this.webContentDisplay.waitFor({state: 'visible'});
 		await this.webContentDisplayContent.hover();
 		await this.webContentDisplayContent.click();
 
-		const {pageType, webContentName} = options;
+		const {pageType, webContentName, waitAfterAddingWebcontent} = options;
 
 		if (pageType === 'widget') {
 			await this.page
@@ -185,6 +186,9 @@ export class WebContentDisplayPage {
 			await this.selectWebContentInConfigurationFrame
 				.getByText(webContentName, {exact: true})
 				.click();
+			if (waitAfterAddingWebcontent) {
+				await this.page.waitForTimeout(500);
+			}
 		}
 		else {
 			await this.webContentDisplayOptionsContent.click();
