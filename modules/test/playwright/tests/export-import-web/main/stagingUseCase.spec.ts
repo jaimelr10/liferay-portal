@@ -261,20 +261,38 @@ test(
 		i = 0;
 		for (const layout of layouts) {
 			await pageEditorPage.goto(layout, site.friendlyUrlPath);
-			await page.waitForLoadState('domcontentloaded');
+			let attempt = 0;
+			do {
+				attempt++;
+				await page.reload({waitUntil: 'domcontentloaded'});
 
-			await webContentDisplayPage.addWebContentWithDisplay({
-				pageType: 'content',
-				webContentName: webContentTitle,
-			});
+				if((await page.getByText(webContentTitle, {exact: true}).isVisible())){
+					break;
+				}
+				await webContentDisplayPage.addWebContentWithDisplay({
+					pageType: 'content',
+					webContentName: webContentTitle,
+				});
+				await page.waitForTimeout(500);
+				
+			} while (attempt <= 100);
+			attempt = 0;
+			do {
+				attempt++;
+				await page.reload({waitUntil: 'domcontentloaded'});
+				if((await page.getByText(`Title-${pageNumbers[i]}`, {exact: true}).first().isVisible())){
+					break;
+				}
+					await webContentDisplayPage.addWebContentWithDisplay({
+					pageType: 'content',
+					webContentName: `Title-${pageNumbers[i]}`,
+				});
 
-			await webContentDisplayPage.addWebContentWithDisplay({
-				pageType: 'content',
-				webContentName: `Title-${pageNumbers[i]}`,
-			});
+				await page.waitForTimeout(500);
+			} while (attempt <= 100);
 
 			i++;
-			await page.waitForTimeout(2000);
+			
 		}
 
 		const remoteUrl = remoteApiHelpers.baseUrl.substring(

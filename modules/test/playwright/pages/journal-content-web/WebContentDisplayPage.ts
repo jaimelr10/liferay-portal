@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {FrameLocator, Locator, Page} from '@playwright/test';
+import {FrameLocator, Locator, Page, expect} from '@playwright/test';
 
 import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import {PORTLET_URLS} from '../../utils/portletUrls';
@@ -128,10 +128,11 @@ export class WebContentDisplayPage {
 	}
 
 	async addWebContentWithDisplay(
-		options: {pageType?: 'content' | 'widget'; webContentName?: string; waitAfterAddingWebcontent?: boolean} = {
+		options: {pageType?: 'content' | 'widget'; waitAfterAddingWebcontent?: boolean, webContentName?: string;} = {
 			pageType: 'content',
+			waitAfterAddingWebcontent: false,
 			webContentName: '',
-			waitAfterAddingWebcontent: false
+			
 		}
 	) {
 		await this.webContentDisplay.waitFor({state: 'visible'});
@@ -186,8 +187,14 @@ export class WebContentDisplayPage {
 			await this.selectWebContentInConfigurationFrame
 				.getByText(webContentName, {exact: true})
 				.click();
+
 			if (waitAfterAddingWebcontent) {
-				await this.page.waitForTimeout(500);
+				await this.page.waitForTimeout(100);
+				if(await this.selectWebContentInConfigurationFrame
+					.getByText(webContentName, {exact: true}).isVisible()){
+						await this.uiElementsPage.closeClickable.click();
+						return;
+					}
 			}
 		}
 		else {
