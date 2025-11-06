@@ -45,6 +45,7 @@ const test = mergeTests(
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
 		'LPD-35914': {enabled: true, system: true},
+		'LPD-39304': {enabled: true},
 	}),
 	loginTest(),
 	assetPublisherPagesTest,
@@ -84,6 +85,8 @@ test(
 		const site = await apiHelpers.headlessSite.createSite({
 			name: `site-${getRandomString()}`,
 		});
+
+		
 		apiHelpers.data.push({id: site.id, type: 'site'});
 
 		const remoteSite = await remoteApiHelpers.headlessSite.createSite({
@@ -91,6 +94,14 @@ test(
 		});
 
 		remoteApiHelpers.data.push({id: remoteSite.id, type: 'site'});
+	
+
+		const remoteUrl = remoteApiHelpers.baseUrl.substring(
+			0,
+			remoteApiHelpers.baseUrl.length - 3
+		);
+
+		await remoteApiHelpers.featureFlag.updateFeatureFlag('LPD-35914', true, true, remoteUrl);
 
 		await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
 			groupId: site.id,
@@ -134,6 +145,7 @@ test(
 			await widgetPagePage.addPortlet('Web Content Display');
 			await widgetPagePage.addPortlet('Web Content Display');
 		}
+
 		const fields: Array<any> = [];
 		const pageNumbers = [1, 11, 111, 12, 2, 21, 22, 3, 31, 32];
 
@@ -258,6 +270,7 @@ test(
 			});
 		}
 
+
 		i = 0;
 		for (const layout of layouts) {
 			await pageEditorPage.goto(layout, site.friendlyUrlPath);
@@ -271,6 +284,7 @@ test(
 				}
 				await webContentDisplayPage.addWebContentWithDisplay({
 					pageType: 'content',
+					waitAfterAddingWebcontent: true,
 					webContentName: webContentTitle,
 				});
 				await page.waitForTimeout(500);
@@ -283,8 +297,9 @@ test(
 				if((await page.getByText(`Title-${pageNumbers[i]}`, {exact: true}).first().isVisible())){
 					break;
 				}
-					await webContentDisplayPage.addWebContentWithDisplay({
+				await webContentDisplayPage.addWebContentWithDisplay({
 					pageType: 'content',
+					waitAfterAddingWebcontent: true,
 					webContentName: `Title-${pageNumbers[i]}`,
 				});
 
@@ -292,13 +307,8 @@ test(
 			} while (attempt <= 100);
 
 			i++;
-			
 		}
 
-		const remoteUrl = remoteApiHelpers.baseUrl.substring(
-			0,
-			remoteApiHelpers.baseUrl.length - 3
-		);
 
 		await remoteStagingPage.publishToLive({
 			layoutFriendlyURL: layouts[0].friendlyURL,
