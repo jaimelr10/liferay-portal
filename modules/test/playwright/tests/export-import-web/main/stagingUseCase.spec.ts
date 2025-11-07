@@ -216,15 +216,14 @@ test(
 			groupId: site.id,
 			titleMap: {en_US: webContentTitle},
 		});
-		const fields2: Array<any> = [];
 
-		fields2.push({name: 'Content1', repeatable: false});
-		fields2.push({name: 'Content2', repeatable: false});
 		const structureName2 = getRandomString();
 		const dataDefinition2 = getDataStructureDefinition({
 			defaultLanguageId: 'en_US',
-
-			fields: fields2,
+			fields: [
+				{name: 'Content1', repeatable: false},
+				{name: 'Content2', repeatable: false},
+			],
 			name: structureName2,
 		});
 
@@ -251,16 +250,14 @@ test(
 		await webContentDisplayPage.gotoWebContentAdmin(site.name);
 
 		for (const num of pageNumbers) {
-			const contentFields3: Array<any> = [];
-
-			contentFields3.push({name: `Content1`, value: `Title-${num}`});
-			contentFields3.push({
-				name: `Content2`,
-				value: `Text Content-${num}`,
-			});
-
 			await apiHelpers.jsonWebServicesJournal.addWebContent({
-				contentFields: contentFields3,
+				contentFields: [
+					{name: `Content1`, value: `Title-${num}`},
+					{
+						name: `Content2`,
+						value: `Text Content-${num}`,
+					},
+				],
 				ddmStructureId: structure2.id,
 				ddmTemplateKey: templateKey2,
 				groupId: site.id,
