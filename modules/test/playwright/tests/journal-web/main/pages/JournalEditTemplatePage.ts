@@ -61,7 +61,7 @@ export class JournalEditTemplatePage {
 			await this.page.getByPlaceholder('Untitled Template').fill(title);
 			await this.page.getByPlaceholder('Untitled Template').click();
 		}
-		await this.page.waitForTimeout(500); 
+		await this.page.waitForTimeout(500);
 	}
 
 	async getDDMTemplateKey(): Promise<string> {

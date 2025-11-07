@@ -77,8 +77,15 @@ export class FeatureFlagApiHelper {
 		);
 	}
 
-	async updateFeatureFlag(key: string, enabled: boolean, system?: boolean, remoteUrl?: string): Promise<void> {
-		await this.page.goto(remoteUrl ? remoteUrl : liferayConfig.environment.baseUrl);
+	async updateFeatureFlag(
+		key: string,
+		enabled: boolean,
+		remoteUrl?: string,
+		system?: boolean
+	): Promise<void> {
+		await this.page.goto(
+			remoteUrl ? remoteUrl : liferayConfig.environment.baseUrl
+		);
 		await this.page.evaluate(
 			({enabled, key, system}) =>
 				Liferay.Util.fetch(
@@ -87,8 +94,8 @@ export class FeatureFlagApiHelper {
 						body: Liferay.Util.objectToFormData({
 							companyId: Liferay.ThemeDisplay.getCompanyId(),
 							enabled: enabled.toString(),
-							system: (system ?? false).toString(),
 							key,
+							system: (system ?? false).toString(),
 						}),
 						method: 'POST',
 					}
@@ -96,7 +103,7 @@ export class FeatureFlagApiHelper {
 			{
 				enabled,
 				key,
-				system
+				system,
 			}
 		);
 	}

@@ -86,7 +86,6 @@ test(
 			name: `site-${getRandomString()}`,
 		});
 
-		
 		apiHelpers.data.push({id: site.id, type: 'site'});
 
 		const remoteSite = await remoteApiHelpers.headlessSite.createSite({
@@ -94,14 +93,18 @@ test(
 		});
 
 		remoteApiHelpers.data.push({id: remoteSite.id, type: 'site'});
-	
 
 		const remoteUrl = remoteApiHelpers.baseUrl.substring(
 			0,
 			remoteApiHelpers.baseUrl.length - 3
 		);
 
-		await remoteApiHelpers.featureFlag.updateFeatureFlag('LPD-35914', true, true, remoteUrl);
+		await remoteApiHelpers.featureFlag.updateFeatureFlag(
+			'LPD-35914',
+			true,
+			remoteUrl,
+			true
+		);
 
 		await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
 			groupId: site.id,
@@ -181,7 +184,7 @@ test(
 		}
 
 		await journalStructuresPage.goto(site.friendlyUrlPath);
-		const templateName = "template1";
+		const templateName = 'template1';
 		const templateScript =
 			'<p><a href="${URL1.getData()}">${Openpage1.getData()}</a></p>\n' +
 			'<p><a href="${URL2.getData()}">${Openpage2.getData()}</a></p>\n' +
@@ -230,7 +233,7 @@ test(
 			dataDefinition2
 		);
 
-		const templateName2 = "template2";
+		const templateName2 = 'template2';
 		const templateScript2 =
 			'<h1>${Content1.getData()}</h1>\n' + '<p>${Content2.getData()}</p>';
 
@@ -270,7 +273,6 @@ test(
 			});
 		}
 
-
 		i = 0;
 		for (const layout of layouts) {
 			await pageEditorPage.goto(layout, site.friendlyUrlPath);
@@ -279,7 +281,11 @@ test(
 				attempt++;
 				await page.reload({waitUntil: 'domcontentloaded'});
 
-				if((await page.getByText(webContentTitle, {exact: true}).isVisible())){
+				if (
+					await page
+						.getByText(webContentTitle, {exact: true})
+						.isVisible()
+				) {
 					break;
 				}
 				await webContentDisplayPage.addWebContentWithDisplay({
@@ -288,13 +294,17 @@ test(
 					webContentName: webContentTitle,
 				});
 				await page.waitForTimeout(500);
-				
 			} while (attempt <= 100);
 			attempt = 0;
 			do {
 				attempt++;
 				await page.reload({waitUntil: 'domcontentloaded'});
-				if((await page.getByText(`Title-${pageNumbers[i]}`, {exact: true}).first().isVisible())){
+				if (
+					await page
+						.getByText(`Title-${pageNumbers[i]}`, {exact: true})
+						.first()
+						.isVisible()
+				) {
 					break;
 				}
 				await webContentDisplayPage.addWebContentWithDisplay({
@@ -308,7 +318,6 @@ test(
 
 			i++;
 		}
-
 
 		await remoteStagingPage.publishToLive({
 			layoutFriendlyURL: layouts[0].friendlyURL,
