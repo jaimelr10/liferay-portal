@@ -67,7 +67,7 @@ const test = mergeTests(
 );
 
 test(
-	'can publish web content with URL references to live via remote staging',
+	'Can publish web content with URL references to live via remote staging',
 	{tag: '@LPS-159626'},
 	async ({
 		apiHelpers,
@@ -672,7 +672,7 @@ classTypeIdsJournalArticleAssetRendererFactory=${basicWebcontentStructureId}`,
 );
 
 test(
-	'non modified referred content cannot publish to live when enable include if modified option',
+	'Non modified referred content cannot publish to live when enable include if modified option',
 	{tag: '@LPS-167777'},
 	async ({apiHelpers, stagingConfigurationPage, stagingPage}) => {
 		const site = await apiHelpers.headlessSite.createSite({
