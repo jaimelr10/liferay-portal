@@ -185,17 +185,12 @@ test(
 
 		await journalStructuresPage.goto(site.friendlyUrlPath);
 		const templateName = 'template1';
-		const templateScript =
-			'<p><a href="${URL1.getData()}">${Openpage1.getData()}</a></p>\n' +
-			'<p><a href="${URL2.getData()}">${Openpage2.getData()}</a></p>\n' +
-			'<p><a href="${URL3.getData()}">${Openpage3.getData()}</a></p>\n' +
-			'<p><a href="${URL11.getData()}">${Openpage11.getData()}</a></p>\n' +
-			'<p><a href="${URL12.getData()}">${Openpage12.getData()}</a></p>\n' +
-			'<p><a href="${URL111.getData()}">${Openpage111.getData()}</a></p>\n' +
-			'<p><a href="${URL21.getData()}">${Openpage21.getData()}</a></p>\n' +
-			'<p><a href="${URL22.getData()}">${Openpage22.getData()}</a></p>\n' +
-			'<p><a href="${URL31.getData()}">${Openpage31.getData()}</a></p>\n' +
-			'<p><a href="${URL32.getData()}">${Openpage32.getData()}</a></p>';
+
+		const templateScript = pageNumbers
+			.map((number) => {
+				return `<p><a href="\${URL${number}.getData()}">\${Openpage${number}.getData()}</a></p>`;
+			})
+			.join('\n');
 
 		await journalEditTemplatePage.goto(site.friendlyUrlPath);
 		await journalEditTemplatePage.selectStructure(structureName);
