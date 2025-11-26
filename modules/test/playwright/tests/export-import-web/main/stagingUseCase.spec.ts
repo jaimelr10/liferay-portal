@@ -49,12 +49,12 @@ const test = mergeTests(
 	journalPagesTest,
 	pageEditorPagesTest,
 	pageViewModePagesTest,
+	stagingConfigurationPageTest,
 	stagingPageTest,
 	systemSettingsPageTest,
 	webContentDisplayPageTest,
-	uiElementsPageTest,
-	stagingConfigurationPageTest,
-	workflowPagesTest
+	workflowPagesTest,
+	uiElementsPageTest
 );
 
 const testWithBatchStagingFF = mergeTests(

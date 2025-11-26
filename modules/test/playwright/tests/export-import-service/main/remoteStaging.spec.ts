@@ -8,6 +8,7 @@ import {expect, mergeTests} from '@playwright/test';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {dataRemoteApiHelpersTest} from '../../../fixtures/dataRemoteApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
+import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {pageViewModePagesTest} from '../../../fixtures/pageViewModePagesTest';
@@ -36,6 +37,7 @@ export const test = mergeTests(
 	featureFlagsTest({
 		'LPD-39304': {enabled: true},
 	}),
+	journalPagesTest,
 	pageEditorPagesTest,
 	pagesAdminPagesTest,
 	pagesPagesTest,
@@ -52,22 +54,21 @@ test(
 	async ({
 		apiHelpers,
 		journalEditTemplatePage,
-		journalStructuresPage,
 		page,
 		pageEditorPage,
 		remoteApiHelpers,
 		remotePage,
 		remoteStagingPage,
 		webContentDisplayPage,
-		widgetPagePage,
+		widgetPagePage
 	}) => {
 		test.slow();
 
-		let featureFlagEnabled;
+		let featureFlagEnabled: boolean = false;
 		const layouts: Array<Layout> = [];
-		let remoteSite;
-		let remoteUrl;
-		let site;
+		let remoteSite: Site;
+		let remoteUrl: string;
+		let site: Site;
 
 		try {
 			await test.step('Setup remote staging and pages', async () => {
@@ -89,7 +90,7 @@ test(
 				);
 
 				featureFlagEnabled =
-					await remoteApiHelpers.featureFlags.isFeatureFlagEnabled(
+					await remoteApiHelpers.featureFlag.isFeatureFlagEnabled(
 						'LPD-35914'
 					).enabled;
 
@@ -163,7 +164,6 @@ test(
 				const structureName = getRandomString();
 				const dataDefinition = getDataStructureDefinition({
 					defaultLanguageId: 'en_US',
-
 					fields,
 					name: structureName,
 				});
@@ -186,8 +186,6 @@ test(
 					});
 					i++;
 				}
-
-				await journalStructuresPage.goto(site.friendlyUrlPath);
 				const templateName = 'template1';
 
 				const templateScript = pageNumbers
@@ -282,48 +280,41 @@ test(
 			await test.step('Add web content to pages', async () => {
 				for (const layout of layouts) {
 					await pageEditorPage.goto(layout, site.friendlyUrlPath);
-					let attempt = 0;
-					do {
-						attempt++;
-						await page.reload({waitUntil: 'domcontentloaded'});
 
-						if (
-							await page
-								.getByText(webContentTitle, {exact: true})
-								.isVisible()
-						) {
-							break;
-						}
+					await expect(async () => {
+						await page.reload();
 						await webContentDisplayPage.addWebContentWithDisplay({
 							pageType: 'content',
 							waitAfterAddingWebcontent: true,
 							webContentName: webContentTitle,
 						});
-						await page.waitForTimeout(500);
-					} while (attempt <= 100);
-					attempt = 0;
-					do {
-						attempt++;
-						await page.reload({waitUntil: 'domcontentloaded'});
-						if (
-							await page
+
+						await expect( 
+							page
+								.getByText(webContentTitle, {exact: true})).toBeVisible();
+						}).toPass({
+							intervals: [1_000, 2_000, 10_000],
+							timeout: 120_000
+						});
+				
+						await expect(async () => {
+							await page.reload();
+							await webContentDisplayPage.addWebContentWithDisplay({
+								pageType: 'content',
+								waitAfterAddingWebcontent: true,
+								webContentName: `Title-${pageNumbers[i]}`,
+							});
+
+
+							await expect(page
 								.getByText(`Title-${pageNumbers[i]}`, {
 									exact: true,
 								})
-								.first()
-								.isVisible()
-						) {
-							break;
-						}
-						await webContentDisplayPage.addWebContentWithDisplay({
-							pageType: 'content',
-							waitAfterAddingWebcontent: true,
-							webContentName: `Title-${pageNumbers[i]}`,
+								.first()).toBeVisible();
+						}).toPass({
+							intervals: [1_000, 2_000, 10_000],
+							timeout: 120_000
 						});
-
-						await page.waitForTimeout(500);
-					} while (attempt <= 100);
-
 					i++;
 				}
 			});
@@ -333,8 +324,7 @@ test(
 					layoutFriendlyURL: layouts[0].friendlyURL,
 					siteFriendlyUrl: site.friendlyUrlPath,
 				});
-				await page.waitForTimeout(500);
-
+			
 				await remotePage.goto(
 					`${remoteUrl}/web${remoteSite.friendlyUrlPath}${layouts[0].friendlyURL}`
 				);

@@ -149,29 +149,14 @@ export class WebContentDisplayPage {
 				.locator('[id*="JournalContentPortlet"]')
 				.getByRole('button', {name: 'Options'})
 				.click();
+
+				await this.configurationOption.click();
+
 		}
 		else {
-			for (const topper of await this.page
-				.locator('#wrapper')
-				.getByText('Web Content Display')
-				.all()) {
-				try {
-					await topper
-						.locator('..')
-						.locator('..')
-						.locator('..')
-						.filter({
-							hasText: 'Select web content to make it visible.',
-						})
-						.getByRole('button', {name: 'Options'})
-						.click({timeout: 1000});
-					break;
-				}
-				catch {}
-			}
+			await this.page
+				.getByRole('button', {name: 'Select web content to make it visible'}).first().click();
 		}
-
-		await this.configurationOption.click();
 
 		await this.page
 			.getByText('Success:The application was added to the page.')
