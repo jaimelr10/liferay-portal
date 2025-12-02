@@ -129,10 +129,12 @@ export class WebContentDisplayPage {
 
 	async addWebContentWithDisplay(
 		options: {
+			numberOfWebContentDisplay?: number;
 			pageType?: 'content' | 'widget';
 			waitAfterAddingWebcontent?: boolean;
 			webContentName?: string;
 		} = {
+			numberOfWebContentDisplay: 1,
 			pageType: 'content',
 			waitAfterAddingWebcontent: false,
 			webContentName: '',
@@ -142,21 +144,22 @@ export class WebContentDisplayPage {
 		await this.webContentDisplayContent.hover();
 		await this.webContentDisplayContent.click();
 
-		const {pageType, waitAfterAddingWebcontent, webContentName} = options;
+		const {numberOfWebContentDisplay = 1, pageType, waitAfterAddingWebcontent, webContentName} = options;
 
 		if (pageType === 'widget') {
 			await this.page
 				.locator('[id*="JournalContentPortlet"]')
 				.getByRole('button', {name: 'Options'})
 				.click();
-
-				await this.configurationOption.click();
-
 		}
 		else {
 			await this.page
-				.getByRole('button', {name: 'Select web content to make it visible'}).first().click();
+				.locator('#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible')
+				.nth(numberOfWebContentDisplay).click();
+				
 		}
+
+		await this.configurationOption.click();
 
 		await this.page
 			.getByText('Success:The application was added to the page.')

@@ -300,6 +300,7 @@ test(
 						await expect(async () => {
 							await page.reload();
 							await webContentDisplayPage.addWebContentWithDisplay({
+								numbwerOfWebContentDisplay: 1,
 								pageType: 'content',
 								waitAfterAddingWebcontent: true,
 								webContentName: `Title-${pageNumbers[i]}`,
