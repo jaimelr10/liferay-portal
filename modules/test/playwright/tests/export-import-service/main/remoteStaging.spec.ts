@@ -64,11 +64,11 @@ test(
 	}) => {
 		test.slow();
 
-		let featureFlagEnabled: boolean = false;
+		let featureFlagEnabled;
 		const layouts: Array<Layout> = [];
 		let remoteSite: Site;
 		let remoteUrl: string;
-		let site: Site;
+		let site: Site;	
 
 		try {
 			await test.step('Setup remote staging and pages', async () => {
@@ -92,13 +92,12 @@ test(
 				featureFlagEnabled =
 					await remoteApiHelpers.featureFlag.isFeatureFlagEnabled(
 						'LPD-35914'
-					).enabled;
+					);
 
-				if (!featureFlagEnabled) {
+				if (!featureFlagEnabled.featureFlag.enabled) {
 					await remoteApiHelpers.featureFlag.updateFeatureFlag(
 						'LPD-35914',
 						true,
-						remoteUrl,
 						true
 					);
 				}
@@ -291,16 +290,16 @@ test(
 
 						await expect( 
 							page
-								.getByText(webContentTitle, {exact: true})).toBeVisible();
+								.getByText(webContentTitle, {exact: true})).toBeVisible({timeout: 1500});
 						}).toPass({
-							intervals: [1_000, 2_000, 10_000],
+							intervals: [1_000, 2_000],
 							timeout: 120_000
 						});
 				
 						await expect(async () => {
 							await page.reload();
 							await webContentDisplayPage.addWebContentWithDisplay({
-								numbwerOfWebContentDisplay: 1,
+								numberOfWebContentDisplay: 2,
 								pageType: 'content',
 								waitAfterAddingWebcontent: true,
 								webContentName: `Title-${pageNumbers[i]}`,
@@ -311,9 +310,9 @@ test(
 								.getByText(`Title-${pageNumbers[i]}`, {
 									exact: true,
 								})
-								.first()).toBeVisible();
+								.first()).toBeVisible({timeout: 1500});
 						}).toPass({
-							intervals: [1_000, 2_000, 10_000],
+							intervals: [1_000, 2_000],
 							timeout: 120_000
 						});
 					i++;
@@ -350,7 +349,7 @@ test(
 		}
 		finally {
 			await test.step('Teardown: Disabling feature flag on global site', async () => {
-				if (!featureFlagEnabled) {
+				if (!featureFlagEnabled.featureFlag.enabled) {
 					await remoteApiHelpers.featureFlag.updateFeatureFlag(
 						'LPD-35914',
 						false,

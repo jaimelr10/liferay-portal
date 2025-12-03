@@ -75,17 +75,14 @@ export class FeatureFlagApiHelper {
 				key,
 			}
 		);
+		
 	}
 
 	async updateFeatureFlag(
 		key: string,
 		enabled: boolean,
-		remoteUrl?: string,
 		system?: boolean
 	): Promise<void> {
-		await this.page.goto(
-			remoteUrl ? remoteUrl : liferayConfig.environment.baseUrl
-		);
 		await this.page.evaluate(
 			({enabled, key, system}) =>
 				Liferay.Util.fetch(

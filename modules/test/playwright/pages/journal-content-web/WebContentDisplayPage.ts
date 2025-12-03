@@ -180,11 +180,10 @@ export class WebContentDisplayPage {
 				.click();
 
 			if (waitAfterAddingWebcontent) {
-				await this.page.waitForTimeout(100);
 				if (
 					await this.selectWebContentInConfigurationFrame
 						.getByText(webContentName, {exact: true})
-						.isVisible()
+						.isVisible({timeout:100})
 				) {
 					await this.uiElementsPage.closeClickable.click();
 
