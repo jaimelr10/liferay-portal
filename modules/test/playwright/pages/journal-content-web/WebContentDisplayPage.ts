@@ -129,12 +129,12 @@ export class WebContentDisplayPage {
 
 	async addWebContentWithDisplay(
 		options: {
-			numberOfWebContentDisplay?: number;
+			customLocator?: Locator;
 			pageType?: 'content' | 'widget';
 			waitAfterAddingWebcontent?: boolean;
 			webContentName?: string;
 		} = {
-			numberOfWebContentDisplay: 1,
+			customLocator: null,
 			pageType: 'content',
 			waitAfterAddingWebcontent: false,
 			webContentName: '',
@@ -144,9 +144,12 @@ export class WebContentDisplayPage {
 		await this.webContentDisplayContent.hover();
 		await this.webContentDisplayContent.click();
 
-		const {numberOfWebContentDisplay = 1, pageType, waitAfterAddingWebcontent, webContentName} = options;
+		const {customLocator, pageType, waitAfterAddingWebcontent, webContentName} = options;
 
-		if (pageType === 'widget') {
+		if(customLocator){
+			await customLocator.click();
+		}
+		else if (pageType === 'widget') {
 			await this.page
 				.locator('[id*="JournalContentPortlet"]')
 				.getByRole('button', {name: 'Options'})
@@ -154,9 +157,12 @@ export class WebContentDisplayPage {
 		}
 		else {
 			await this.page
-				.locator('#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible')
-				.nth(numberOfWebContentDisplay).click();
-				
+				.locator('#wrapper')
+				.getByText('Web Content Display')
+				.last()
+				.locator('..')
+				.getByRole('button', {name: 'Options'})
+				.click();	
 		}
 
 		await this.configurationOption.click();

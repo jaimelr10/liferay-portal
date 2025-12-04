@@ -283,6 +283,9 @@ test(
 					await expect(async () => {
 						await page.reload();
 						await webContentDisplayPage.addWebContentWithDisplay({
+							customLocator: await page
+								.locator('#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible')
+								.nth(1),
 							pageType: 'content',
 							waitAfterAddingWebcontent: true,
 							webContentName: webContentTitle,
@@ -299,7 +302,9 @@ test(
 						await expect(async () => {
 							await page.reload();
 							await webContentDisplayPage.addWebContentWithDisplay({
-								numberOfWebContentDisplay: 2,
+								customLocator: await page
+									.locator('#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible')
+									.nth(2),
 								pageType: 'content',
 								waitAfterAddingWebcontent: true,
 								webContentName: `Title-${pageNumbers[i]}`,
