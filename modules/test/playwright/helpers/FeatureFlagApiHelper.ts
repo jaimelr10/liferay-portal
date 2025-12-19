@@ -5,8 +5,6 @@
 
 import {Page} from '@playwright/test';
 
-import {liferayConfig} from '../liferay.config';
-
 type TIsEnabledResult = {
 	dependentFeatureFlags: TFeatureFlagResult[];
 	featureFlag: TFeatureFlagResult;
@@ -75,16 +73,11 @@ export class FeatureFlagApiHelper {
 				key,
 			}
 		);
-		
 	}
 
-	async updateFeatureFlag(
-		key: string,
-		enabled: boolean,
-		system?: boolean
-	): Promise<void> {
+	async updateFeatureFlag(key: string, enabled: boolean): Promise<void> {
 		await this.page.evaluate(
-			({enabled, key, system}) =>
+			({enabled, key}) =>
 				Liferay.Util.fetch(
 					'/o/com-liferay-feature-flag-web/set-enabled',
 					{
@@ -92,7 +85,6 @@ export class FeatureFlagApiHelper {
 							companyId: Liferay.ThemeDisplay.getCompanyId(),
 							enabled: enabled.toString(),
 							key,
-							system: (system ?? false).toString(),
 						}),
 						method: 'POST',
 					}
@@ -100,7 +92,6 @@ export class FeatureFlagApiHelper {
 			{
 				enabled,
 				key,
-				system,
 			}
 		);
 	}

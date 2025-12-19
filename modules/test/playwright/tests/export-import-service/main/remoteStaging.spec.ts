@@ -64,13 +64,29 @@ test(
 	}) => {
 		test.slow();
 
-		let featureFlagEnabled;
 		const layouts: Array<Layout> = [];
+		let exportImportFeatureFlagEnabled: boolean;
 		let remoteSite: Site;
 		let remoteUrl: string;
-		let site: Site;	
+		let site: Site;
 
 		try {
+			await test.step('Enable export/import feature flag in remote instance', async () => {
+				({
+					featureFlag: {enabled: exportImportFeatureFlagEnabled},
+				} =
+					await remoteApiHelpers.featureFlag.isFeatureFlagEnabled(
+						'LPD-35914'
+					));
+
+				if (!exportImportFeatureFlagEnabled) {
+					await remoteApiHelpers.featureFlag.updateFeatureFlag(
+						'LPD-35914',
+						true
+					);
+				}
+			});
+
 			await test.step('Setup remote staging and pages', async () => {
 				site = await apiHelpers.headlessSite.createSite({
 					name: `site-${getRandomString()}`,
@@ -88,19 +104,6 @@ test(
 					0,
 					remoteApiHelpers.baseUrl.length - 3
 				);
-
-				featureFlagEnabled =
-					await remoteApiHelpers.featureFlag.isFeatureFlagEnabled(
-						'LPD-35914'
-					);
-
-				if (!featureFlagEnabled.featureFlag.enabled) {
-					await remoteApiHelpers.featureFlag.updateFeatureFlag(
-						'LPD-35914',
-						true,
-						true
-					);
-				}
 
 				await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
 					groupId: site.id,
@@ -354,12 +357,13 @@ test(
 		}
 		finally {
 			await test.step('Teardown: Disabling feature flag on global site', async () => {
-				if (!featureFlagEnabled.featureFlag.enabled) {
+				if (
+					exportImportFeatureFlagEnabled !== undefined &&
+					!exportImportFeatureFlagEnabled
+				) {
 					await remoteApiHelpers.featureFlag.updateFeatureFlag(
 						'LPD-35914',
-						false,
-						remoteUrl,
-						true
+						exportImportFeatureFlagEnabled
 					);
 				}
 			});
