@@ -30,7 +30,7 @@ import {safeTeardown} from './utils/safeTeardown';
 const remotePort = '9080';
 const remotePage = remotePageTest(remotePort);
 
-export const test = mergeTests(
+const test = mergeTests(
 	dataApiHelpersTest,
 	dataRemoteApiHelpersTest(remotePage, remotePort),
 	loginTest(),
