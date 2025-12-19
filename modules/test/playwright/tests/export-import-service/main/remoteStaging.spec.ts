@@ -71,7 +71,7 @@ test(
 		let site: Site;
 
 		try {
-			await test.step('Enable export/import feature flag in remote instance', async () => {
+			await test.step('Ensure export/import feature flag is enabled on the remote instance', async () => {
 				({
 					featureFlag: {enabled: exportImportFeatureFlagEnabled},
 				} =
@@ -87,7 +87,7 @@ test(
 				}
 			});
 
-			await test.step('Setup remote staging and pages', async () => {
+			await test.step('Create local and remote sites and enable remote staging', async () => {
 				site = await apiHelpers.headlessSite.createSite({
 					name: `site-${getRandomString()}`,
 				});
@@ -111,6 +111,7 @@ test(
 					remotePort,
 				});
 
+			await test.step('Create a hierarchy of pages on the local site', async () => {
 				for (const i of [1, 2, 3]) {
 					let layout =
 						await apiHelpers.jsonWebServicesLayout.addLayout({
@@ -145,8 +146,7 @@ test(
 				}
 			});
 
-			const pageNumbers = [1, 11, 111, 12, 2, 21, 22, 3, 31, 32];
-			await test.step('Setup pages with web content display', async () => {
+			await test.step('Add two Web Content Display portlets to each page of the local site', async () => {
 				for (const layout of layouts) {
 					await pageEditorPage.goto(layout, site.friendlyUrlPath);
 
@@ -154,8 +154,10 @@ test(
 					await widgetPagePage.addPortlet('Web Content Display');
 				}
 			});
+
 			const webContentTitle = getRandomString();
-			await test.step('Create structures, templates and web contents', async () => {
+			const pageNumbers = [1, 11, 111, 12, 2, 21, 22, 3, 31, 32];
+			await test.step('Create data structures, templates, and web content articles on the local site', async () => {
 				const fields: Array<any> = [];
 
 				for (const num of pageNumbers) {
@@ -279,7 +281,7 @@ test(
 			});
 
 			let i = 0;
-			await test.step('Add web content to pages', async () => {
+			await test.step('Add web content articles to the display portlets on each page of the local site', async () => {
 				for (const layout of layouts) {
 					await pageEditorPage.goto(layout, site.friendlyUrlPath);
 
@@ -327,7 +329,7 @@ test(
 				}
 			});
 
-			await test.step('Publish to live and verify on remote site', async () => {
+			await test.step('Publish to live and verify content and links on the remote site', async () => {
 				await remoteStagingPage.publishToLive({
 					layoutFriendlyURL: layouts[0].friendlyURL,
 					siteFriendlyUrl: site.friendlyUrlPath,
@@ -356,7 +358,7 @@ test(
 			});
 		}
 		finally {
-			await test.step('Teardown: Disabling feature flag on global site', async () => {
+			await test.step('Restore original state of the feature flag on the remote instance', async () => {
 				if (
 					exportImportFeatureFlagEnabled !== undefined &&
 					!exportImportFeatureFlagEnabled
