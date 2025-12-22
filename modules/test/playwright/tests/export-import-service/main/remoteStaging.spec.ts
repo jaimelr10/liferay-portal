@@ -67,7 +67,6 @@ test(
 		const layouts: Array<Layout> = [];
 		let exportImportFeatureFlagEnabled: boolean;
 		let remoteSite: Site;
-		let remoteUrl: string;
 		let site: Site;
 
 		try {
@@ -99,11 +98,6 @@ test(
 				});
 
 				remoteApiHelpers.data.push({id: remoteSite.id, type: 'site'});
-
-				remoteUrl = remoteApiHelpers.baseUrl.substring(
-					0,
-					remoteApiHelpers.baseUrl.length - 3
-				);
 
 				await apiHelpers.jsonWebServicesStaging.enableRemoteStaging({
 					groupId: site.id,
@@ -340,7 +334,12 @@ test(
 					layoutFriendlyURL: layouts[0].friendlyURL,
 					siteFriendlyUrl: site.friendlyUrlPath,
 				});
-			
+
+				const remoteUrl = remoteApiHelpers.baseUrl.substring(
+					0,
+					remoteApiHelpers.baseUrl.length - 3
+				);
+
 				await remotePage.goto(
 					`${remoteUrl}/web${remoteSite.friendlyUrlPath}${layouts[0].friendlyURL}`
 				);
