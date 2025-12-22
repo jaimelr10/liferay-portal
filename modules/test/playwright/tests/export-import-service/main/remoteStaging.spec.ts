@@ -16,6 +16,7 @@ import {productMenuPageTest} from '../../../fixtures/productMenuPageTest';
 import {remotePageTest} from '../../../fixtures/remotePageTest';
 import {uiElementsPageTest} from '../../../fixtures/uiElementsTest';
 import {webContentDisplayPageTest} from '../../../fixtures/webContentDisplayPageTest';
+import {createLayoutHierarchy} from '../../../utils/createLayoutHierarchy';
 import getGlobalSiteId from '../../../utils/getGlobalSiteId';
 import getRandomString from '../../../utils/getRandomString';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
@@ -64,8 +65,8 @@ test(
 	}) => {
 		test.slow();
 
-		const layouts: Array<Layout> = [];
 		let exportImportFeatureFlagEnabled: boolean;
+		let layouts: Array<Layout> = [];
 		let remoteSite: Site;
 		let site: Site;
 
@@ -107,38 +108,30 @@ test(
 			});
 
 			await test.step('Create a hierarchy of pages on the local site', async () => {
-				for (const i of [1, 2, 3]) {
-					let layout =
-						await apiHelpers.jsonWebServicesLayout.addLayout({
-							groupId: site.id,
-							title: `Page ${i}`,
-						});
-
-					layouts.push(layout);
-
-					for (const j of [1, 2]) {
-						layout =
-							await apiHelpers.jsonWebServicesLayout.addLayout({
-								groupId: site.id,
-								parentLayoutId: layout.layoutId,
-								title: `Page ${i}${j}`,
-							});
-
-						layouts.push(layout);
-
-						if (i === 1 && j === 1) {
-							layout =
-								await apiHelpers.jsonWebServicesLayout.addLayout(
-									{
-										groupId: site.id,
-										parentLayoutId: layout.layoutId,
-										title: 'Page 111',
-									}
-								);
-							layouts.push(layout);
-						}
-					}
-				}
+				layouts = await createLayoutHierarchy({
+					apiHelpers,
+					pageNodes: [
+						{
+							children: [
+								{
+									children: [{title: 'Page 111'}],
+									title: 'Page 11',
+								},
+								{title: 'Page 12'},
+							],
+							title: 'Page 1',
+						},
+						{
+							children: [{title: 'Page 21'}, {title: 'Page 22'}],
+							title: 'Page 2',
+						},
+						{
+							children: [{title: 'Page 31'}, {title: 'Page 32'}],
+							title: 'Page 3',
+						},
+					],
+					siteId: site.id,
+				});
 			});
 
 			await test.step('Add two Web Content Display portlets to each page of the local site', async () => {
