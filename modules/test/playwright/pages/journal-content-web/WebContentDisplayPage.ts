@@ -144,9 +144,14 @@ export class WebContentDisplayPage {
 		await this.webContentDisplayContent.hover();
 		await this.webContentDisplayContent.click();
 
-		const {customLocator, pageType, waitAfterAddingWebcontent, webContentName} = options;
+		const {
+			customLocator,
+			pageType,
+			waitAfterAddingWebcontent,
+			webContentName,
+		} = options;
 
-		if(customLocator){
+		if (customLocator) {
 			await customLocator.click();
 		}
 		else if (pageType === 'widget') {
@@ -162,7 +167,7 @@ export class WebContentDisplayPage {
 				.last()
 				.locator('..')
 				.getByRole('button', {name: 'Options'})
-				.click();	
+				.click();
 		}
 
 		await this.configurationOption.click();
@@ -189,7 +194,7 @@ export class WebContentDisplayPage {
 				if (
 					await this.selectWebContentInConfigurationFrame
 						.getByText(webContentName, {exact: true})
-						.isVisible({timeout:100})
+						.isVisible({timeout: 100})
 				) {
 					await this.uiElementsPage.closeClickable.click();
 

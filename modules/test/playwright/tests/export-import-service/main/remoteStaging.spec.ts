@@ -8,7 +8,6 @@ import {expect, mergeTests} from '@playwright/test';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {dataRemoteApiHelpersTest} from '../../../fixtures/dataRemoteApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
-import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {pageViewModePagesTest} from '../../../fixtures/pageViewModePagesTest';
@@ -22,6 +21,7 @@ import getRandomString from '../../../utils/getRandomString';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
 import {reloadUntilVisible} from '../../../utils/reloadUntilVisible';
 import getBasicWebContentStructureId from '../../../utils/structured-content/getBasicWebContentStructureId';
+import {journalPagesTest} from '../../journal-web/main/fixtures/journalPagesTest';
 import getDataStructureDefinition from '../../journal-web/main/utils/getDataStructureDefinition';
 import {pagesPagesTest} from '../../layout-admin-web/main/fixtures/pagesPagesTest';
 import {remoteStagingPagesTest} from './fixtures/remoteStagingPagesTest';
@@ -60,7 +60,7 @@ test(
 		remotePage,
 		remoteStagingPage,
 		webContentDisplayPage,
-		widgetPagePage
+		widgetPagePage,
 	}) => {
 		test.slow();
 
@@ -110,6 +110,7 @@ test(
 					remoteGroupId: remoteSite.id,
 					remotePort,
 				});
+			});
 
 			await test.step('Create a hierarchy of pages on the local site', async () => {
 				for (const i of [1, 2, 3]) {
@@ -289,42 +290,47 @@ test(
 						await page.reload();
 						await webContentDisplayPage.addWebContentWithDisplay({
 							customLocator: await page
-								.locator('#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible')
+								.locator(
+									'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
+								)
 								.nth(1),
 							pageType: 'content',
 							waitAfterAddingWebcontent: true,
 							webContentName: webContentTitle,
 						});
 
-						await expect( 
-							page
-								.getByText(webContentTitle, {exact: true})).toBeVisible({timeout: 1500});
-						}).toPass({
-							intervals: [1_000, 2_000],
-							timeout: 120_000
+						await expect(
+							page.getByText(webContentTitle, {exact: true})
+						).toBeVisible({timeout: 1500});
+					}).toPass({
+						intervals: [1_000, 2_000],
+						timeout: 120_000,
+					});
+
+					await expect(async () => {
+						await page.reload();
+						await webContentDisplayPage.addWebContentWithDisplay({
+							customLocator: await page
+								.locator(
+									'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
+								)
+								.nth(2),
+							pageType: 'content',
+							waitAfterAddingWebcontent: true,
+							webContentName: `Title-${pageNumbers[i]}`,
 						});
-				
-						await expect(async () => {
-							await page.reload();
-							await webContentDisplayPage.addWebContentWithDisplay({
-								customLocator: await page
-									.locator('#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible')
-									.nth(2),
-								pageType: 'content',
-								waitAfterAddingWebcontent: true,
-								webContentName: `Title-${pageNumbers[i]}`,
-							});
 
-
-							await expect(page
+						await expect(
+							page
 								.getByText(`Title-${pageNumbers[i]}`, {
 									exact: true,
 								})
-								.first()).toBeVisible({timeout: 1500});
-						}).toPass({
-							intervals: [1_000, 2_000],
-							timeout: 120_000
-						});
+								.first()
+						).toBeVisible({timeout: 1500});
+					}).toPass({
+						intervals: [1_000, 2_000],
+						timeout: 120_000,
+					});
 					i++;
 				}
 			});
