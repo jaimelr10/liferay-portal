@@ -146,12 +146,10 @@ test(
 			const webContentTitle = getRandomString();
 			const pageNumbers = [1, 11, 111, 12, 2, 21, 22, 3, 31, 32];
 			await test.step('Create data structures, templates, and web content articles on the local site', async () => {
-				const fields: Array<any> = [];
-
-				for (const num of pageNumbers) {
-					fields.push({name: `Openpage${num}`, repeatable: false});
-					fields.push({name: `URL${num}`, repeatable: false});
-				}
+				const fields: Array<any> = pageNumbers.flatMap((num) => [
+					{name: `Openpage${num}`, repeatable: false},
+					{name: `URL${num}`, repeatable: false},
+				]);
 
 				const structureName = getRandomString();
 				const dataDefinition = getDataStructureDefinition({
@@ -164,20 +162,23 @@ test(
 					dataDefinition
 				);
 
-				let i = 0;
-				const contentFields: Array<any> = [];
-				for (const layout of layouts) {
-					contentFields.push({
-						name: `Openpage${pageNumbers[i]}`,
-						value: layout.nameCurrentValue,
-					});
-					contentFields.push({
-						name: `URL${pageNumbers[i]}`,
-						value:
-							`/web${site.friendlyUrlPath}` + layout.friendlyURL,
-					});
-					i++;
-				}
+				const contentFields: Array<{name: string; value: string}> = layouts.flatMap(
+					(layout, index) => {
+						const pageNum = pageNumbers[index];
+
+						return [
+							{
+								name: `Openpage${pageNum}`,
+								value: layout.nameCurrentValue,
+							},
+							{
+								name: `URL${pageNum}`,
+								value: `/web${site.friendlyUrlPath}${layout.friendlyURL}`,
+							},
+						];
+					}
+				);
+
 				const templateName = 'template1';
 
 				const templateScript = pageNumbers
