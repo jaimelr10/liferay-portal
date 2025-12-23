@@ -145,7 +145,11 @@ test(
 
 			const webContentTitle = getRandomString();
 			const pageNumbers = [1, 11, 111, 12, 2, 21, 22, 3, 31, 32];
-			await test.step('Create data structures, templates, and web content articles on the local site', async () => {
+
+			let structure: any;
+			let templateKey: string;
+
+			await test.step('Create a data structure and template for page links', async () => {
 				const fields: Array<any> = pageNumbers.flatMap((num) => [
 					{name: `Openpage${num}`, repeatable: false},
 					{name: `URL${num}`, repeatable: false},
@@ -157,26 +161,9 @@ test(
 					fields,
 					name: structureName,
 				});
-				const structure = await apiHelpers.dataEngine.createStructure(
+				structure = await apiHelpers.dataEngine.createStructure(
 					site.id,
 					dataDefinition
-				);
-
-				const contentFields: Array<{name: string; value: string}> = layouts.flatMap(
-					(layout, index) => {
-						const pageNum = pageNumbers[index];
-
-						return [
-							{
-								name: `Openpage${pageNum}`,
-								value: layout.nameCurrentValue,
-							},
-							{
-								name: `URL${pageNum}`,
-								value: `/web${site.friendlyUrlPath}${layout.friendlyURL}`,
-							},
-						];
-					}
 				);
 
 				const templateName = 'template1';
@@ -198,8 +185,25 @@ test(
 					templateName
 				);
 
-				const templateKey =
-					await journalEditTemplatePage.getDDMTemplateKey();
+				templateKey = await journalEditTemplatePage.getDDMTemplateKey();
+			});
+
+			await test.step('Create a web content article with page links', async () => {
+				const contentFields: Array<{name: string; value: string}> =
+					layouts.flatMap((layout, index) => {
+						const pageNum = pageNumbers[index];
+
+						return [
+							{
+								name: `Openpage${pageNum}`,
+								value: layout.nameCurrentValue,
+							},
+							{
+								name: `URL${pageNum}`,
+								value: `/web${site.friendlyUrlPath}${layout.friendlyURL}`,
+							},
+						];
+					});
 
 				await apiHelpers.jsonWebServicesJournal.addWebContent({
 					contentFields,
@@ -208,7 +212,12 @@ test(
 					groupId: site.id,
 					titleMap: {en_US: webContentTitle},
 				});
+			});
 
+			let structure2: any;
+			let templateKey2: string;
+
+			await test.step('Create a data structure and template for individual page content', async () => {
 				const structureName2 = getRandomString();
 				const dataDefinition2 = getDataStructureDefinition({
 					defaultLanguageId: 'en_US',
@@ -219,7 +228,7 @@ test(
 					name: structureName2,
 				});
 
-				const structure2 = await apiHelpers.dataEngine.createStructure(
+				structure2 = await apiHelpers.dataEngine.createStructure(
 					site.id,
 					dataDefinition2
 				);
@@ -240,9 +249,11 @@ test(
 					templateName2
 				);
 
-				const templateKey2 =
+				templateKey2 =
 					await journalEditTemplatePage.getDDMTemplateKey();
+			});
 
+			await test.step('Create individual web content articles for each page', async () => {
 				await webContentDisplayPage.gotoWebContentAdmin(site.name);
 
 				for (const num of pageNumbers) {
