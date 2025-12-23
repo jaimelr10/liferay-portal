@@ -249,7 +249,8 @@ test(
 					templateName2
 				);
 
-				templateKey2 = await journalEditTemplatePage.getDDMTemplateKey();
+				templateKey2 =
+					await journalEditTemplatePage.getDDMTemplateKey();
 			});
 
 			await test.step('Create individual web content articles for each page', async () => {
@@ -279,57 +280,31 @@ test(
 				}
 			});
 
-			let i = 0;
 			await test.step('Add web content articles to the display portlets on each page of the local site', async () => {
-				for (const layout of layouts) {
+				for (const [i, layout] of layouts.entries()) {
 					await pageEditorPage.goto(layout, site.friendlyUrlPath);
 
-					await expect(async () => {
-						await page.reload();
-						await webContentDisplayPage.addWebContentWithDisplay({
-							customLocator: await page
-								.locator(
-									'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
-								)
-								.nth(1),
-							pageType: 'content',
-							waitAfterAddingWebcontent: true,
-							webContentName: webContentTitle,
-						});
-
-						await expect(
-							page.getByText(webContentTitle, {exact: true})
-						).toBeVisible({timeout: 1500});
-					}).toPass({
-						intervals: [1_000, 2_000],
-						timeout: 120_000,
+					await webContentDisplayPage.addWebContentWithDisplay({
+						customLocator: await page
+							.locator(
+								'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
+							)
+							.nth(1),
+						pageType: 'content',
+						waitAfterAddingWebcontent: true,
+						webContentName: webContentTitle,
 					});
 
-					await expect(async () => {
-						await page.reload();
-						await webContentDisplayPage.addWebContentWithDisplay({
-							customLocator: await page
-								.locator(
-									'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
-								)
-								.nth(2),
-							pageType: 'content',
-							waitAfterAddingWebcontent: true,
-							webContentName: `Title-${pageNumbers[i]}`,
-						});
-
-						await expect(
-							page
-								.getByText(`Title-${pageNumbers[i]}`, {
-									exact: true,
-								})
-								.first()
-						).toBeVisible({timeout: 1500});
-					}).toPass({
-						intervals: [1_000, 2_000],
-						timeout: 120_000,
+					await webContentDisplayPage.addWebContentWithDisplay({
+						customLocator: await page
+							.locator(
+								'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
+							)
+							.nth(2),
+						pageType: 'content',
+						waitAfterAddingWebcontent: true,
+						webContentName: `Title-${pageNumbers[i]}`,
 					});
-					i++;
 				}
 			});
 
