@@ -150,29 +150,29 @@ test(
 			let templateKey: string;
 
 			await test.step('Create a data structure and template for page links', async () => {
+				const structureName = getRandomString();
 				const fields: Array<any> = pageNumbers.flatMap((num) => [
 					{name: `Openpage${num}`, repeatable: false},
 					{name: `URL${num}`, repeatable: false},
 				]);
 
-				const structureName = getRandomString();
 				const dataDefinition = getDataStructureDefinition({
 					defaultLanguageId: 'en_US',
 					fields,
 					name: structureName,
 				});
+
 				structure = await apiHelpers.dataEngine.createStructure(
 					site.id,
 					dataDefinition
 				);
-
-				const templateName = 'template1';
 
 				const templateScript = pageNumbers
 					.map((number) => {
 						return `<p><a href="\${URL${number}.getData()}">\${Openpage${number}.getData()}</a></p>`;
 					})
 					.join('\n');
+				const templateName = 'template1';
 
 				await journalEditTemplatePage.goto(site.friendlyUrlPath);
 				await journalEditTemplatePage.selectStructure(structureName);
@@ -233,13 +233,13 @@ test(
 					dataDefinition2
 				);
 
-				const templateName2 = 'template2';
+				await journalEditTemplatePage.goto(site.friendlyUrlPath);
+				await journalEditTemplatePage.selectStructure(structureName2);
+
 				const templateScript2 =
 					'<h1>${Content1.getData()}</h1>\n' +
 					'<p>${Content2.getData()}</p>';
-
-				await journalEditTemplatePage.goto(site.friendlyUrlPath);
-				await journalEditTemplatePage.selectStructure(structureName2);
+				const templateName2 = 'template2';
 				await journalEditTemplatePage.editTemplate(
 					templateName2,
 					templateScript2
@@ -249,8 +249,7 @@ test(
 					templateName2
 				);
 
-				templateKey2 =
-					await journalEditTemplatePage.getDDMTemplateKey();
+				templateKey2 = await journalEditTemplatePage.getDDMTemplateKey();
 			});
 
 			await test.step('Create individual web content articles for each page', async () => {
