@@ -16,6 +16,7 @@ import {productMenuPageTest} from '../../../fixtures/productMenuPageTest';
 import {remotePageTest} from '../../../fixtures/remotePageTest';
 import {uiElementsPageTest} from '../../../fixtures/uiElementsTest';
 import {webContentDisplayPageTest} from '../../../fixtures/webContentDisplayPageTest';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {createLayoutHierarchy} from '../../../utils/createLayoutHierarchy';
 import getGlobalSiteId from '../../../utils/getGlobalSiteId';
 import getRandomString from '../../../utils/getRandomString';
@@ -324,19 +325,18 @@ test(
 				);
 
 				for (const num of [111, 21, 3]) {
-					await remotePage
-						.getByRole('link', {exact: true, name: `Page ${num}`})
-						.click();
-					await remotePage.waitForLoadState('domcontentloaded');
+					await clickAndExpectToBeVisible({
+						target: remotePage.locator('h1', {
+							hasText: `Title-${num}`,
+						}),
+						trigger: remotePage.getByRole('link', {
+							exact: true,
+							name: `Page ${num}`,
+						}),
+					});
 
-					await expect(
-						remotePage
-							.locator('h1')
-							.filter({hasText: `Title-${num}`})
-					).toBeVisible();
-
-					await expect(remotePage.url()).toContain(
-						`/web/${site.name}/page-${num}`
+					await expect(remotePage).toHaveURL(
+						new RegExp(`/web/${site.name}/page-${num}`)
 					);
 				}
 			});
