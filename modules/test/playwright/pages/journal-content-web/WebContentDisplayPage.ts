@@ -169,11 +169,15 @@ export class WebContentDisplayPage {
 		await this.configurationFrameSelectButton.click();
 
 		if (webContentName) {
-			await expect(async () => {
-				await this.selectWebContentInConfigurationFrame
-					.getByText(webContentName, {exact: true})
-					.click();
-			}).toPass();
+			await this.selectWebContentInConfigurationFrame
+				.getByText(webContentName, {exact: true})
+				.click();
+
+			await expect(
+				this.configurationFrame
+					.locator('.card-row')
+					.filter({hasText: webContentName})
+			).toBeVisible({timeout: 1000});
 		}
 		else {
 			await this.webContentDisplayOptionsContent.click();

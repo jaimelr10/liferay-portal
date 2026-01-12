@@ -285,27 +285,29 @@ test(
 				for (const [i, layout] of layouts.entries()) {
 					await pageEditorPage.goto(layout, site.friendlyUrlPath);
 
-					await webContentDisplayPage.addWebContentWithDisplay({
-						customLocator: await page
-							.locator(
-								'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
-							)
-							.nth(1),
-						pageType: 'content',
-						waitAfterAddingWebcontent: true,
-						webContentName: webContentTitle,
-					});
+					const webContentPortlets = page.locator(
+						'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
+					);
 
-					await webContentDisplayPage.addWebContentWithDisplay({
-						customLocator: await page
-							.locator(
-								'#wrapper, [id^="portlet-topper-toolbar_com_liferay_journal_content_web_portlet_JournalContentPortlet_INSTANCE_"]:visible'
-							)
-							.nth(2),
-						pageType: 'content',
-						waitAfterAddingWebcontent: true,
-						webContentName: `Title-${pageNumbers[i]}`,
-					});
+					await expect(async () => {
+						await page.reload();
+						await webContentDisplayPage.addWebContentWithDisplay({
+							customLocator: webContentPortlets.nth(1),
+							pageType: 'content',
+							waitAfterAddingWebcontent: true,
+							webContentName: webContentTitle,
+						});
+					}).toPass();
+
+					await expect(async () => {
+						await page.reload();
+						await webContentDisplayPage.addWebContentWithDisplay({
+							customLocator: webContentPortlets.nth(2),
+							pageType: 'content',
+							waitAfterAddingWebcontent: true,
+							webContentName: `Title-${pageNumbers[i]}`,
+						});
+					}).toPass();
 				}
 			});
 
