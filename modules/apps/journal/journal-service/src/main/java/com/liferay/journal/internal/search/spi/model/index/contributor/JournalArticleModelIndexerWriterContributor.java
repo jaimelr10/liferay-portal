@@ -81,7 +81,7 @@ public class JournalArticleModelIndexerWriterContributor
 					JournalArticle.class.getName()));
 			batchIndexingActionable.setPerformActionMethod(
 				(JournalArticle journalArticle) ->
-					batchIndexingActionable.addDocument(
+					batchIndexingActionable.addDocuments(
 						modelIndexerWriterDocumentHelper.getDocument(
 							journalArticle)));
 		}
@@ -121,7 +121,7 @@ public class JournalArticleModelIndexerWriterContributor
 						return;
 					}
 
-					batchIndexingActionable.addDocument(
+					batchIndexingActionable.addDocuments(
 						modelIndexerWriterDocumentHelper.getDocument(
 							latestIndexableArticle));
 				});

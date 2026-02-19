@@ -40,7 +40,7 @@ public class CTCollectionModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(CTCollection ctCollection) -> batchIndexingActionable.addDocument(
+			(CTCollection ctCollection) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(ctCollection)));
 	}
 

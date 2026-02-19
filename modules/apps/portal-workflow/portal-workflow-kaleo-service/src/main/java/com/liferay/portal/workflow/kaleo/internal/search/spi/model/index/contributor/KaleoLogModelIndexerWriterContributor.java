@@ -34,7 +34,7 @@ public class KaleoLogModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(KaleoLog kaleoLog) -> batchIndexingActionable.addDocument(
+			(KaleoLog kaleoLog) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(kaleoLog)));
 	}
 

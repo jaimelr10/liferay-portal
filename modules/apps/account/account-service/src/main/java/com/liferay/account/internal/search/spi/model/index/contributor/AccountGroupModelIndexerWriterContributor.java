@@ -34,7 +34,7 @@ public class AccountGroupModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(AccountGroup accountGroup) -> batchIndexingActionable.addDocument(
+			(AccountGroup accountGroup) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(accountGroup)));
 	}
 

@@ -35,7 +35,7 @@ public class SegmentsEntryModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(SegmentsEntry segmentsEntry) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						segmentsEntry)));
 	}

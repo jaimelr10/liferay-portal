@@ -563,7 +563,7 @@ public class BookmarksEntryLocalServiceImpl
 					return;
 				}
 
-				indexableActionableDynamicQuery.addDocument(
+				indexableActionableDynamicQuery.addDocuments(
 					indexer.getDocument(entry));
 			});
 

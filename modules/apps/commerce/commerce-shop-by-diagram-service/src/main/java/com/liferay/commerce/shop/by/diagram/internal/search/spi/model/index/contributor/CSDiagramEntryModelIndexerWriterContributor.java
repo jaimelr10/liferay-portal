@@ -36,7 +36,7 @@ public class CSDiagramEntryModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(CSDiagramEntry csDiagramEntry) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						csDiagramEntry)));
 	}

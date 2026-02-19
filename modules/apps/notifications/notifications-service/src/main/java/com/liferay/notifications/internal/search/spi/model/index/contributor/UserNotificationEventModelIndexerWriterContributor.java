@@ -35,7 +35,7 @@ public class UserNotificationEventModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(UserNotificationEvent userNotificationEvent) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						userNotificationEvent)));
 	}

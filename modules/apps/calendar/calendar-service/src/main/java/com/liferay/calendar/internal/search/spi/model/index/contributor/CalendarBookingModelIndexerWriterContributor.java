@@ -51,7 +51,7 @@ public class CalendarBookingModelIndexerWriterContributor
 			});
 		batchIndexingActionable.setPerformActionMethod(
 			(CalendarBooking calendarBooking) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						calendarBooking)));
 	}

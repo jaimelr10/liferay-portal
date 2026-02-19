@@ -204,7 +204,7 @@ public class PatcherFixIndexer extends BaseIndexer<PatcherFix> {
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(PatcherFix patcherFix) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(patcherFix));
 				}
 				catch (PortalException portalException) {

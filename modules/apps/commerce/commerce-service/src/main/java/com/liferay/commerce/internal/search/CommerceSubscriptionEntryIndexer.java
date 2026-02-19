@@ -201,7 +201,7 @@ public class CommerceSubscriptionEntryIndexer
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(CommerceSubscriptionEntry commerceSubscriptionEntry) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(commerceSubscriptionEntry));
 				}
 				catch (PortalException portalException) {

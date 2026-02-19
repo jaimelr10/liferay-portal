@@ -35,7 +35,7 @@ public class BookmarksFolderModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(BookmarksFolder bookmarksFolder) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						bookmarksFolder)));
 	}

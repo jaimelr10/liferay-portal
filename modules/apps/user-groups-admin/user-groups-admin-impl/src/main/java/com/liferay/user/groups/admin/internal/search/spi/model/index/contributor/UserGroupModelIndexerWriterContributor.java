@@ -34,7 +34,7 @@ public class UserGroupModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(UserGroup userGroup) -> batchIndexingActionable.addDocument(
+			(UserGroup userGroup) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(userGroup)));
 	}
 

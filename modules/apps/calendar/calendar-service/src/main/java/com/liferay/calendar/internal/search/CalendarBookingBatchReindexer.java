@@ -50,7 +50,7 @@ public class CalendarBookingBatchReindexer {
 		batchIndexingActionable.setCompanyId(companyId);
 		batchIndexingActionable.setPerformActionMethod(
 			(CalendarBooking calendarBooking) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					_indexerDocumentBuilder.getDocument(calendarBooking)));
 
 		batchIndexingActionable.performActions();

@@ -36,7 +36,7 @@ public class LayoutUtilityPageEntryModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(LayoutUtilityPageEntry layoutUtilityPageEntry) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						layoutUtilityPageEntry)));
 	}

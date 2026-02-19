@@ -61,7 +61,7 @@ public class MBCategoryModelIndexerWriterContributor
 							" and group ID ", mbCategory.getGroupId()));
 				}
 
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(mbCategory));
 			});
 	}

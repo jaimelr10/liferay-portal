@@ -35,7 +35,7 @@ public class BlogsEntryModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(BlogsEntry blogsEntry) -> batchIndexingActionable.addDocument(
+			(BlogsEntry blogsEntry) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(blogsEntry)));
 	}
 

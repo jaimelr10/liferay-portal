@@ -38,7 +38,7 @@ public class DDLRecordBatchReindexer {
 			});
 		batchIndexingActionable.setCompanyId(companyId);
 		batchIndexingActionable.setPerformActionMethod(
-			(DDLRecord record) -> batchIndexingActionable.addDocument(
+			(DDLRecord record) -> batchIndexingActionable.addDocuments(
 				_indexerDocumentBuilder.getDocument(record)));
 
 		batchIndexingActionable.performActions();

@@ -35,7 +35,7 @@ public class RoleModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(Role role) -> batchIndexingActionable.addDocument(
+			(Role role) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(role)));
 	}
 

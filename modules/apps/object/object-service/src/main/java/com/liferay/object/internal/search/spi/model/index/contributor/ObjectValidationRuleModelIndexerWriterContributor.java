@@ -35,7 +35,7 @@ public class ObjectValidationRuleModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(ObjectValidationRule objectValidationRule) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						objectValidationRule)));
 	}

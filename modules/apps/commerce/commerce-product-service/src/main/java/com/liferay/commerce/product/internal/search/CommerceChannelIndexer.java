@@ -181,7 +181,7 @@ public class CommerceChannelIndexer extends BaseIndexer<CommerceChannel> {
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(CommerceChannel commerceChannel) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(commerceChannel));
 				}
 				catch (PortalException portalException) {

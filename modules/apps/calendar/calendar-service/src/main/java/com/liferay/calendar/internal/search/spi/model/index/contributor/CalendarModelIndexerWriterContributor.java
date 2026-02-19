@@ -37,7 +37,7 @@ public class CalendarModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(Calendar calendar) -> batchIndexingActionable.addDocument(
+			(Calendar calendar) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(calendar)));
 	}
 

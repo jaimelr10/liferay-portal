@@ -36,7 +36,7 @@ public class RedirectEntryModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(RedirectEntry redirectEntry) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						redirectEntry)));
 	}

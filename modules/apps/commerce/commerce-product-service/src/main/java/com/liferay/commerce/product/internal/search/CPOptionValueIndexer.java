@@ -153,7 +153,7 @@ public class CPOptionValueIndexer extends BaseIndexer<CPOptionValue> {
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(CPOptionValue cpOptionValue) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(cpOptionValue));
 				}
 				catch (PortalException portalException) {

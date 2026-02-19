@@ -443,7 +443,7 @@ public class CommerceDiscountIndexer extends BaseIndexer<CommerceDiscount> {
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(CommerceDiscount commerceDiscount) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(commerceDiscount));
 				}
 				catch (PortalException portalException) {

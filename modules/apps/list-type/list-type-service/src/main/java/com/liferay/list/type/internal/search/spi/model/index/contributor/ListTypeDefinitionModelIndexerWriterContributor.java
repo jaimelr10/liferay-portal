@@ -35,7 +35,7 @@ public class ListTypeDefinitionModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(ListTypeDefinition listTypeDefinition) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						listTypeDefinition)));
 	}

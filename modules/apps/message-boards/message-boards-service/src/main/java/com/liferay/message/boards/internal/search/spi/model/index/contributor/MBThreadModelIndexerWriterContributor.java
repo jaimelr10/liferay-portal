@@ -56,7 +56,7 @@ public class MBThreadModelIndexerWriterContributor
 							" and group ID ", mbThread.getGroupId()));
 				}
 
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(mbThread));
 			});
 	}

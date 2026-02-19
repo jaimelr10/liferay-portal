@@ -137,7 +137,7 @@ public class CommercePricingClassIndexer
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(CommercePricingClass commercePricingClass) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(commercePricingClass));
 				}
 				catch (PortalException portalException) {

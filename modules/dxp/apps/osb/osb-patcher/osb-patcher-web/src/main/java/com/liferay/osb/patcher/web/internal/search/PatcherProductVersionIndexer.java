@@ -125,7 +125,7 @@ public class PatcherProductVersionIndexer
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(PatcherProductVersion patcherProductVersion) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(patcherProductVersion));
 				}
 				catch (PortalException portalException) {

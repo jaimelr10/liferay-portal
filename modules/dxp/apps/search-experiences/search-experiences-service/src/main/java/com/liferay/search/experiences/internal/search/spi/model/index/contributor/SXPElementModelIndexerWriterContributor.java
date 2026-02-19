@@ -34,7 +34,7 @@ public class SXPElementModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(SXPElement sxpElement) -> batchIndexingActionable.addDocument(
+			(SXPElement sxpElement) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(sxpElement)));
 	}
 

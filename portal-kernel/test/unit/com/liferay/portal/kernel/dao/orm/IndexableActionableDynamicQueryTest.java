@@ -72,7 +72,7 @@ public class IndexableActionableDynamicQueryTest {
 
 		verifyNoDocumentsUpdated();
 
-		indexableActionableDynamicQuery.addDocument(document3);
+		indexableActionableDynamicQuery.addDocuments(document3);
 
 		verifyDocumentsUpdated(document1, document2, document3);
 	}

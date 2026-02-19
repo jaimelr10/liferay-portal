@@ -106,7 +106,7 @@ public class DDMFormInstanceIndexer extends BaseIndexer<DDMFormInstance> {
 					Document document = getDocument(ddmFormInstance);
 
 					if (document != null) {
-						indexableActionableDynamicQuery.addDocument(document);
+						indexableActionableDynamicQuery.addDocuments(document);
 					}
 				}
 				catch (PortalException portalException) {

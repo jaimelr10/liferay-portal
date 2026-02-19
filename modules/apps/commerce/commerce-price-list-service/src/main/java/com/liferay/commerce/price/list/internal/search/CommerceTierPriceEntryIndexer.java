@@ -183,7 +183,7 @@ public class CommerceTierPriceEntryIndexer
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(CommerceTierPriceEntry commerceTierPriceEntry) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(commerceTierPriceEntry));
 				}
 				catch (PortalException portalException) {

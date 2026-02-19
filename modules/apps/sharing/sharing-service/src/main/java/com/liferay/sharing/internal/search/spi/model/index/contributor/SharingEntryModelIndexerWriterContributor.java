@@ -34,7 +34,7 @@ public class SharingEntryModelIndexerWriterContributor
 		ModelIndexerWriterDocumentHelper modelIndexerWriterDocumentHelper) {
 
 		batchIndexingActionable.setPerformActionMethod(
-			(SharingEntry sharingEntry) -> batchIndexingActionable.addDocument(
+			(SharingEntry sharingEntry) -> batchIndexingActionable.addDocuments(
 				modelIndexerWriterDocumentHelper.getDocument(sharingEntry)));
 	}
 

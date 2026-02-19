@@ -201,7 +201,7 @@ public class CommercePriceEntryIndexer extends BaseIndexer<CommercePriceEntry> {
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(CommercePriceEntry commercePriceEntry) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(commercePriceEntry));
 				}
 				catch (PortalException portalException) {

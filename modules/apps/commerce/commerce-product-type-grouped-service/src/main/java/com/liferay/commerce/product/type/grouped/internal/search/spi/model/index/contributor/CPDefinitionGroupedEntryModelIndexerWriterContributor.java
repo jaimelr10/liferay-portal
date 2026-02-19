@@ -38,7 +38,7 @@ public class CPDefinitionGroupedEntryModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(CPDefinitionGroupedEntry cpDefinitionGroupedEntry) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						cpDefinitionGroupedEntry)));
 	}

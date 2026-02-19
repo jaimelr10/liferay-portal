@@ -36,7 +36,7 @@ public class NotificationQueueEntryModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(NotificationQueueEntry notificationQueueEntry) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						notificationQueueEntry)));
 	}

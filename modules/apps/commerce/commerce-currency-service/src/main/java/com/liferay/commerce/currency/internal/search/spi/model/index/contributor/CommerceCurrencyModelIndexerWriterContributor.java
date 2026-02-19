@@ -36,7 +36,7 @@ public class CommerceCurrencyModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(CommerceCurrency commerceCurrency) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						commerceCurrency)));
 	}

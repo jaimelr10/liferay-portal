@@ -355,7 +355,7 @@ public class DDMFormInstanceRecordIndexer
 					Document document = getDocument(ddmFormInstanceRecord);
 
 					if (document != null) {
-						indexableActionableDynamicQuery.addDocument(document);
+						indexableActionableDynamicQuery.addDocuments(document);
 					}
 				}
 				catch (PortalException portalException) {

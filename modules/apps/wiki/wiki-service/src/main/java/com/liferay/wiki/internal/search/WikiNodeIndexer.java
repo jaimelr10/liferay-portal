@@ -150,7 +150,7 @@ public class WikiNodeIndexer extends BaseIndexer<WikiNode> {
 		indexableActionableDynamicQuery.setPerformActionMethod(
 			(WikiNode node) -> {
 				try {
-					indexableActionableDynamicQuery.addDocument(
+					indexableActionableDynamicQuery.addDocuments(
 						getDocument(node));
 				}
 				catch (PortalException portalException) {

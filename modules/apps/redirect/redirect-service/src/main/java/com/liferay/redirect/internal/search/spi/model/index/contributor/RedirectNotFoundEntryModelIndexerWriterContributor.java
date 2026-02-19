@@ -36,7 +36,7 @@ public class RedirectNotFoundEntryModelIndexerWriterContributor
 
 		batchIndexingActionable.setPerformActionMethod(
 			(RedirectNotFoundEntry redirectNotFoundEntry) ->
-				batchIndexingActionable.addDocument(
+				batchIndexingActionable.addDocuments(
 					modelIndexerWriterDocumentHelper.getDocument(
 						redirectNotFoundEntry)));
 	}
