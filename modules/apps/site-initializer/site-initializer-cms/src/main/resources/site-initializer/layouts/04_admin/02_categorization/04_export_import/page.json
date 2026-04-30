@@ -1,0 +1,27 @@
+{
+	"friendlyURL": "/categorization/export-import",
+	"hidden": true,
+	"name": "Export Import",
+	"name_i18n": {
+		"en_US": "Export Import",
+		"es_ES": "Exportar Importar"
+	},
+	"permissions": [
+		{
+			"actionIds": [
+				"VIEW"
+			],
+			"roleName": "CMS Administrator",
+			"scope": 4
+		},
+		{
+			"actionIds": [
+			],
+			"roleName": "Guest",
+			"scope": 4
+		}
+	],
+	"private": false,
+	"system": false,
+	"type": "Content"
+}

@@ -8,16 +8,20 @@ package com.liferay.site.cms.site.initializer.internal.util;
 import com.liferay.exportimport.constants.ExportImportPortletKeys;
 import com.liferay.exportimport.kernel.lar.DefaultConfigurationPortletDataHandler;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
+import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.PortletLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
@@ -86,6 +90,14 @@ public class ExportImportUtil {
 		HttpServletRequest httpServletRequest, String portletResource,
 		String titleKey, ThemeDisplay themeDisplay) {
 
+		if (FeatureFlagManagerUtil.isEnabled(
+				themeDisplay.getCompanyId(), "LPD-57655")) {
+
+			return _getDedicatedPageActionItemJSONObject(
+				httpServletRequest, "/export_portlet.jsp", portletResource,
+				"export", titleKey, themeDisplay);
+		}
+
 		return getActionItemJSONObject(
 			httpServletRequest, "export", portletResource, "export", "export",
 			titleKey, themeDisplay);
@@ -95,9 +107,41 @@ public class ExportImportUtil {
 		HttpServletRequest httpServletRequest, String portletResource,
 		String titleKey, ThemeDisplay themeDisplay) {
 
+		if (FeatureFlagManagerUtil.isEnabled(
+				themeDisplay.getCompanyId(), "LPD-57655")) {
+
+			return _getDedicatedPageActionItemJSONObject(
+				httpServletRequest, "/import_portlet.jsp", portletResource,
+				"import", titleKey, themeDisplay);
+		}
+
 		return getActionItemJSONObject(
 			httpServletRequest, "import", portletResource, "import", "import",
 			titleKey, themeDisplay);
+	}
+
+	private static String _getCMSExportImportPageURL(
+		Group cmsGroup, HttpServletRequest httpServletRequest, String mvcPath,
+		String portletResource) {
+
+		Layout layout = LayoutLocalServiceUtil.fetchLayoutByFriendlyURL(
+			cmsGroup.getGroupId(), false, "/categorization/export-import");
+
+		if (layout == null) {
+			return null;
+		}
+
+		return PortletURLBuilder.create(
+			PortletURLFactoryUtil.create(
+				httpServletRequest, ExportImportPortletKeys.EXPORT_IMPORT,
+				layout, PortletRequest.RENDER_PHASE)
+		).setMVCPath(
+			mvcPath
+		).setRedirect(
+			PortalUtil.getCurrentURL(httpServletRequest)
+		).setPortletResource(
+			portletResource
+		).buildString();
 	}
 
 	private static String _getControlPanelPortletURL(
@@ -121,6 +165,56 @@ public class ExportImportUtil {
 			"returnToFullPageURL", PortalUtil.getCurrentURL(httpServletRequest)
 		).setWindowState(
 			LiferayWindowState.POP_UP
+		).buildString();
+	}
+
+	private static JSONObject _getDedicatedPageActionItemJSONObject(
+		HttpServletRequest httpServletRequest, String mvcPath,
+		String portletResource, String symbolLeft, String titleKey,
+		ThemeDisplay themeDisplay) {
+
+		if (!_hasConfigurationPermission(portletResource, themeDisplay)) {
+			return null;
+		}
+
+		return JSONUtil.put(
+			"href",
+			_getDedicatedPagePortletURL(
+				themeDisplay.getScopeGroup(), httpServletRequest, mvcPath,
+				portletResource)
+		).put(
+			"label", LanguageUtil.get(httpServletRequest, titleKey)
+		).put(
+			"symbolLeft", symbolLeft
+		).put(
+			"title", LanguageUtil.get(httpServletRequest, titleKey)
+		);
+	}
+
+	private static String _getDedicatedPagePortletURL(
+		Group group, HttpServletRequest httpServletRequest, String mvcPath,
+		String portletResource) {
+
+		if (group.isCMS()) {
+			String cmsPageURL = _getCMSExportImportPageURL(
+				group, httpServletRequest, mvcPath, portletResource);
+
+			if (cmsPageURL != null) {
+				return cmsPageURL;
+			}
+		}
+
+		return PortletURLBuilder.create(
+			PortalUtil.getControlPanelPortletURL(
+				httpServletRequest, group,
+				ExportImportPortletKeys.EXPORT_IMPORT, 0, 0,
+				PortletRequest.RENDER_PHASE)
+		).setMVCPath(
+			mvcPath
+		).setRedirect(
+			PortalUtil.getCurrentURL(httpServletRequest)
+		).setPortletResource(
+			portletResource
 		).buildString();
 	}
 

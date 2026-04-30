@@ -15,6 +15,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -150,15 +151,7 @@ public class ViewVocabulariesDisplayContext {
 
 	public Map<String, Object> getReactData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
-			"actionItems",
-			_putAll(
-				ExportImportUtil.getActionItemJSONObject(
-					_httpServletRequest, "export-import-vocabularies",
-					AssetCategoriesAdminPortletKeys.ASSET_CATEGORIES_ADMIN,
-					_themeDisplay),
-				ExportImportUtil.getActionItemJSONObject(
-					_httpServletRequest, "export-import-tags",
-					AssetTagsAdminPortletKeys.ASSET_TAGS_ADMIN, _themeDisplay))
+			"actionItems", _getActionItemsJSONArray()
 		).put(
 			"activeTab", "vocabularies"
 		).put(
@@ -176,6 +169,39 @@ public class ViewVocabulariesDisplayContext {
 					"/categorization/view-vocabularies"),
 				_themeDisplay)
 		).build();
+	}
+
+	private JSONArray _getActionItemsJSONArray() {
+		if (FeatureFlagManagerUtil.isEnabled(
+				_themeDisplay.getCompanyId(), "LPD-57655")) {
+
+			return _putAll(
+				ExportImportUtil.getExportActionItemJSONObject(
+					_httpServletRequest,
+					AssetCategoriesAdminPortletKeys.ASSET_CATEGORIES_ADMIN,
+					"export-vocabularies", _themeDisplay),
+				ExportImportUtil.getImportActionItemJSONObject(
+					_httpServletRequest,
+					AssetCategoriesAdminPortletKeys.ASSET_CATEGORIES_ADMIN,
+					"import-vocabularies", _themeDisplay),
+				ExportImportUtil.getExportActionItemJSONObject(
+					_httpServletRequest,
+					AssetTagsAdminPortletKeys.ASSET_TAGS_ADMIN, "export-tags",
+					_themeDisplay),
+				ExportImportUtil.getImportActionItemJSONObject(
+					_httpServletRequest,
+					AssetTagsAdminPortletKeys.ASSET_TAGS_ADMIN, "import-tags",
+					_themeDisplay));
+		}
+
+		return _putAll(
+			ExportImportUtil.getActionItemJSONObject(
+				_httpServletRequest, "export-import-vocabularies",
+				AssetCategoriesAdminPortletKeys.ASSET_CATEGORIES_ADMIN,
+				_themeDisplay),
+			ExportImportUtil.getActionItemJSONObject(
+				_httpServletRequest, "export-import-tags",
+				AssetTagsAdminPortletKeys.ASSET_TAGS_ADMIN, _themeDisplay));
 	}
 
 	private String _getEditPermissionsURL() {
