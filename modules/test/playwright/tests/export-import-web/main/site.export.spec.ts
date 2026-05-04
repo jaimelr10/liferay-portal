@@ -66,13 +66,7 @@ test(
 
 		await exportImportPage.newExportButton.click();
 
-		await exportImportPage.exportButton.click();
-
-		await expect(
-			exportImportPage.page.getByRole('alert').filter({
-				hasText: 'Please enter a file with a valid file name.',
-			})
-		).toBeVisible();
+		await expect(exportImportPage.exportButton).toBeDisabled();
 	}
 );
 
