@@ -19,6 +19,15 @@ export class ExportPage {
 
 	async exportPages() {
 		await this.page.getByRole('link', {name: 'Custom Export'}).click();
+
+		await this.page
+			.getByLabel('File Name')
+			.fill('export-' + Date.now());
+		await this.page
+			.locator('input[type="checkbox"]:visible')
+			.first()
+			.check({force: true});
+
 		await this.page.getByRole('button', {name: 'Export'}).click();
 
 		for (const processResult of await this.page
