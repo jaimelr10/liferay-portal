@@ -213,10 +213,7 @@ export class StagingPage {
 	}
 
 	async gotoTemplatePage() {
-		await this.page
-			.getByText('Staging Open Applications')
-			.getByLabel('Options')
-			.click();
+		await this.page.getByLabel('Options', {exact: true}).click();
 		await this.page
 			.getByRole('menuitem', {name: 'Publish Templates'})
 			.click();
