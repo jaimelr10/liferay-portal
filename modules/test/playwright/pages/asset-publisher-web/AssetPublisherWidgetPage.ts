@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {FrameLocator, Locator, Page} from '@playwright/test';
+import {FrameLocator, Page} from '@playwright/test';
 
 import {ApiHelpers} from '../../helpers/ApiHelpers';
 import getRandomString from '../../utils/getRandomString';
@@ -13,8 +13,6 @@ export class AssetPublisherWidgetPage {
 	readonly page: Page;
 	readonly widgetPagePage: WidgetPagePage;
 
-	readonly collectionInput: Locator;
-	readonly collectionSelectorIframe: FrameLocator;
 	readonly configurationIframe: FrameLocator;
 
 	constructor(page: Page) {
@@ -24,13 +22,6 @@ export class AssetPublisherWidgetPage {
 
 		this.configurationIframe = this.page.frameLocator(
 			'iframe[title*="Configuration"]'
-		);
-		this.collectionInput = this.configurationIframe.getByLabel(
-			'Collection',
-			{exact: true}
-		);
-		this.collectionSelectorIframe = this.configurationIframe.frameLocator(
-			'iframe[title="Select Collection"]'
 		);
 	}
 
@@ -50,9 +41,21 @@ export class AssetPublisherWidgetPage {
 	}
 
 	async selectCollection(assetListEntryName: string) {
-		await this.collectionInput.click();
-		await this.collectionSelectorIframe
-			.getByRole('button', {name: `${assetListEntryName}`})
+		const toggle = this.configurationIframe.locator(
+			'a[data-toggle="liferay-collapse"][aria-controls="selectCollectionContent"]'
+		);
+
+		if ((await toggle.getAttribute('aria-expanded')) !== 'true') {
+			await toggle.click();
+		}
+
+		await this.configurationIframe
+			.locator('button.btn-monospaced[aria-label="Select Collection"]')
+			.click();
+
+		await this.configurationIframe
+			.frameLocator('iframe[title="Select Collection"]')
+			.getByText(assetListEntryName)
 			.click();
 	}
 }
