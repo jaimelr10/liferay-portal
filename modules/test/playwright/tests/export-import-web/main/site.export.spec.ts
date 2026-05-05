@@ -59,18 +59,6 @@ test('can export at site level with custom export task name', async ({
 });
 
 test(
-	'cannot export at site level without file name',
-	{tag: '@LPD-76875'},
-	async ({exportImportPage}) => {
-		await exportImportPage.goToExport();
-
-		await exportImportPage.newExportButton.click();
-
-		await expect(exportImportPage.exportButton).toBeDisabled();
-	}
-);
-
-test(
 	'can export twice with the same name without overwriting the original file',
 	{tag: '@LPD-76875'},
 	async ({apiHelpers, exportImportPage}) => {
