@@ -37,6 +37,8 @@ portletDisplay.setURLBack(exportImportPreviewDisplayContext.getBackURL());
 				"importPreviewAPIURL", exportImportPreviewDisplayContext.getImportPreviewAPIURL()
 			).put(
 				"importProcessAPIURL", exportImportPreviewDisplayContext.getImportProcessAPIURL()
+			).put(
+				"instance", exportImportPreviewDisplayContext.isCompanyGroup()
 			).build()
 		%>'
 	/>

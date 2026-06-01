@@ -20,10 +20,12 @@ export function NewImport({
 	backURL,
 	importPreviewAPIURL,
 	importProcessAPIURL,
+	instance,
 }: {
 	backURL: string;
 	importPreviewAPIURL: string;
 	importProcessAPIURL: string;
+	instance: boolean;
 }) {
 	const [importPreview, setImportPreview] = useState<
 		ImportPreview | undefined
@@ -124,7 +126,7 @@ export function NewImport({
 				}}
 				title={Liferay.Language.get('settings')}
 			>
-				<SettingsStep />
+				<SettingsStep instance={instance} />
 			</WizardStep>
 		</Wizard>
 	);

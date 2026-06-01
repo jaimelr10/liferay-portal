@@ -110,6 +110,10 @@ public class ExportImportPreviewDisplayContext {
 		return _importProcessAPIURL;
 	}
 
+	public boolean isCompanyGroup() {
+		return _stagingGroupHelper.isCompanyGroup(_group);
+	}
+
 	private String _encode(String value) {
 		if (Validator.isBlank(value)) {
 			return "";
