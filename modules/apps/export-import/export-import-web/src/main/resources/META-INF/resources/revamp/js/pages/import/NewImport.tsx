@@ -11,6 +11,7 @@ import {Wizard, WizardStep} from '../../components/Wizard';
 import {postImportProcess} from '../../services/postImportProcess';
 import {ImportPreview} from '../../types/exportImportPreview';
 import {DataStrategy, UserIdStrategy} from '../../types/exportImportProcess';
+import {Scope} from '../../types/scope';
 import {toRequestPortletDataHandlers} from '../../utils/toRequestPortletDataHandlers';
 import DataSelectionStep from './steps/DataSelectionStep';
 import FileSelectionStep from './steps/FileSelectionStep';
@@ -20,12 +21,12 @@ export function NewImport({
 	backURL,
 	importPreviewAPIURL,
 	importProcessAPIURL,
-	instance,
+	scope,
 }: {
 	backURL: string;
 	importPreviewAPIURL: string;
 	importProcessAPIURL: string;
-	instance: boolean;
+	scope: Scope;
 }) {
 	const [importPreview, setImportPreview] = useState<
 		ImportPreview | undefined
@@ -126,7 +127,7 @@ export function NewImport({
 				}}
 				title={Liferay.Language.get('settings')}
 			>
-				<SettingsStep instance={instance} />
+				<SettingsStep scope={scope} />
 			</WizardStep>
 		</Wizard>
 	);
