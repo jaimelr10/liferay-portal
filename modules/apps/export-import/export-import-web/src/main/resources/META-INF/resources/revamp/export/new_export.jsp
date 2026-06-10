@@ -38,6 +38,8 @@ renderResponse.setTitle(exportImportPreviewDisplayContext.getExportTitle());
 			).put(
 				"commentsAndRatingsEnabled", exportImportPreviewDisplayContext.isCommentsAndRatingsEnabled()
 			).put(
+				"exportPreview", exportImportPreviewDisplayContext.getExportPreviewJSONObject()
+			).put(
 				"exportPreviewAPIURL", exportImportPreviewDisplayContext.getExportPreviewAPIURL()
 			).put(
 				"exportProcessAPIURL", exportImportPreviewDisplayContext.getExportProcessAPIURL()
