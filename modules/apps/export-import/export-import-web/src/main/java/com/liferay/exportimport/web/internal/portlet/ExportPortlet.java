@@ -6,6 +6,8 @@
 package com.liferay.exportimport.web.internal.portlet;
 
 import com.liferay.exportimport.constants.ExportImportPortletKeys;
+import com.liferay.exportimport.rest.resource.v1_0.ExportPreviewResource;
+import com.liferay.exportimport.web.internal.constants.ExportImportWebKeys;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.theme.PortletDisplay;
@@ -87,10 +89,16 @@ public class ExportPortlet extends MVCPortlet {
 				WebKeys.PRIVATE_LAYOUT, Boolean.FALSE.toString());
 		}
 
+		renderRequest.setAttribute(
+			ExportImportWebKeys.EXPORT_PREVIEW_RESOURCE_FACTORY,
+			_exportPreviewResourceFactory);
 		renderRequest.setAttribute(TrashWebKeys.TRASH_HELPER, _trashHelper);
 
 		super.render(renderRequest, renderResponse);
 	}
+
+	@Reference
+	private ExportPreviewResource.Factory _exportPreviewResourceFactory;
 
 	@Reference
 	private TrashHelper _trashHelper;

@@ -36,6 +36,8 @@ portletDisplay.setURLBack(exportImportPreviewDisplayContext.getBackURL());
 			).put(
 				"commentsAndRatingsEnabled", exportImportPreviewDisplayContext.isCommentsAndRatingsEnabled()
 			).put(
+				"exportPreview", exportImportPreviewDisplayContext.getExportPreviewJSONObject()
+			).put(
 				"exportPreviewAPIURL", exportImportPreviewDisplayContext.getExportPreviewAPIURL()
 			).put(
 				"exportProcessAPIURL", exportImportPreviewDisplayContext.getExportProcessAPIURL()

@@ -13,4 +13,7 @@ public class ExportImportWebKeys {
 	public static final String EXPORT_IMPORT_CONFIGURATION_ID =
 		"EXPORT_IMPORT_CONFIGURATION_ID";
 
+	public static final String EXPORT_PREVIEW_RESOURCE_FACTORY =
+		"EXPORT_PREVIEW_RESOURCE_FACTORY";
+
 }
