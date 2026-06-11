@@ -8,7 +8,6 @@ package com.liferay.exportimport.web.internal.display.context;
 import com.liferay.exportimport.rest.dto.v1_0.ExportPreview;
 import com.liferay.exportimport.rest.resource.v1_0.ExportPreviewResource;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate.Scope;
-import com.liferay.exportimport.web.internal.constants.ExportImportWebKeys;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.group.capability.GroupCapabilityUtil;
@@ -22,7 +21,6 @@ import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.staging.StagingGroupHelper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,12 +36,15 @@ import java.nio.charset.StandardCharsets;
 public class ExportImportPreviewDisplayContext {
 
 	public ExportImportPreviewDisplayContext(
-		String backMVCRenderCommandName, HttpServletRequest httpServletRequest,
+		String backMVCRenderCommandName,
+		ExportPreviewResource.Factory exportPreviewResourceFactory,
+		HttpServletRequest httpServletRequest,
 		LiferayPortletResponse liferayPortletResponse, Group group,
 		long groupId, long liveGroupId, boolean privateLayout,
-		StagingGroupHelper stagingGroupHelper) {
+		StagingGroupHelper stagingGroupHelper, ThemeDisplay themeDisplay) {
 
 		_backMVCRenderCommandName = backMVCRenderCommandName;
+		_exportPreviewResourceFactory = exportPreviewResourceFactory;
 		_httpServletRequest = httpServletRequest;
 		_liferayPortletResponse = liferayPortletResponse;
 		_group = group;
@@ -51,6 +52,7 @@ public class ExportImportPreviewDisplayContext {
 		_liveGroupId = liveGroupId;
 		_privateLayout = privateLayout;
 		_stagingGroupHelper = stagingGroupHelper;
+		_themeDisplay = themeDisplay;
 	}
 
 	public String getBackURL() {
@@ -192,33 +194,21 @@ public class ExportImportPreviewDisplayContext {
 	}
 
 	private ExportPreview _getExportPreview() {
-		ExportPreviewResource.Factory exportPreviewResourceFactory =
-			(ExportPreviewResource.Factory)_httpServletRequest.getAttribute(
-				ExportImportWebKeys.EXPORT_PREVIEW_RESOURCE_FACTORY);
-
-		if (exportPreviewResourceFactory == null) {
+		if (_exportPreviewResourceFactory == null) {
 			return null;
 		}
 
 		try {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)_httpServletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
-
-			if (themeDisplay == null) {
-				return null;
-			}
-
 			ExportPreviewResource exportPreviewResource =
-				exportPreviewResourceFactory.create(
+				_exportPreviewResourceFactory.create(
 				).checkPermissions(
 					true
 				).httpServletRequest(
 					_httpServletRequest
 				).preferredLocale(
-					themeDisplay.getLocale()
+					_themeDisplay.getLocale()
 				).user(
-					themeDisplay.getUser()
+					_themeDisplay.getUser()
 				).build();
 
 			if (_stagingGroupHelper.isCompanyGroup(_group)) {
@@ -266,6 +256,7 @@ public class ExportImportPreviewDisplayContext {
 	private String _backURL;
 	private String _exportPreviewAPIURL;
 	private JSONObject _exportPreviewJSONObject;
+	private final ExportPreviewResource.Factory _exportPreviewResourceFactory;
 	private String _exportProcessAPIURL;
 	private final Group _group;
 	private final long _groupId;
@@ -276,5 +267,6 @@ public class ExportImportPreviewDisplayContext {
 	private final long _liveGroupId;
 	private final boolean _privateLayout;
 	private final StagingGroupHelper _stagingGroupHelper;
+	private final ThemeDisplay _themeDisplay;
 
 }

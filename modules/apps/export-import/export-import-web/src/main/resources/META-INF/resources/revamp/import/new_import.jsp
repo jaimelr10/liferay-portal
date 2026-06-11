@@ -10,12 +10,7 @@
 <liferay-staging:defineObjects />
 
 <%
-if (liveGroup == null) {
-	liveGroup = group;
-	liveGroupId = groupId;
-}
-
-ExportImportPreviewDisplayContext exportImportPreviewDisplayContext = new ExportImportPreviewDisplayContext("/export_import/view_import_layouts", request, liferayPortletResponse, liveGroup, groupId, liveGroupId, privateLayout, stagingGroupHelper);
+ExportImportPreviewDisplayContext exportImportPreviewDisplayContext = (ExportImportPreviewDisplayContext)request.getAttribute(ExportImportWebKeys.EXPORT_IMPORT_PREVIEW_DISPLAY_CONTEXT);
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(exportImportPreviewDisplayContext.getBackURL());
