@@ -12,18 +12,15 @@ import React, {useEffect, useId, useRef, useState} from 'react';
 import '../../../../css/utilities.scss';
 import {PageTreeModalConfiguration} from '../../../pages/export/components/PageTreeModal';
 import {ExportImportProcess} from '../../../types/exportImportProcess';
-import {
-	PreviewPortletDataHandlerBoolean,
-	PreviewPortletDataHandlerSection as PortletDataHandlerSectionType,
-} from '../../../types/portletDataHandler';
+import {PreviewPortletDataHandlerSection as PortletDataHandlerSectionType} from '../../../types/portletDataHandler';
 import {
 	COMPACT_SECTION_NAMES,
 	HandlerSelection,
 	SCROLLABLE_SECTION_NAMES,
 	SECTION_KEY_CONTENT,
 	SECTION_KEY_CONTENT_AND_DATA,
-	SECTION_KEY_SITE_BUILDER,
-	getInitialSelections,
+	getInitialSectionSelection,
+	getSectionPreviewPortletDataHandlers,
 	getSelectionSummary,
 	isSelected,
 	updateSelection,
@@ -83,51 +80,10 @@ export default function ContentSection({
 		return () => resizeObserver.disconnect();
 	}, [scrollable, section]);
 
-	const previewPortletDataHandlers =
-		section.previewPortletDataHandlers.map<PreviewPortletDataHandlerBoolean>(
-			(handler) => ({...handler, type: 'Boolean'})
-		);
-
-	const syntheticPreviewPortletDataHandlers = [
-		{
-			applies:
-				lookAndFeelEnabled && section.name === SECTION_KEY_SITE_BUILDER,
-			previewPortletDataHandler: {
-				label: Liferay.Language.get('look-and-feel'),
-				name: 'lookAndFeel',
-				previewPortletDataHandlerControls: [
-					{
-						label: Liferay.Language.get('theme-settings'),
-						name: 'themeSettings',
-						type: 'Boolean',
-					},
-					{
-						label: Liferay.Language.get('logo'),
-						name: 'logo',
-						type: 'Boolean',
-					},
-					{
-						label: Liferay.Language.get('site-pages-settings'),
-						name: 'sitePagesSettings',
-						type: 'Boolean',
-					},
-					{
-						label: Liferay.Language.get('site-template-settings'),
-						name: 'siteTemplateSettings',
-						type: 'Boolean',
-					},
-				],
-				type: 'Boolean',
-			} as PreviewPortletDataHandlerBoolean,
-		},
-	]
-		.filter(({applies}) => applies)
-		.map(({previewPortletDataHandler}) => previewPortletDataHandler);
-
-	const allPreviewPortletDataHandlers = [
-		...previewPortletDataHandlers,
-		...syntheticPreviewPortletDataHandlers,
-	];
+	const allPreviewPortletDataHandlers = getSectionPreviewPortletDataHandlers(
+		section,
+		{lookAndFeelEnabled}
+	);
 
 	const sectionSelection = value || {};
 
@@ -204,9 +160,10 @@ export default function ContentSection({
 					onChange(
 						allSelected
 							? undefined
-							: getInitialSelections(
-									allPreviewPortletDataHandlers
-								)
+							: getInitialSectionSelection(section, {
+									commentsAndRatingsEnabled,
+									lookAndFeelEnabled,
+								})
 					)
 				}
 				selected={allSelected}
