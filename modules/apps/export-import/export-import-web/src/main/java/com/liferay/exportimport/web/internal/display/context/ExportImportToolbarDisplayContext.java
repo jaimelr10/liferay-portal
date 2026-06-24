@@ -81,9 +81,13 @@ public class ExportImportToolbarDisplayContext {
 				String mvcRenderCommandName = ParamUtil.getString(
 					_httpServletRequest, "mvcRenderCommandName");
 
+				boolean revampEnabled = FeatureFlagManagerUtil.isEnabled(
+					_themeDisplay.getCompanyId(), "LPD-57655");
+
 				String cmd;
 				String label;
 				String mvcPath;
+				String newViewMVCRenderCommandName;
 
 				if (mvcRenderCommandName.equals(
 						"/export_import/view_export_layouts")) {
@@ -91,48 +95,60 @@ public class ExportImportToolbarDisplayContext {
 					cmd = Constants.EXPORT;
 					label = "custom-export";
 
-					if (FeatureFlagManagerUtil.isEnabled(
-							_themeDisplay.getCompanyId(), "LPD-57655")) {
-
-						mvcPath = "/revamp/export/new_export.jsp";
+					if (revampEnabled) {
+						mvcPath = null;
+						newViewMVCRenderCommandName =
+							"/export_import/view_new_export";
 					}
 					else {
 						mvcPath = "/export/new_export/export_layouts.jsp";
+						newViewMVCRenderCommandName = null;
 					}
 				}
 				else {
 					cmd = Constants.IMPORT;
 					label = "import";
 
-					if (FeatureFlagManagerUtil.isEnabled(
-							_themeDisplay.getCompanyId(), "LPD-57655")) {
-
-						mvcPath = "/revamp/import/new_import.jsp";
+					if (revampEnabled) {
+						mvcPath = null;
+						newViewMVCRenderCommandName =
+							"/export_import/view_new_import";
 					}
 					else {
 						mvcPath = "/import/new_import/import_layouts.jsp";
+						newViewMVCRenderCommandName = null;
 					}
 				}
 
 				addPrimaryDropdownItem(
 					dropdownItem -> {
 						dropdownItem.setHref(
-							getRenderURL(), "mvcPath", mvcPath, Constants.CMD,
-							cmd, "groupId",
-							String.valueOf(
+							PortletURLBuilder.create(
+								getRenderURL()
+							).setMVCPath(
+								() -> mvcPath
+							).setMVCRenderCommandName(
+								() -> newViewMVCRenderCommandName
+							).setCMD(
+								cmd
+							).setParameter(
+								"displayStyle",
+								ParamUtil.getString(
+									_httpServletRequest, "displayStyle",
+									"descriptive")
+							).setParameter(
+								"groupId",
 								ParamUtil.getLong(
-									_httpServletRequest, "groupId")),
-							"liveGroupId",
-							String.valueOf(
-								groupDisplayContextHelper.getLiveGroupId()),
-							"privateLayout",
-							ParamUtil.getString(
-								_httpServletRequest, "privateLayout",
-								Boolean.FALSE.toString()),
-							"displayStyle",
-							ParamUtil.getString(
-								_httpServletRequest, "displayStyle",
-								"descriptive"));
+									_httpServletRequest, "groupId")
+							).setParameter(
+								"liveGroupId",
+								groupDisplayContextHelper.getLiveGroupId()
+							).setParameter(
+								"privateLayout",
+								ParamUtil.getString(
+									_httpServletRequest, "privateLayout",
+									Boolean.FALSE.toString())
+							).buildPortletURL());
 						dropdownItem.setLabel(
 							LanguageUtil.get(_httpServletRequest, label));
 					});

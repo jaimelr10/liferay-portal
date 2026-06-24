@@ -5,13 +5,20 @@
 
 package com.liferay.exportimport.web.internal.display.context;
 
+import com.liferay.exportimport.rest.dto.v1_0.ExportPreview;
+import com.liferay.exportimport.rest.resource.v1_0.ExportPreviewResource;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate.Scope;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.group.capability.GroupCapabilityUtil;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.staging.StagingGroupHelper;
@@ -29,12 +36,15 @@ import java.nio.charset.StandardCharsets;
 public class ExportImportPreviewDisplayContext {
 
 	public ExportImportPreviewDisplayContext(
-		String backMVCRenderCommandName, HttpServletRequest httpServletRequest,
+		String backMVCRenderCommandName,
+		ExportPreviewResource.Factory exportPreviewResourceFactory,
+		HttpServletRequest httpServletRequest,
 		LiferayPortletResponse liferayPortletResponse, Group group,
 		long groupId, long liveGroupId, boolean privateLayout,
-		StagingGroupHelper stagingGroupHelper) {
+		StagingGroupHelper stagingGroupHelper, ThemeDisplay themeDisplay) {
 
 		_backMVCRenderCommandName = backMVCRenderCommandName;
+		_exportPreviewResourceFactory = exportPreviewResourceFactory;
 		_httpServletRequest = httpServletRequest;
 		_liferayPortletResponse = liferayPortletResponse;
 		_group = group;
@@ -42,6 +52,7 @@ public class ExportImportPreviewDisplayContext {
 		_liveGroupId = liveGroupId;
 		_privateLayout = privateLayout;
 		_stagingGroupHelper = stagingGroupHelper;
+		_themeDisplay = themeDisplay;
 	}
 
 	public String getBackURL() {
@@ -81,6 +92,28 @@ public class ExportImportPreviewDisplayContext {
 		_exportPreviewAPIURL = _getResourceAPIURL("/export-preview");
 
 		return _exportPreviewAPIURL;
+	}
+
+	public JSONObject getExportPreviewJSONObject() {
+		if (_exportPreviewJSONObject != null) {
+			return _exportPreviewJSONObject;
+		}
+
+		ExportPreview exportPreview = _getExportPreview();
+
+		if (exportPreview == null) {
+			return null;
+		}
+
+		try {
+			_exportPreviewJSONObject = JSONFactoryUtil.createJSONObject(
+				exportPreview.toString());
+		}
+		catch (Exception exception) {
+			_log.error("Unable to serialize export preview", exception);
+		}
+
+		return _exportPreviewJSONObject;
 	}
 
 	public String getExportProcessAPIURL() {
@@ -160,6 +193,46 @@ public class ExportImportPreviewDisplayContext {
 		return URLEncoder.encode(value, StandardCharsets.UTF_8);
 	}
 
+	private ExportPreview _getExportPreview() {
+		if (_exportPreviewResourceFactory == null) {
+			return null;
+		}
+
+		try {
+			ExportPreviewResource exportPreviewResource =
+				_exportPreviewResourceFactory.create(
+				).checkPermissions(
+					true
+				).httpServletRequest(
+					_httpServletRequest
+				).preferredLocale(
+					_themeDisplay.getLocale()
+				).user(
+					_themeDisplay.getUser()
+				).build();
+
+			if (_stagingGroupHelper.isCompanyGroup(_group)) {
+				return exportPreviewResource.getExportPreview(
+					null, null, null, null);
+			}
+
+			String externalReferenceCode = _group.getExternalReferenceCode();
+
+			if (_group.isDepot()) {
+				return exportPreviewResource.getAssetLibraryExportPreview(
+					externalReferenceCode, null, null, null, null);
+			}
+
+			return exportPreviewResource.getSiteExportPreview(
+				externalReferenceCode, null, null, null, null);
+		}
+		catch (Exception exception) {
+			_log.error("Unable to get export preview", exception);
+		}
+
+		return null;
+	}
+
 	private String _getResourceAPIURL(String endpoint) {
 		if (_stagingGroupHelper.isCompanyGroup(_group)) {
 			return _BASE_PATH + endpoint;
@@ -178,9 +251,14 @@ public class ExportImportPreviewDisplayContext {
 
 	private static final String _BASE_PATH = "/o/export-import/v1.0";
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		ExportImportPreviewDisplayContext.class);
+
 	private final String _backMVCRenderCommandName;
 	private String _backURL;
 	private String _exportPreviewAPIURL;
+	private JSONObject _exportPreviewJSONObject;
+	private final ExportPreviewResource.Factory _exportPreviewResourceFactory;
 	private String _exportProcessAPIURL;
 	private final Group _group;
 	private final long _groupId;
@@ -191,5 +269,6 @@ public class ExportImportPreviewDisplayContext {
 	private final long _liveGroupId;
 	private final boolean _privateLayout;
 	private final StagingGroupHelper _stagingGroupHelper;
+	private final ThemeDisplay _themeDisplay;
 
 }
