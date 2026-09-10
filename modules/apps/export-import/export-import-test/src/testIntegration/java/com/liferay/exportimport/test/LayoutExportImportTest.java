@@ -83,9 +83,6 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetPrototypeLocalService;
@@ -1077,10 +1074,6 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 
 		User adminUser = UserTestUtil.getAdminUser(_company.getCompanyId());
 
-		String originalName = PrincipalThreadLocal.getName();
-		PermissionChecker originalPermissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
 		try (SafeCloseable safeCloseable =
 				CompanyThreadLocal.setCompanyIdWithSafeCloseable(
 					_company.getCompanyId())) {
@@ -1098,11 +1091,8 @@ public class LayoutExportImportTest extends BaseExportImportTestCase {
 				_layoutLocalService.getLayoutsCount(group, false),
 				_layoutLocalService.getLayoutsCount(newCompanyGroup, false));
 		}
-		finally {
-			PermissionThreadLocal.setPermissionChecker(
-				originalPermissionChecker);
-			PrincipalThreadLocal.setName(originalName);
-		}
+
+		UserTestUtil.setUser(TestPropsValues.getUser());
 	}
 
 	@Test
