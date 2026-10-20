@@ -36,6 +36,7 @@ import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -52,6 +53,7 @@ import com.liferay.portal.vulcan.pagination.Pagination;
 import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.NotFoundException;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.Serializable;
 
@@ -296,11 +298,8 @@ public class ImportProcessResourceImpl extends BaseImportProcessResourceImpl {
 		return fileEntry;
 	}
 
-	private boolean _isPrivateLayout(FileEntry fileEntry) throws Exception {
-		try (InputStream inputStream = fileEntry.getContentStream();
-
-			ZipReader zipReader = _zipReaderFactory.getZipReader(inputStream)) {
-
+	private boolean _isPrivateLayout(File file) throws Exception {
+		try (ZipReader zipReader = _zipReaderFactory.getZipReader(file)) {
 			Document document = SAXReaderUtil.read(
 				zipReader.getEntryAsString("/manifest.xml"));
 
@@ -356,33 +355,39 @@ public class ImportProcessResourceImpl extends BaseImportProcessResourceImpl {
 		Map<String, String[]> parameterMap = ParameterMapUtil.toParameterMap(
 			importProcessRequest, false);
 
-		Map<String, Serializable> settingsMap =
-			_exportImportConfigurationSettingsMapFactory.
-				buildImportLayoutSettingsMap(
-					contextUser.getUserId(), groupId,
-					group.isLayoutSetPrototype() || _isPrivateLayout(fileEntry),
-					null, parameterMap,
-					contextAcceptLanguage.getPreferredLocale(),
-					contextUser.getTimeZone());
-
-		ExportImportConfiguration exportImportConfiguration =
-			_exportImportConfigurationLocalService.
-				addDraftExportImportConfiguration(
-					contextUser.getUserId(), name,
-					ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
-					settingsMap);
+		File file = FileUtil.createTempFile("lar");
 
 		try (InputStream inputStream = fileEntry.getContentStream()) {
+			FileUtil.write(file, inputStream);
+
+			Map<String, Serializable> settingsMap =
+				_exportImportConfigurationSettingsMapFactory.
+					buildImportLayoutSettingsMap(
+						contextUser.getUserId(), groupId,
+						group.isLayoutSetPrototype() || _isPrivateLayout(file),
+						null, parameterMap,
+						contextAcceptLanguage.getPreferredLocale(),
+						contextUser.getTimeZone());
+
+			ExportImportConfiguration exportImportConfiguration =
+				_exportImportConfigurationLocalService.
+					addDraftExportImportConfiguration(
+						contextUser.getUserId(), name,
+						ExportImportConfigurationConstants.TYPE_IMPORT_LAYOUT,
+						settingsMap);
+
 			long backgroundTaskId =
 				_exportImportLocalService.importLayoutsInBackground(
-					contextUser.getUserId(), exportImportConfiguration,
-					inputStream);
+					contextUser.getUserId(), exportImportConfiguration, file);
 
 			TempFileEntryUtil.deleteTempFileEntry(fileEntry.getFileEntryId());
 
 			return _toImportProcess(
 				_backgroundTaskLocalService.getBackgroundTask(
 					backgroundTaskId));
+		}
+		finally {
+			FileUtil.delete(file);
 		}
 	}
 
