@@ -4,7 +4,7 @@
  */
 
 import {useFormikContext} from 'formik';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 
 import SectionHeader from '../../../components/SectionHeader';
 import {FormikFieldText} from '../../../components/forms/formik';
@@ -19,8 +19,6 @@ export default function FileSelectionStep({
 	importPreviewAPIURL: string;
 	setImportPreview: (importPreview?: ImportPreview) => void;
 }) {
-	const [progress, setProgress] = useState<number>();
-
 	const {setFieldTouched, setFieldValue, values} = useFormikContext<{
 		fileSelector?: File;
 		name: string;
@@ -55,10 +53,14 @@ export default function FileSelectionStep({
 		setImportPreview,
 	]);
 
-	const handleUpload = async (file: File, signal?: AbortSignal) => {
+	const handleUpload = async (
+		file: File,
+		onProgress: (percent: number) => void,
+		signal?: AbortSignal
+	) => {
 		const result = await postImportPreview({
 			file,
-			onProgress: setProgress,
+			onProgress,
 			signal,
 			url: importPreviewAPIURL,
 		});
@@ -93,7 +95,6 @@ export default function FileSelectionStep({
 				aria-describedby="fileSelector-description"
 				aria-labelledby="fileSelector-label"
 				name="fileSelector"
-				progress={progress}
 				uploadRequest={handleUpload}
 				validExtensions=".lar"
 			/>
