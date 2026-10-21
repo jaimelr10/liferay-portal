@@ -122,6 +122,7 @@ export function Wizard({
 						backURL={backURL}
 						continueDisabled={
 							formik.isSubmitting ||
+							formik.status?.submitted ||
 							(isStepValid
 								? !isStepValid(formik.values)
 								: !formik.isValid)

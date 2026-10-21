@@ -14,6 +14,8 @@ import {
 	within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import {navigate} from 'frontend-js-web';
+import fetch from 'jest-fetch-mock';
 import React from 'react';
 
 import {NewImport} from '../../../../../src/main/resources/META-INF/resources/revamp/js/pages/import/NewImport';
@@ -22,6 +24,11 @@ import {SCOPES} from '../../../../../src/main/resources/META-INF/resources/revam
 import formatDate from '../../../../../src/main/resources/META-INF/resources/revamp/js/utils/formatDate';
 import {mockImportPreview} from '../../mocks/mockImportPreview';
 import {mockPreviewPortletDataHandlerSectionsForFilterTest} from '../../mocks/mockSectionsForFilterTest';
+
+jest.mock('frontend-js-web', () => ({
+	...(jest.requireActual('frontend-js-web') as object),
+	navigate: jest.fn(),
+}));
 
 jest.mock(
 	'../../../../../src/main/resources/META-INF/resources/revamp/js/services/postImportPreview',
@@ -327,6 +334,30 @@ describe('NewImport', () => {
 		).not.toBeInTheDocument();
 
 		await checkAccessibility({context: container});
+	});
+
+	it('disables Import and goes to the processes list once the import has started', async () => {
+		fetch.mockResponseOnce(JSON.stringify({id: 1}));
+
+		await goToDataSelectionStep();
+
+		await user.click(screen.getByRole('button', {name: /continue/i}));
+
+		const importButton = screen.getByRole('button', {name: /^import$/i});
+
+		await waitFor(() => expect(importButton).toBeEnabled());
+
+		await user.click(importButton);
+
+		await waitFor(() =>
+			expect(navigate).toHaveBeenCalledWith('/some/back/url')
+		);
+
+		expect(Liferay.Util.openToast).toHaveBeenCalledWith({
+			message: 'the-process-has-started',
+			type: 'success',
+		});
+		expect(screen.getByRole('button', {name: /^import$/i})).toBeDisabled();
 	});
 
 	it('shows the section as indeterminate and summarizes the selected handlers when the selection is partial', async () => {

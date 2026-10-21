@@ -46,7 +46,11 @@ function Footer({
 						</ClayLink>
 
 						{actionButton ? (
-							actionButton
+							React.cloneElement(actionButton, {
+								disabled:
+									actionButton.props.disabled ||
+									continueDisabled,
+							})
 						) : (
 							<ClayButton
 								disabled={continueDisabled}
