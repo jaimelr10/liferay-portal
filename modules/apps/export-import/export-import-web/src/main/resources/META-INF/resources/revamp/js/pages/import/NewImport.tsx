@@ -14,7 +14,7 @@ import {ImportPreview} from '../../types/exportImportPreview';
 import {DataStrategy, UserIdStrategy} from '../../types/exportImportProcess';
 import {Scope} from '../../types/scope';
 import {toProcessRequestFlags} from '../../utils/contentSelection';
-import {navigateToProcesses} from '../../utils/navigateToProcesses';
+import {startProcess} from '../../utils/startProcess';
 import {toRequestPortletDataHandlers} from '../../utils/toRequestPortletDataHandlers';
 import DataSelectionStep from './steps/DataSelectionStep';
 import FileSelectionStep from './steps/FileSelectionStep';
@@ -23,6 +23,7 @@ import SettingsStep, {SETTINGS_STEP_INITIAL_VALUES} from './steps/SettingsStep';
 export function NewImport({
 	backURL,
 	commentsAndRatingsEnabled = false,
+	importFDSName,
 	importPreviewAPIURL,
 	importProcessAPIURL,
 	lookAndFeelEnabled = false,
@@ -31,6 +32,7 @@ export function NewImport({
 }: {
 	backURL: string;
 	commentsAndRatingsEnabled?: boolean;
+	importFDSName: string;
 	importPreviewAPIURL: string;
 	importProcessAPIURL: string;
 	lookAndFeelEnabled?: boolean;
@@ -93,7 +95,7 @@ export function NewImport({
 					</ClayButton>
 				}
 				initialValues={SETTINGS_STEP_INITIAL_VALUES}
-				onSubmit={async (values, formikHelpers) => {
+				onSubmit={(values, formikHelpers) => {
 					if (!importPreview) {
 						Liferay.Util.openToast({
 							message: Liferay.Language.get(
@@ -109,41 +111,35 @@ export function NewImport({
 						| ContentSelection
 						| undefined;
 
-					const result = await postImportProcess({
-						importProcessRequest: {
-							...toProcessRequestFlags(contentSelection),
-							dataStrategy: values.dataStrategy as DataStrategy,
-							deletions: !!values.deletions,
-							name: values.name,
-							permissions: !!values.permissions,
-							requestPortletDataHandlers:
-								toRequestPortletDataHandlers(
-									importPreview.previewPortletDataHandlerSections ??
-										[],
-									values.contentSelection
-								),
-							siteExternalReferenceCodes:
-								values.siteExternalReferenceCodes,
-							userIdStrategy:
-								values.userIdStrategy as UserIdStrategy,
-						},
-						url: importProcessAPIURL,
-					});
-
-					if (result.error) {
-						Liferay.Util.openToast({
-							message: result.error,
-							type: 'danger',
-						});
-
-						return;
-					}
-
-					navigateToProcesses(
+					return startProcess({
+						fdsName: importFDSName,
 						formikHelpers,
-						Liferay.Language.get('the-process-has-started'),
-						backURL
-					);
+						message: Liferay.Language.get(
+							'the-process-has-started'
+						),
+						request: postImportProcess({
+							importProcessRequest: {
+								...toProcessRequestFlags(contentSelection),
+								dataStrategy:
+									values.dataStrategy as DataStrategy,
+								deletions: !!values.deletions,
+								name: values.name,
+								permissions: !!values.permissions,
+								requestPortletDataHandlers:
+									toRequestPortletDataHandlers(
+										importPreview.previewPortletDataHandlerSections ??
+											[],
+										values.contentSelection
+									),
+								siteExternalReferenceCodes:
+									values.siteExternalReferenceCodes,
+								userIdStrategy:
+									values.userIdStrategy as UserIdStrategy,
+							},
+							url: importProcessAPIURL,
+						}),
+						url: backURL,
+					});
 				}}
 				title={Liferay.Language.get('settings')}
 			>
