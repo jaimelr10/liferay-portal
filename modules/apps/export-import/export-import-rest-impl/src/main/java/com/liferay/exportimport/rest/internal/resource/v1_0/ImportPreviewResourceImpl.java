@@ -22,6 +22,7 @@ import com.liferay.exportimport.rest.dto.v1_0.ImportPreview;
 import com.liferay.exportimport.rest.dto.v1_0.PreviewPortletDataHandler;
 import com.liferay.exportimport.rest.dto.v1_0.PreviewSite;
 import com.liferay.exportimport.rest.internal.util.GroupUtil;
+import com.liferay.exportimport.rest.internal.util.ImportTempFileEntryUtil;
 import com.liferay.exportimport.rest.internal.util.PermissionUtil;
 import com.liferay.exportimport.rest.internal.util.PreviewPortletDataHandlerUtil;
 import com.liferay.exportimport.rest.resource.v1_0.ImportPreviewResource;
@@ -35,7 +36,6 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.upload.UploadServletRequest;
@@ -54,8 +54,6 @@ import jakarta.servlet.ServletRequestWrapper;
 import jakarta.ws.rs.BadRequestException;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -143,27 +141,6 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 				new ServiceContext());
 	}
 
-	private FileEntry _addTempFileEntry(
-			long groupId, BinaryFile binaryFile, File file)
-		throws Exception {
-
-		String folderName = ImportPreviewResource.class.getName();
-
-		String[] tempFileNames = _layoutService.getTempFileNames(
-			groupId, folderName);
-
-		for (String tempFileEntryName : tempFileNames) {
-			_layoutService.deleteTempFileEntry(
-				groupId, folderName, tempFileEntryName);
-		}
-
-		try (InputStream inputStream = new FileInputStream(file)) {
-			return _layoutService.addTempFileEntry(
-				groupId, folderName, binaryFile.getFileName(), inputStream,
-				binaryFile.getContentType());
-		}
-	}
-
 	private List<ExportImportGroup> _getExportImportGroups(
 			PortletDataContext portletDataContext)
 		throws Exception {
@@ -206,7 +183,9 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 					_getPreviewPortletDataHandlersMap(
 						locale, manifestSummary, portletId);
 
-			FileEntry fileEntry = _addTempFileEntry(groupId, binaryFile, file);
+			FileEntry fileEntry = ImportTempFileEntryUtil.addTempFileEntry(
+				groupId, contextUser.getUserId(), binaryFile.getFileName(),
+				file, binaryFile.getContentType());
 
 			return new ImportPreview() {
 				{
@@ -218,7 +197,8 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 						() -> PreviewPortletDataHandlerUtil.getDeletionCount(
 							previewPortletDataHandlersMap));
 					setExportDate(manifestSummary::getExportDate);
-					setFileName(fileEntry::getFileName);
+					setFileName(
+						() -> ImportTempFileEntryUtil.getFileName(fileEntry));
 					setFileSize(fileEntry::getSize);
 					setPreviewPortletDataHandlerSections(
 						() ->
@@ -444,9 +424,6 @@ public class ImportPreviewResourceImpl extends BaseImportPreviewResourceImpl {
 
 	@Reference
 	private ExportImportLocalService _exportImportLocalService;
-
-	@Reference
-	private LayoutService _layoutService;
 
 	@Reference
 	private PortletDataContextFactory _portletDataContextFactory;
