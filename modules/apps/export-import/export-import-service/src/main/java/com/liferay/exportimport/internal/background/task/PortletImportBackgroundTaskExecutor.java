@@ -11,6 +11,7 @@ import com.liferay.exportimport.kernel.exception.ExportImportIOException;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.kernel.service.ExportImportLocalService;
 import com.liferay.exportimport.report.service.ExportImportReportEntryLocalService;
+import com.liferay.exportimport.upload.ImportUploadManager;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskExecutor;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskResult;
@@ -27,9 +28,11 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
@@ -120,6 +123,14 @@ public class PortletImportBackgroundTaskExecutor
 			}
 		}
 
+		Map<String, Serializable> taskContextMap =
+			backgroundTask.getTaskContextMap();
+
+		if (taskContextMap.containsKey("importUploadId")) {
+			_importFromUpload(
+				backgroundTask, exportImportConfiguration, taskContextMap);
+		}
+
 		int count =
 			_exportImportReportEntryLocalService.
 				getExportImportReportEntriesCount(
@@ -140,6 +151,51 @@ public class PortletImportBackgroundTaskExecutor
 		return new PortletExportImportBackgroundTaskDisplay(backgroundTask);
 	}
 
+	private void _importFromUpload(
+			BackgroundTask backgroundTask,
+			ExportImportConfiguration exportImportConfiguration,
+			Map<String, Serializable> taskContextMap)
+		throws Exception {
+
+		String importUploadId = MapUtil.getString(
+			taskContextMap, "importUploadId");
+		long uploadGroupId = MapUtil.getLong(taskContextMap, "uploadGroupId");
+
+		File file = null;
+
+		try {
+			file = FileUtil.createTempFile("lar");
+
+			_importUploadManager.writeTo(
+				uploadGroupId, backgroundTask.getUserId(), importUploadId,
+				file);
+
+			TransactionInvokerUtil.invoke(
+				transactionConfig,
+				new PortletImportCallable(exportImportConfiguration, file));
+		}
+		catch (IOException ioException) {
+			ExportImportIOException exportImportIOException =
+				new ExportImportIOException(getClass().getName(), ioException);
+
+			exportImportIOException.setFileName(
+				MapUtil.getString(taskContextMap, "fileName"));
+			exportImportIOException.setType(
+				ExportImportIOException.PORTLET_IMPORT_FILE);
+
+			throw exportImportIOException;
+		}
+		catch (Throwable throwable) {
+			throw new SystemException(throwable);
+		}
+		finally {
+			FileUtil.delete(file);
+
+			_importUploadManager.deleteImportUpload(
+				uploadGroupId, backgroundTask.getUserId(), importUploadId);
+		}
+	}
+
 	@Reference
 	private DLAppLocalService _dlAppLocalService;
 
@@ -149,6 +205,9 @@ public class PortletImportBackgroundTaskExecutor
 	@Reference
 	private ExportImportReportEntryLocalService
 		_exportImportReportEntryLocalService;
+
+	@Reference
+	private ImportUploadManager _importUploadManager;
 
 	private class PortletImportCallable implements Callable<Void> {
 
